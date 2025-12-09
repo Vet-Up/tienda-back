@@ -16,14 +16,14 @@ skinparam classArrowColor #4CAF50
 skinparam classArrowThickness 2
 skinparam classArrowFontColor black
 skinparam classArrowFontSize 11
-skinparam nodesep 20
+skinparam nodesep 50
 skinparam ranksep 5
 
 
 
 
 ' Entities'
-class Client{
+class User{
     id
     name
     username
@@ -34,58 +34,7 @@ class Client{
     profilePicture
     birthdate
     country
-    Vet
-    Pet
 
-}
-
-class Pet {
-    id
-    species
-    age
-    status
-    gender
-    MedicalHistory
-    Client
-    Vet
-}
-
-class MedicalHistory{
-    id
-    medical_description
-    Pet
-    Vet
-}
-
-class Vet {
-    id
-    name
-    email
-    phone
-    address
-    Pet
-    Client
-    Clinic
-}
-
-class VaccineType{
-    id_vaccine
-    name
-    price
-}
-
-class PetVaccine{
-    id_pet
-    id_vaccine
-    application_date
-}
-
-class Clinic {
-    id
-    name
-    location
-    workingHours
-    Vet
 }
 
 class Cart{
@@ -118,15 +67,9 @@ class ProductCategory{
 
 
 'Relationships'
-Client "1" --- "N" Pet : owns >
-Pet "1" -- "1" MedicalHistory : has >
-Vet "1" -- "N" Client : serves >
-Clinic "1" -- "N" Vet : employs >
-Cart "1" -- "N" CartItem : has >
-CartItem "N" -- "1" Product : contains >
-PetVaccine "N" -- "1" Pet : relates >
-PetVaccine "N" -- "1" VaccineType : relates >
-Cart "1" -- "1" Client : has >
+Cart "1" -- "1" User : has >
+Cart "1" - "N" CartItem : has >
+CartItem "N" - "1" Product : contains >
 Product "N" -- "N" ProductCategory : relates >
 
 

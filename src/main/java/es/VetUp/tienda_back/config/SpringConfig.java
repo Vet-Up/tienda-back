@@ -1,10 +1,15 @@
 package es.VetUp.tienda_back.config;
 
 import es.VetUp.tienda_back.b_domain.model.User;
+import es.VetUp.tienda_back.b_domain.repository.ProductRepository;
 import es.VetUp.tienda_back.b_domain.repository.UserRepository;
+import es.VetUp.tienda_back.b_domain.service.impl.ProductServiceImpl;
 import es.VetUp.tienda_back.b_domain.service.impl.UserServiceImpl;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.ProductJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.UserJpaDao;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.ProductJpaDaoImpl;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.UserJpaDaoImpl;
+import es.VetUp.tienda_back.c_persistence.repository.ProductRepositoryImpl;
 import es.VetUp.tienda_back.c_persistence.repository.UserRepositoryImpl;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -31,4 +36,21 @@ public class SpringConfig {
     public UserServiceImpl userService(UserRepository userRepository) {
         return new UserServiceImpl(userRepository);
     }
+
+    @Bean
+    public ProductJpaDao productJpaDao() {
+        return new ProductJpaDaoImpl() {
+        };
+    }
+
+    @Bean
+    public ProductRepository productRepository(ProductJpaDao productJpaDao) {
+        return new ProductRepositoryImpl(productJpaDao);
+    }
+
+    @Bean
+    public ProductServiceImpl productService(ProductRepository productRepository) {
+        return new ProductServiceImpl(productRepository);
+    }
+
 }

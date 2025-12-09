@@ -97,6 +97,34 @@
 					<parameters>true</parameters>
 				</configuration>
 			</plugin>
+            <plugin>
+                <groupId>com.github.davidmoten</groupId>
+                <artifactId>plantuml-maven-plugin</artifactId>
+                <version>0.2.14</version>
+                <executions>
+                    <execution>
+                        <id>generate-diagrams</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sources>
+                        <directory>${basedir}/src</directory>
+                        <includes>
+                            <include>**/*.puml</include>
+                        </includes>
+                    </sources>
+                    <outputDirectory>${basedir}/src</outputDirectory>
+                    <formats>
+                        <format>png</format>
+                    </formats>
+                    <preserveDirectoryStructure>true</preserveDirectoryStructure>
+                    <generateMarkdownIndex>false</generateMarkdownIndex>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 
