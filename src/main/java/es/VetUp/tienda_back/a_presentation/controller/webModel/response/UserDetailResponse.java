@@ -1,6 +1,7 @@
 package es.VetUp.tienda_back.a_presentation.controller.webModel.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import es.VetUp.tienda_back.b_domain.model.enums.UserRole;
 
 import java.time.LocalDate;
 
@@ -10,7 +11,7 @@ public record UserDetailResponse(
         String username,
         String email,
         String address,
-        Boolean isAdmin,
+        UserRole isAdmin,
         Number phone,
         String country,
         String profilePicture,

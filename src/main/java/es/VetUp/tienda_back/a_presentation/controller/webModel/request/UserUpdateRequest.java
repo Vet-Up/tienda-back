@@ -1,5 +1,7 @@
 package es.VetUp.tienda_back.a_presentation.controller.webModel.request;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import es.VetUp.tienda_back.b_domain.model.enums.UserRole;
+
 import java.time.LocalDate;
 
 public record UserUpdateRequest(
@@ -9,7 +11,7 @@ public record UserUpdateRequest(
         String email,
         String password,
         String address,
-        Boolean isAdmin,
+        UserRole isAdmin,
         Integer phone,
         String country,
         String profilePicture,

@@ -1,4 +1,6 @@
 package es.VetUp.tienda_back.b_domain.service.dto;
+import es.VetUp.tienda_back.b_domain.model.enums.OrderState;
+import es.VetUp.tienda_back.b_domain.model.enums.UserRole;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
@@ -16,7 +18,7 @@ public record UserDto(
     @NotNull
     String address,
     @NotNull
-    Boolean isAdmin,
+    UserRole isAdmin,
     @NotNull
     Integer phone,
     @NotNull

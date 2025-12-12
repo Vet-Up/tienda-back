@@ -1,5 +1,7 @@
 package es.VetUp.tienda_back.b_domain.model;
 
+import es.VetUp.tienda_back.b_domain.model.enums.UserRole;
+
 import java.time.LocalDate;
 
 public class User {
@@ -9,13 +11,13 @@ public class User {
     private final String email;
     private final String password;
     private final String address;
-    private final Boolean  isAdmin;
+    private final UserRole isAdmin;
     private final Integer phone;
     private final String country;
     private final String  profilePicture;
     private final LocalDate birthdate;
 
-    public User(Long id, String name, String username, String email, String password, String address, Boolean isAdmin, Integer phone, String country, String profilePicture,     LocalDate birthdate) {
+    public User(Long id, String name, String username, String email, String password, String address, UserRole isAdmin, Integer phone, String country, String profilePicture,     LocalDate birthdate) {
         this.id = id;
         this.name = name;
         this.username = username;
@@ -53,7 +55,7 @@ public class User {
         return address;
     }
 
-    public Boolean getAdmin() {
+    public UserRole getAdmin() {
         return isAdmin;
     }
 

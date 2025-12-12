@@ -1,0 +1,64 @@
+package es.VetUp.tienda_back.a_presentation.controller;
+
+import es.VetUp.tienda_back.a_presentation.controller.mapper.OrderPresentationMapper;
+import es.VetUp.tienda_back.a_presentation.controller.webModel.request.OrderInsertRequest;
+import es.VetUp.tienda_back.a_presentation.controller.webModel.request.OrderUpdateRequest;
+import es.VetUp.tienda_back.a_presentation.controller.webModel.response.OrderDetailResponse;
+import es.VetUp.tienda_back.b_domain.service.OrderService;
+import es.VetUp.tienda_back.b_domain.service.dto.OrderDto;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/orders")
+public class OrderContraller {
+
+    private final OrderService orderService;
+    public OrderContraller(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OrderDetailResponse>> findAllOrders() {
+        List<OrderDto> orders = orderService.getAllOrders();
+        List<OrderDetailResponse> orderResponses = orders.stream().map(OrderPresentationMapper.getInstance()::fromOrderDtoToOrderDetailResponse).toList();
+        return new ResponseEntity<>(orderResponses, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderDetailResponse> getOrderById(@PathVariable Long id) {
+        OrderDto orderDto = orderService.getOrderById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        OrderDetailResponse orderDetailResponse =
+                OrderPresentationMapper.getInstance().fromOrderDtoToOrderDetailResponse(orderDto);
+        return new ResponseEntity<>(orderDetailResponse, HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<OrderDetailResponse> createOrder(@RequestBody OrderInsertRequest orderInsertRequest) {
+        OrderDto orderDto = OrderPresentationMapper.getInstance().fromOrderInsertRequestToOrderDto(orderInsertRequest);
+        OrderDto createdOrder = orderService.createOrder(orderDto);
+        OrderDetailResponse response = OrderPresentationMapper.getInstance().fromOrderDtoToOrderDetailResponse(createdOrder);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<OrderDetailResponse> updateOrder(@PathVariable("id") Long id, @RequestBody OrderUpdateRequest orderUpdateRequest) {
+        if (!id.equals(orderUpdateRequest.id())) {
+            throw new IllegalArgumentException("ID in path and request body must match");
+        }
+        OrderDto orderDto = OrderPresentationMapper.getInstance().fromOrderUpdateRequestToOrderDto(orderUpdateRequest);
+        OrderDto updatedOrder = orderService.updateOrder(orderDto);
+        OrderDetailResponse response = OrderPresentationMapper.getInstance().fromOrderDtoToOrderDetailResponse(updatedOrder);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
+        orderService.deleteOrder(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+}

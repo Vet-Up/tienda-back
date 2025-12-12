@@ -1,11 +1,12 @@
 -- =====================================
---    PRODUCT CATEGORY - INSERTS
+--              USERS
 -- =====================================
-INSERT INTO product_category (name, description) VALUES
-('Food', 'Healthy and nutritious food for pets'),
-('Toys', 'Entertainment toys for all pets'),
-('Accessories', 'Collars, leashes, beds and more'),
-('Hygiene', 'Shampoos, grooming items, cleaning products');
+
+INSERT INTO users (name, username, email, password, phone, address, profile_picture, birthdate, country, is_admin)
+VALUES
+('Admin User', 'admin', 'admin@vetup.com', 'adminpass', 123456789, 'Calle Admin 1', NULL, '1990-01-01', 'España', 'ADMIN'),
+('Juan Pérez', 'juanp', 'juanp@gmail.com', 'pass1234', 654123987, 'Avenida Siempre Viva 742', NULL, '1995-05-15', 'España', 'CUSTOMER'),
+('María Gómez', 'mariag', 'mariag@gmail.com', 'mariag@gmail.com', 612334455, 'Gran Vía 12', NULL, '1998-09-20', 'España', 'CUSTOMER');
 
 
 -- =====================================
@@ -47,6 +48,15 @@ INSERT INTO products (name, product_description, price, discounted_price, pictur
 ('Flea Spray', 'Effective spray to prevent fleas', 12.99, 11.50, 'flea_spray.jpg', 'Frontline', 4),
 ('Shampoo for Long-Hair Dogs', 'Soft shampoo for long-haired dogs', 9.99, NULL, 'longhair_shampoo.jpg', 'Beaphar', 4);
 
+-- =====================================
+--    PRODUCT CATEGORY - INSERTS
+-- =====================================
+INSERT INTO product_category (name, description) VALUES
+('Food', 'Healthy and nutritious food for pets'),
+('Toys', 'Entertainment toys for all pets'),
+('Accessories', 'Collars, leashes, beds and more'),
+('Hygiene', 'Shampoos, grooming items, cleaning products');
+
 
 -- =====================================
 --                USERS
@@ -61,23 +71,24 @@ INSERT INTO users (name, username, email, password, phone, address, profile_pict
 
 
 -- =====================================
---                CART
+--               ORDERS
 -- =====================================
-INSERT INTO cart (total_products, total_price, user_id) VALUES
-(0, 0.00, 1),
-(0, 0.00, 2),
-(0, 0.00, 3),
-(0, 0.00, 4);  -- cart for admin user
+
+INSERT INTO orders (total_products, total_price, user_id, state)
+VALUES
+(2, 39.98, 2, 'ORDER'),
+(1, 29.99, 3, 'CART');
 
 
 -- =====================================
---              CART ITEMS
+--             ORDER ITEMS
 -- =====================================
 
--- User 1
-INSERT INTO cart_item (quantity, id_cart, id_product) VALUES
-(2, 1, 1),
-(1, 1, 3);
+INSERT INTO orders_item (quantity, id_order, id_product)
+VALUES
+(1, 1, 1),
+(1, 1, 2),
+(1, 2, 1);
 
 -- User 2
 INSERT INTO cart_item (quantity, id_cart, id_product) VALUES

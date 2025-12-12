@@ -12,7 +12,7 @@ CREATE TABLE users (
     profile_picture VARCHAR(255),
     birthdate DATE,
     country VARCHAR(60),
-    is_admin BOOLEAN DEFAULT FALSE
+    is_admin ENUM('ADMIN','CUSTOMER') DEFAULT 'CUSTOMER'
 );
 
 -- =====================================
@@ -43,12 +43,12 @@ CREATE TABLE products (
 -- =====================================
 --                ORDER
 -- =====================================
-CREATE TABLE cart (
-    id_cart BIGINT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE orders (
+    id_order BIGINT AUTO_INCREMENT PRIMARY KEY,
     total_products INT DEFAULT 0,
     total_price DECIMAL(10,2) DEFAULT 0,
-    user_id BIGINT UNIQUE NULL,
-    state INT DEFAULT 0,
+    user_id BIGINT NULL,
+    state ENUM('CART','ORDER') DEFAULT 'CART',
     FOREIGN KEY (user_id)
         REFERENCES users(id)
         ON DELETE SET NULL
@@ -57,14 +57,15 @@ CREATE TABLE cart (
 -- =====================================
 --              ORDER ITEM
 -- =====================================
-CREATE TABLE cart_item (
-    id_item_cart BIGINT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE orders_item (
+    id_item_order BIGINT AUTO_INCREMENT PRIMARY KEY,
     quantity INT NOT NULL,
 
-    id_cart BIGINT NOT NULL,
+    id_order BIGINT NOT NULL,
+    id_product BIGINT NOT NULL,
 
-    FOREIGN KEY (id_cart)
-        REFERENCES cart(id_cart) ON DELETE CASCADE,
+    FOREIGN KEY (id_order)
+        REFERENCES orders(id_order) ON DELETE CASCADE,
 
     FOREIGN KEY (product_id)
         REFERENCES products(product_id)

@@ -49,7 +49,6 @@ public class UserPersistenceMapper {
             userEntity.country(),
             userEntity.profilePicture(),
             userEntity.birthdate()
-
         );
     }
 }

@@ -1,6 +1,7 @@
 package es.VetUp.tienda_back.c_persistence.dao.jpa.impl;
 
 
+import es.VetUp.tienda_back.b_domain.model.enums.UserRole;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.UserJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.entity.UserJpaEntity;
 
@@ -18,9 +19,12 @@ public class UserJpaDaoImpl implements UserJpaDao {
 
     @Override
     public List<UserJpaEntity> getAllClientsnotAdmin() {
-        return entityManager.createQuery("SELECT u FROM UserJpaEntity u WHERE u.isAdmin = false", UserJpaEntity.class)
+        return entityManager.createQuery(
+                        "SELECT u FROM UserJpaEntity u WHERE u.isAdmin = :role", UserJpaEntity.class)
+                .setParameter("role", UserRole.CUSTOMER)
                 .getResultList();
     }
+
 
     @Override
     public Optional<UserJpaEntity> getClientById(Long id) {

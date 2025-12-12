@@ -1,6 +1,7 @@
 package es.VetUp.tienda_back.c_persistence.dao.jpa.entity;
 
 
+import es.VetUp.tienda_back.b_domain.model.enums.UserRole;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -19,19 +20,19 @@ public class UserJpaEntity implements Serializable {
     private String email;
     private String password;
     private String address;
-    private Boolean isAdmin;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "is_admin")
+    private UserRole isAdmin;
     private Integer phone;
     private String country;
     private String profilePicture;
     private LocalDate birthdate;
 
-//
-//    @OneToOne(mappedBy = "user")
-//    private CartJpaEntity cart;
+
 
     public UserJpaEntity() {
     }
-    public UserJpaEntity(Long id, String name, String username, String email, String password, String address, Boolean isAdmin, Integer phone, String country, String profilePicture, LocalDate birthdate) {
+    public UserJpaEntity(Long id, String name, String username, String email, String password, String address, UserRole isAdmin, Integer phone, String country, String profilePicture, LocalDate birthdate) {
         this.id = id;
         this.name = name;
         this.username = username;
@@ -69,7 +70,7 @@ public class UserJpaEntity implements Serializable {
         return address;
     }
 
-    public Boolean getIsAdmin() {
+    public UserRole getIsAdmin() {
         return isAdmin;
     }
 
@@ -89,13 +90,7 @@ public class UserJpaEntity implements Serializable {
         return birthdate;
     }
 
-//    public CartJpaEntity getCart() {
-//        return cart;
-//    }
-//
-//    public void setCart(CartJpaEntity cart) {
-//        this.cart = cart;
-//    }
+
 }
 
 

@@ -3,19 +3,25 @@ package es.VetUp.tienda_back.b_domain.service.impl;
 import es.VetUp.tienda_back.b_domain.exception.BusinessException;
 import es.VetUp.tienda_back.b_domain.exception.ResourceNotFoundException;
 import es.VetUp.tienda_back.b_domain.mapper.UserMapper;
+import es.VetUp.tienda_back.b_domain.model.enums.OrderState;
 import es.VetUp.tienda_back.b_domain.repository.UserRepository;
 import es.VetUp.tienda_back.b_domain.repository.entity.UserEntity;
+import es.VetUp.tienda_back.b_domain.service.OrderService;
 import es.VetUp.tienda_back.b_domain.service.UserService;
+import es.VetUp.tienda_back.b_domain.service.dto.OrderDto;
 import es.VetUp.tienda_back.b_domain.service.dto.UserDto;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    public UserServiceImpl(UserRepository userRepository) {
+    private final OrderService orderService;
+    public UserServiceImpl(UserRepository userRepository, OrderService orderService) {
         this.userRepository = userRepository;
+        this.orderService = orderService;
     }
 
 
@@ -44,16 +50,32 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
+
         if (getUserByEmail(userDto.email()).isPresent()) {
             throw new BusinessException("User with email " + userDto.email() + " already exists");
         }
 
-        UserEntity userEntity = UserMapper.getInstance().fromUserToUserEntity(UserMapper.getInstance().fromUserDtoToUser(userDto));
+        UserEntity userEntity = UserMapper.getInstance().fromUserToUserEntity(
+                UserMapper.getInstance().fromUserDtoToUser(userDto));
         UserEntity createdUserEntity = userRepository.createClient(userEntity);
-        return UserMapper.getInstance().fromUserToUserDto(
-                UserMapper.getInstance().fromUserEntityToUser(createdUserEntity)
+
+
+        UserDto createdUserDto = UserMapper.getInstance().fromUserToUserDto(
+                UserMapper.getInstance().fromUserEntityToUser(createdUserEntity));
+
+
+        OrderDto initialOrder = new OrderDto(
+                null,
+                0,
+                BigDecimal.ZERO,
+                OrderState.CART,
+                createdUserDto
         );
+
+        orderService.createOrder(initialOrder);
+        return createdUserDto;
     }
+
 
 
     @Override

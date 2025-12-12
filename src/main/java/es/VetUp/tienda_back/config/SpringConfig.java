@@ -2,14 +2,21 @@ package es.VetUp.tienda_back.config;
 
 import es.VetUp.tienda_back.b_domain.model.User;
 import es.VetUp.tienda_back.b_domain.repository.ProductRepository;
+import es.VetUp.tienda_back.b_domain.repository.OrderRepository;
 import es.VetUp.tienda_back.b_domain.repository.UserRepository;
 import es.VetUp.tienda_back.b_domain.service.impl.ProductServiceImpl;
+import es.VetUp.tienda_back.b_domain.service.OrderService;
+import es.VetUp.tienda_back.b_domain.service.UserService;
+import es.VetUp.tienda_back.b_domain.service.impl.OrderServiceImpl;
 import es.VetUp.tienda_back.b_domain.service.impl.UserServiceImpl;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.ProductJpaDao;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.OrderJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.UserJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.ProductJpaDaoImpl;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.OrderJpaDaoImpl;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.UserJpaDaoImpl;
 import es.VetUp.tienda_back.c_persistence.repository.ProductRepositoryImpl;
+import es.VetUp.tienda_back.c_persistence.repository.OrderRepositoryImpl;
 import es.VetUp.tienda_back.c_persistence.repository.UserRepositoryImpl;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -28,13 +35,29 @@ public class SpringConfig {
     }
 
     @Bean
+    public OrderJpaDao orderJpaDao() {
+        return new OrderJpaDaoImpl() {
+        };
+    }
+
+    @Bean
     public UserRepository userRepository(UserJpaDao userJpaDao) {
         return new UserRepositoryImpl(userJpaDao);
     }
 
     @Bean
-    public UserServiceImpl userService(UserRepository userRepository) {
-        return new UserServiceImpl(userRepository);
+    public OrderRepository orderRepository(OrderJpaDao orderJpaDao) {
+        return new OrderRepositoryImpl(orderJpaDao);
+    }
+
+    @Bean
+    public UserService userService(UserRepository userRepository, OrderService orderService) {
+        return new UserServiceImpl(userRepository, orderService);
+    }
+
+    @Bean
+    public OrderService orderService(OrderRepository orderRepository) {
+        return new OrderServiceImpl(orderRepository);
     }
 
     @Bean
@@ -52,5 +75,4 @@ public class SpringConfig {
     public ProductServiceImpl productService(ProductRepository productRepository) {
         return new ProductServiceImpl(productRepository);
     }
-
 }
