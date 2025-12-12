@@ -19,13 +19,14 @@ public class ProductMapper {
 
     public Product fromProductEntitytoProduct(ProductEntity productEntity) {
         return new Product(
-                productEntity.product_id(),
+                productEntity.productId(),
                 productEntity.name(),
-                productEntity.product_description(),
+                productEntity.productDescription(),
                 productEntity.price(),
                 productEntity.discountedPrice(),
                 productEntity.pictureProduct(),
-                productEntity.brand()
+                productEntity.brand(),
+                productEntity.categoryId()
         );
     }
 
@@ -37,19 +38,21 @@ public class ProductMapper {
                 product.getPrice(),
                 product.getDiscountedPrice(),
                 product.getPictureProduct(),
-                product.getBrand()
+                product.getBrand(),
+                product.getCategoryId()
         );
     }
 
     public Product fromProductDtotoProduct(ProductDto productDto) {
         return new Product(
-                productDto.product_id(),
+                productDto.productId(),
                 productDto.name(),
-                productDto.product_description(),
+                productDto.productDescription(),
                 productDto.price(),
                 productDto.discountedPrice(),
                 productDto.pictureProduct(),
-                productDto.brand()
+                productDto.brand(),
+                productDto.categoryId()
         );
     }
 
@@ -61,7 +64,8 @@ public class ProductMapper {
                 product.getPrice(),
                 product.getDiscountedPrice(),
                 product.getPictureProduct(),
-                product.getBrand()
+                product.getBrand(),
+                product.getCategoryId()
         );
     }
 

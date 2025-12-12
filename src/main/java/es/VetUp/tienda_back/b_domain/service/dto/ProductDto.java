@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 
 public record ProductDto (
-    Long product_id,
+    Long productId,
 
     @NotBlank(message = "Name is required")
     @Size(min = 2, max = 150, message = "Name must be between 2 and 150 characters")
@@ -17,7 +17,7 @@ public record ProductDto (
 
     @NotBlank(message = "Product description is required")
     @Size(max = 1000, message = "Description cannot exceed 1000 characters")
-    String product_description,
+    String productDescription,
 
     @Positive(message = "Price must be greater than 0")
     BigDecimal price,
@@ -30,5 +30,8 @@ public record ProductDto (
 
     @NotBlank(message = "Brand is required")
     @Size(min = 2, max = 100, message = "Brand must be between 2 and 100 characters")
-    String brand
+    String brand,
+
+    @NotBlank(message = "El id de categoría es obligatorio")
+    Long categoryId
 ) {}

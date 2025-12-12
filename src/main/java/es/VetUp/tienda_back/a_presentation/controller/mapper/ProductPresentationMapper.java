@@ -1,9 +1,9 @@
-package es.VetUp.tienda_back.a_presentation.mapper;
+package es.VetUp.tienda_back.a_presentation.controller.mapper;
 
-import es.VetUp.tienda_back.a_presentation.webModel.request.ProductInsertRequest;
-import es.VetUp.tienda_back.a_presentation.webModel.request.ProductUpdateRequest;
-import es.VetUp.tienda_back.a_presentation.webModel.response.ProductDetailResponse;
-import es.VetUp.tienda_back.a_presentation.webModel.response.ProductSummaryResponse;
+import es.VetUp.tienda_back.a_presentation.controller.webModel.request.ProductInsertRequest;
+import es.VetUp.tienda_back.a_presentation.controller.webModel.request.ProductUpdateRequest;
+import es.VetUp.tienda_back.a_presentation.controller.webModel.response.ProductDetailResponse;
+import es.VetUp.tienda_back.a_presentation.controller.webModel.response.ProductSummaryResponse;
 import es.VetUp.tienda_back.b_domain.service.dto.ProductDto;
 
 public class ProductPresentationMapper {
@@ -21,9 +21,9 @@ public class ProductPresentationMapper {
 
     public ProductDetailResponse fromProductDtoToToProductDetailResponse(ProductDto productDto) {
         return new ProductDetailResponse(
-                productDto.product_id(),
+                productDto.productId(),
                 productDto.name(),
-                productDto.product_description(),
+                productDto.productDescription(),
                 productDto.price(),
                 productDto.discountedPrice(),
                 productDto.pictureProduct(),
@@ -33,12 +33,13 @@ public class ProductPresentationMapper {
 
     public static ProductSummaryResponse fromProductDtoToProductSummaryResponse(ProductDto productDto) {
         return new ProductSummaryResponse(
-                productDto.product_id(),
+                productDto.productId(),
                 productDto.name(),
                 productDto.price(),
                 productDto.discountedPrice(),
                 productDto.pictureProduct(),
-                productDto.brand()
+                productDto.brand(),
+                productDto.categoryId()
         );
     }
 
@@ -50,7 +51,9 @@ public class ProductPresentationMapper {
                 productInsertRequest.price(),
                 productInsertRequest.discountedPrice(),
                 productInsertRequest.pictureProduct(),
-                productInsertRequest.brand()
+                productInsertRequest.brand(),
+                productInsertRequest.categoryId()
+
         );
     }
 
@@ -62,7 +65,8 @@ public class ProductPresentationMapper {
                 productUpdateRequest.price(),
                 productUpdateRequest.discountedPrice(),
                 productUpdateRequest.pictureProduct(),
-                productUpdateRequest.brand()
+                productUpdateRequest.brand(),
+                productUpdateRequest.categoryId()
         );
     }
 }

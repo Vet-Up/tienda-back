@@ -1,4 +1,4 @@
-package es.VetUp.tienda_back.a_presentation.webModel.response;
+package es.VetUp.tienda_back.a_presentation.controller.webModel.response;
 
 import java.math.BigDecimal;
 
@@ -8,5 +8,6 @@ public record ProductSummaryResponse(
             BigDecimal  price,
             BigDecimal discountedPrice,
             String pictureProduct,
-            String brand
+            String brand,
+            Long categoryId
 ){}

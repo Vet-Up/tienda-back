@@ -15,5 +15,7 @@ public interface GenericJpaDao<T> {
 
     List<T> findAll(int page, int size);
 
+    List<T> findAll();
+
     long count();
 }

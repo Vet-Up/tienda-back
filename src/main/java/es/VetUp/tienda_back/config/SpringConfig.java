@@ -1,20 +1,25 @@
 package es.VetUp.tienda_back.config;
 
 import es.VetUp.tienda_back.b_domain.model.User;
+import es.VetUp.tienda_back.b_domain.repository.CategoryRepository;
 import es.VetUp.tienda_back.b_domain.repository.ProductRepository;
 import es.VetUp.tienda_back.b_domain.repository.OrderRepository;
 import es.VetUp.tienda_back.b_domain.repository.UserRepository;
+import es.VetUp.tienda_back.b_domain.service.impl.CategoryServiceImpl;
 import es.VetUp.tienda_back.b_domain.service.impl.ProductServiceImpl;
 import es.VetUp.tienda_back.b_domain.service.OrderService;
 import es.VetUp.tienda_back.b_domain.service.UserService;
 import es.VetUp.tienda_back.b_domain.service.impl.OrderServiceImpl;
 import es.VetUp.tienda_back.b_domain.service.impl.UserServiceImpl;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.CategoryJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.ProductJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.OrderJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.UserJpaDao;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.CategoryJpaDaoImpl;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.ProductJpaDaoImpl;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.OrderJpaDaoImpl;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.UserJpaDaoImpl;
+import es.VetUp.tienda_back.c_persistence.repository.CategoryRepositoryImpl;
 import es.VetUp.tienda_back.c_persistence.repository.ProductRepositoryImpl;
 import es.VetUp.tienda_back.c_persistence.repository.OrderRepositoryImpl;
 import es.VetUp.tienda_back.c_persistence.repository.UserRepositoryImpl;
@@ -35,24 +40,24 @@ public class SpringConfig {
     }
 
     @Bean
+    public UserRepository userRepository(UserJpaDao userJpaDao) {
+        return new UserRepositoryImpl(userJpaDao);
+    }
+
+    @Bean
+    public UserService userService(UserRepository userRepository, OrderService orderService) {
+        return new UserServiceImpl(userRepository, orderService);
+    }
+
+    @Bean
     public OrderJpaDao orderJpaDao() {
         return new OrderJpaDaoImpl() {
         };
     }
 
     @Bean
-    public UserRepository userRepository(UserJpaDao userJpaDao) {
-        return new UserRepositoryImpl(userJpaDao);
-    }
-
-    @Bean
     public OrderRepository orderRepository(OrderJpaDao orderJpaDao) {
         return new OrderRepositoryImpl(orderJpaDao);
-    }
-
-    @Bean
-    public UserService userService(UserRepository userRepository, OrderService orderService) {
-        return new UserServiceImpl(userRepository, orderService);
     }
 
     @Bean
@@ -75,4 +80,22 @@ public class SpringConfig {
     public ProductServiceImpl productService(ProductRepository productRepository) {
         return new ProductServiceImpl(productRepository);
     }
+
+    @Bean
+    public CategoryJpaDao categoryJpaDao() {
+        return new CategoryJpaDaoImpl() {
+        };
+    }
+
+    @Bean
+    public CategoryRepository categoryRepository(CategoryJpaDao categoryJpaDao) {
+        return new CategoryRepositoryImpl(categoryJpaDao);
+    }
+
+    @Bean
+    public CategoryServiceImpl categoryService(CategoryRepository categoryRepository, ProductRepository productRepository) {
+        return new CategoryServiceImpl(categoryRepository, productRepository);
+    }
+
+
 }

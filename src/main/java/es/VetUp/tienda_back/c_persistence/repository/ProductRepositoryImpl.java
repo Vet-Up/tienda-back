@@ -42,7 +42,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public ProductEntity saveProduct(ProductEntity productEntity) {
         ProductJpaEntity productJpaEntity = ProductPersistenceMapper.getInstance().fromProductEntitytoToProductJpaEntity(productEntity);
-        if(productEntity.product_id() == null){
+        if(productEntity.productId() == null){
             return ProductPersistenceMapper.getInstance().fromProductJpaEntitytoToProductEntity(productJpaDao.insert(productJpaEntity));
         }
         return ProductPersistenceMapper.getInstance().fromProductJpaEntitytoToProductEntity(productJpaDao.update(productJpaEntity));
@@ -60,5 +60,10 @@ public class ProductRepositoryImpl implements ProductRepository {
     public void deleteProduct(Long productId) {
         productJpaDao.deleteById((long) productId);
 
+    }
+
+    @Override
+    public boolean existsByCategoryId(Long categoryId) {
+        return productJpaDao.existsByCategoryId(categoryId);
     }
 }

@@ -1,0 +1,7 @@
+package es.VetUp.tienda_back.a_presentation.controller.webModel.response;
+
+public record CategoryDetailResponse (
+    Long categoryId,
+    String name,
+    String description
+){}

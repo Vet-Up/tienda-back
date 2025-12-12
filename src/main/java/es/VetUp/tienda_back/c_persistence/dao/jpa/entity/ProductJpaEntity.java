@@ -12,7 +12,7 @@ public class ProductJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "product_id")
-    private Long product_id;
+    private Long productId;
     @NotBlank(message = "Product name is required")
     @Size(min = 2, max = 150, message = "Product name must be between 2 and 150 characters")
     private String name;
@@ -36,25 +36,32 @@ public class ProductJpaEntity {
     @Size(min = 2, max = 100, message = "Brand must be between 2 and 100 characters")
     private String brand;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private CategoryJpaEntity category;
+
     public ProductJpaEntity() {
     }
 
-    public ProductJpaEntity(Long product_id, String name, String productDescription, BigDecimal  price, BigDecimal  discountedPrice, String pictureProduct, String brand) {
-        this.product_id = product_id;
+    public ProductJpaEntity(Long productId, String name, String productDescription, BigDecimal  price, BigDecimal  discountedPrice, String pictureProduct, String brand, Long categoryId) {
+        this.productId = productId;
         this.name = name;
         this.productDescription = productDescription;
         this.price = price;
         this.discountedPrice = discountedPrice;
         this.pictureProduct = pictureProduct;
         this.brand = brand;
+        this.category = new CategoryJpaEntity();
+        this.category.setCategoryId(categoryId);
+
     }
 
     public Long getProduct_id() {
-        return product_id;
+        return productId;
     }
 
     public void setProduct_id(Long product_id) {
-        this.product_id = product_id;
+        this.productId = product_id;
     }
 
     public String getName() { return name; }
@@ -75,4 +82,7 @@ public class ProductJpaEntity {
     public String getBrand() { return brand; }
     public void setBrand(String brand) { this.brand = brand; }
 
+    public Long getCategoryId() { return category.getCategoryId(); }
+    public void setCategoryId(Long categoryId) {
+    }
 }

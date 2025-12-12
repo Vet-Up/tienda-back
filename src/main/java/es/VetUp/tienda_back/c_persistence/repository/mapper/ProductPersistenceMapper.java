@@ -28,7 +28,8 @@ public class ProductPersistenceMapper {
                 productJpaEntity.getPrice(),
                 productJpaEntity.getDiscountedPrice(),
                 productJpaEntity.getPictureProduct(),
-                productJpaEntity.getBrand()
+                productJpaEntity.getBrand(),
+                productJpaEntity.getCategoryId()
         );
     }
 
@@ -38,13 +39,14 @@ public class ProductPersistenceMapper {
         }
 
         return new ProductJpaEntity(
-                productEntity.product_id(),
+                productEntity.productId(),
                 productEntity.name(),
-                productEntity.product_description(),
+                productEntity.productDescription(),
                 productEntity.price(),
                 productEntity.discountedPrice(),
                 productEntity.pictureProduct(),
-                productEntity.brand()
+                productEntity.brand(),
+                productEntity.categoryId()
         );
     }
 }

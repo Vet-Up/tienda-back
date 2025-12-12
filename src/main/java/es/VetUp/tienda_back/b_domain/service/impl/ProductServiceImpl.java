@@ -90,8 +90,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public ProductDto updateProduct(Long productId, ProductDto productDto) {
-        productRepository.findProductById(productDto.product_id())
-                .orElseThrow(() -> new RuntimeException("Product with id " + productDto.product_id() + " does not exist"));
+        productRepository.findProductById(productDto.productId())
+                .orElseThrow(() -> new RuntimeException("Product with id " + productDto.productId() + " does not exist"));
 
         ProductEntity productEntityToUpdate = ProductMapper.getInstance()
                 .fromProducttoProductEntity(

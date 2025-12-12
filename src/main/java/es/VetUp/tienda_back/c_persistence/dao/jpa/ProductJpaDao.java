@@ -8,4 +8,5 @@ public interface ProductJpaDao extends GenericJpaDao<ProductJpaEntity> {
     List<ProductJpaEntity> findByCategoryId(int categoryId,int page, int size);
     List<ProductJpaEntity> findByBrandId(String brand, int page, int size);
 
+    boolean existsByCategoryId(Long categoryId);
 }

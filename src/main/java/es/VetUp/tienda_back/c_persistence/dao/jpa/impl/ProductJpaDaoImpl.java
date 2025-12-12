@@ -42,6 +42,13 @@ public class ProductJpaDaoImpl implements ProductJpaDao {
     }
 
     @Override
+    public boolean existsByCategoryId(Long categoryId) {
+        String sql = "SELECT COUNT(p) FROM ProductJpaEntity p WHERE p.category.id = :categoryId";
+        Long count = entityManager.createQuery(sql, Long.class).setParameter("categoryId", categoryId).getSingleResult();
+        return count > 0;
+    }
+
+    @Override
     public ProductJpaEntity insert(ProductJpaEntity jpaEntity) {
         entityManager.persist(jpaEntity);
         return jpaEntity;
@@ -77,6 +84,11 @@ public class ProductJpaDaoImpl implements ProductJpaDao {
 
         return productJpaEntityPage.getResultList();
 
+    }
+
+    @Override
+    public List<ProductJpaEntity> findAll() {
+        return List.of();
     }
 
     @Override

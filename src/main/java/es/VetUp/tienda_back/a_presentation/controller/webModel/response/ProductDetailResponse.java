@@ -1,4 +1,4 @@
-package es.VetUp.tienda_back.a_presentation.webModel.response;
+package es.VetUp.tienda_back.a_presentation.controller.webModel.response;
 
 import java.math.BigDecimal;
 

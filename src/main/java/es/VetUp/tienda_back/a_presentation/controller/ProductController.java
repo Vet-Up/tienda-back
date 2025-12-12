@@ -1,10 +1,10 @@
-package es.VetUp.tienda_back.a_presentation;
+package es.VetUp.tienda_back.a_presentation.controller;
 
-import es.VetUp.tienda_back.a_presentation.mapper.ProductPresentationMapper;
-import es.VetUp.tienda_back.a_presentation.webModel.request.ProductInsertRequest;
-import es.VetUp.tienda_back.a_presentation.webModel.request.ProductUpdateRequest;
-import es.VetUp.tienda_back.a_presentation.webModel.response.ProductDetailResponse;
-import es.VetUp.tienda_back.a_presentation.webModel.response.ProductSummaryResponse;
+import es.VetUp.tienda_back.a_presentation.controller.mapper.ProductPresentationMapper;
+import es.VetUp.tienda_back.a_presentation.controller.webModel.request.ProductInsertRequest;
+import es.VetUp.tienda_back.a_presentation.controller.webModel.request.ProductUpdateRequest;
+import es.VetUp.tienda_back.a_presentation.controller.webModel.response.ProductDetailResponse;
+import es.VetUp.tienda_back.a_presentation.controller.webModel.response.ProductSummaryResponse;
 import es.VetUp.tienda_back.b_domain.model.Page;
 import es.VetUp.tienda_back.b_domain.service.ProductService;
 import es.VetUp.tienda_back.b_domain.service.dto.ProductDto;

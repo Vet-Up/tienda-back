@@ -4,27 +4,29 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Product {
-    private final Long product_id;
+    private final Long productId;
     private final String name;
-    private final String product_description;
+    private final String productDescription;
     private final BigDecimal  price;
     private final BigDecimal  discountedPrice;
     private final String pictureProduct;
     private final String brand;
+    private final Long categoryId;
 
 
-    public Product(Long productId, String name, String productDescription, BigDecimal  price, BigDecimal  discountedPrice, String pictureProduct, String brand) {
-        this.product_id = productId;
+    public Product(Long productId, String name, String productDescription, BigDecimal  price, BigDecimal  discountedPrice, String pictureProduct, String brand, Long categoryId) {
+        this.productId = productId;
         this.name = name;
-        this.product_description = productDescription;
+        this.productDescription = productDescription;
         this.price = price;
         this.discountedPrice = discountedPrice;
         this.pictureProduct = pictureProduct;
         this.brand = brand;
+        this.categoryId = categoryId;
     }
 
     public Long getProduct_id() {
-        return product_id;
+        return productId;
     }
 
     public String getName() {
@@ -32,7 +34,7 @@ public class Product {
     }
 
     public String getProduct_description() {
-        return product_description;
+        return productDescription;
     }
 
     public BigDecimal  getPrice() {
@@ -51,16 +53,22 @@ public class Product {
         return brand;
     }
 
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Objects.equals(product_id, product.product_id) && Objects.equals(name, product.name) && Objects.equals(product_description, product.product_description) && Objects.equals(price, product.price) && Objects.equals(discountedPrice, product.discountedPrice) && Objects.equals(pictureProduct, product.pictureProduct) && Objects.equals(brand, product.brand);
+        return Objects.equals(productId, product.productId) && Objects.equals(name, product.name) && Objects.equals(productDescription, product.productDescription) && Objects.equals(price, product.price) && Objects.equals(discountedPrice, product.discountedPrice) && Objects.equals(pictureProduct, product.pictureProduct) && Objects.equals(brand, product.brand);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(product_id, name, product_description, price, discountedPrice, pictureProduct, brand);
+        return Objects.hash(productId, name, productDescription, price, discountedPrice, pictureProduct, brand);
     }
 
 

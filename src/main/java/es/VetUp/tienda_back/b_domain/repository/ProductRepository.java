@@ -15,6 +15,7 @@ public interface ProductRepository {
     ProductEntity saveProduct(ProductEntity productEntity);
     ProductEntity updateProduct(Long productId, ProductEntity productEntity);
     void deleteProduct(Long productId);
+    boolean existsByCategoryId(Long categoryId);
 
 
 }

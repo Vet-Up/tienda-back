@@ -3,13 +3,14 @@ package es.VetUp.tienda_back.b_domain.repository.entity;
 import java.math.BigDecimal;
 
 public record ProductEntity(
-    Long product_id,
+    Long productId,
     String name,
-    String product_description,
+    String productDescription,
     BigDecimal  price,
     BigDecimal discountedPrice,
     String pictureProduct,
-    String brand
+    String brand,
+    Long categoryId
 ) {
 
 }
