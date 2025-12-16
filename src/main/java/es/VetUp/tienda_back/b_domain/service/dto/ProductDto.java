@@ -2,6 +2,7 @@ package es.VetUp.tienda_back.b_domain.service.dto;
 
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
@@ -32,6 +33,6 @@ public record ProductDto (
     @Size(min = 2, max = 100, message = "Brand must be between 2 and 100 characters")
     String brand,
 
-    @NotBlank(message = "El id de categoría es obligatorio")
+    @NotNull(message = "El id de categoría es obligatorio")
     Long categoryId
 ) {}

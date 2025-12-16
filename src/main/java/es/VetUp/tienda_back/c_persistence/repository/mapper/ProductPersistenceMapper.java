@@ -1,6 +1,7 @@
 package es.VetUp.tienda_back.c_persistence.repository.mapper;
 
 import es.VetUp.tienda_back.b_domain.repository.entity.ProductEntity;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.entity.CategoryJpaEntity;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.entity.ProductJpaEntity;
 
 public class ProductPersistenceMapper {
@@ -22,7 +23,7 @@ public class ProductPersistenceMapper {
         }
 
         return new ProductEntity(
-                productJpaEntity.getProduct_id(),
+                productJpaEntity.getProductId(),
                 productJpaEntity.getName(),
                 productJpaEntity.getProductDescription(),
                 productJpaEntity.getPrice(),
@@ -38,6 +39,12 @@ public class ProductPersistenceMapper {
             return null;
         }
 
+        CategoryJpaEntity categoryJpaEntity = null;
+        if (productEntity.categoryId() != null) {
+            categoryJpaEntity = new CategoryJpaEntity();
+            categoryJpaEntity.setCategoryId(productEntity.categoryId());
+        }
+
         return new ProductJpaEntity(
                 productEntity.productId(),
                 productEntity.name(),
@@ -46,7 +53,7 @@ public class ProductPersistenceMapper {
                 productEntity.discountedPrice(),
                 productEntity.pictureProduct(),
                 productEntity.brand(),
-                productEntity.categoryId()
+                categoryJpaEntity
         );
     }
 }

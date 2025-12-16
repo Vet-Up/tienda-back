@@ -27,7 +27,8 @@ public class ProductPresentationMapper {
                 productDto.price(),
                 productDto.discountedPrice(),
                 productDto.pictureProduct(),
-                productDto.brand()
+                productDto.brand(),
+                productDto.categoryId()
         );
     }
 

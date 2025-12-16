@@ -57,9 +57,9 @@ public class ProductJpaDaoImpl implements ProductJpaDao {
 
     @Override
     public ProductJpaEntity update(ProductJpaEntity jpaEntity) {
-        ProductJpaEntity managed = entityManager.find(ProductJpaEntity.class, jpaEntity.getProduct_id());
+        ProductJpaEntity managed = entityManager.find(ProductJpaEntity.class, jpaEntity.getProductId());
         if (managed == null) {
-            throw new ResourceNotFoundException("Product not found with id: " + jpaEntity.getProduct_id());
+            throw new ResourceNotFoundException("Product not found with id: " + jpaEntity.getProductId());
         }
         entityManager.flush();
         return entityManager.merge(jpaEntity);

@@ -51,7 +51,7 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public ProductEntity updateProduct(Long productId, ProductEntity productEntity) {
         ProductJpaEntity productJpaEntity = ProductPersistenceMapper.getInstance().fromProductEntitytoToProductJpaEntity(productEntity);
-        productJpaEntity.setProduct_id((long) productId);
+        productJpaEntity.setProductId((long) productId);
         return ProductPersistenceMapper.getInstance().fromProductJpaEntitytoToProductEntity(productJpaDao.update(productJpaEntity));
 
     }

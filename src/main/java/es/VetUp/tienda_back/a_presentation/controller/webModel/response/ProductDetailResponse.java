@@ -9,7 +9,8 @@ public record ProductDetailResponse(
          BigDecimal  price,
          BigDecimal discountedPrice,
          String pictureProduct,
-         String brand
+         String brand,
+         Long categoryId
 ) {
 }
 
