@@ -70,5 +70,6 @@ CREATE TABLE orders_item (
                                  REFERENCES orders(id_order) ON DELETE CASCADE,
 
                              FOREIGN KEY (product_id)
-                                 REFERENCES products(product_id)
+                                 REFERENCES products(product_id) ON DELETE CASCADE
+
 );

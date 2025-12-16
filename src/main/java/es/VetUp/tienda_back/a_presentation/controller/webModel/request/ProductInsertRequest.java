@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public record ProductInsertRequest (
         String name,
-        String product_description,
+        String productDescription,
         BigDecimal  price,
         BigDecimal discountedPrice,
         String pictureProduct,

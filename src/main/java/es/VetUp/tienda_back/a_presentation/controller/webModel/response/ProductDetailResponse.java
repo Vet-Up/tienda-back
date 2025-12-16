@@ -3,9 +3,9 @@ package es.VetUp.tienda_back.a_presentation.controller.webModel.response;
 import java.math.BigDecimal;
 
 public record ProductDetailResponse(
-         Long product_id,
+         Long productId,
          String name,
-         String product_description,
+         String productDescription,
          BigDecimal  price,
          BigDecimal discountedPrice,
          String pictureProduct,

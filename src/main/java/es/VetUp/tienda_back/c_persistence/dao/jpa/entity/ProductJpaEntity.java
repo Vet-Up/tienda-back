@@ -36,6 +36,7 @@ public class ProductJpaEntity {
     @Size(min = 2, max = 100, message = "Brand must be between 2 and 100 characters")
     private String brand;
 
+
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryJpaEntity category;
@@ -83,6 +84,5 @@ public class ProductJpaEntity {
     public void setBrand(String brand) { this.brand = brand; }
 
     public Long getCategoryId() { return category.getCategoryId(); }
-    public void setCategoryId(Long categoryId) {
-    }
+    public void setCategoryId(Long categoryId) { this.category = new CategoryJpaEntity(); this.category.setCategoryId(categoryId); }
 }

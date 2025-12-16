@@ -35,6 +35,7 @@ public class ProductPresentationMapper {
         return new ProductSummaryResponse(
                 productDto.productId(),
                 productDto.name(),
+                productDto.productDescription(),
                 productDto.price(),
                 productDto.discountedPrice(),
                 productDto.pictureProduct(),
@@ -47,7 +48,7 @@ public class ProductPresentationMapper {
         return new ProductDto(
                 null,
                 productInsertRequest.name(),
-                productInsertRequest.product_description(),
+                productInsertRequest.productDescription(),
                 productInsertRequest.price(),
                 productInsertRequest.discountedPrice(),
                 productInsertRequest.pictureProduct(),
@@ -59,9 +60,9 @@ public class ProductPresentationMapper {
 
     public ProductDto fromProductUpdateRequestToProductDto(ProductUpdateRequest productUpdateRequest) {
         return new ProductDto(
-                productUpdateRequest.product_id(),
+                productUpdateRequest.productId(),
                 productUpdateRequest.name(),
-                productUpdateRequest.product_description(),
+                productUpdateRequest.productDescription(),
                 productUpdateRequest.price(),
                 productUpdateRequest.discountedPrice(),
                 productUpdateRequest.pictureProduct(),

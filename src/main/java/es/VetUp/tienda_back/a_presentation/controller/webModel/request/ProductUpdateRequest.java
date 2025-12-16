@@ -3,9 +3,9 @@ package es.VetUp.tienda_back.a_presentation.controller.webModel.request;
 import java.math.BigDecimal;
 
 public record ProductUpdateRequest(
-        Long product_id,
+        Long productId,
         String name,
-        String product_description,
+        String productDescription,
         BigDecimal  price,
         BigDecimal discountedPrice,
         String pictureProduct,
