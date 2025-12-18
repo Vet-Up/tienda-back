@@ -20,7 +20,7 @@ public class UserJpaDaoImpl implements UserJpaDao {
     @Override
     public List<UserJpaEntity> getAllUsers() {
         return entityManager.createQuery(
-                "SELECT u FROM UserJpaEntity",
+                "SELECT u FROM UserJpaEntity u",
                 UserJpaEntity.class)
                 .getResultList();
     }
