@@ -39,7 +39,7 @@ public class ProductJpaEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryJpaEntity category;
 
-    // --- Constructors ---
+
     public ProductJpaEntity() {}
 
     public ProductJpaEntity(Long productId, String name, String productDescription,

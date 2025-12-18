@@ -35,4 +35,6 @@ public record ProductDto (
 
     @NotNull(message = "El id de categoría es obligatorio")
     Long categoryId
-) {}
+) {
+    
+}

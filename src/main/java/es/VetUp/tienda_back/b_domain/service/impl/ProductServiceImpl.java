@@ -42,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductDto getProductById(Long productId) {
         return productRepository.findProductById(productId).map(ProductMapper.getInstance()::fromProductEntitytoProduct)
                 .map(ProductMapper.getInstance()::fromProducttoProductDto)
-                .orElseThrow(() -> new RuntimeException("Product with id" + productId + " not found"));
+                .orElseThrow(() -> new RuntimeException("Product with id " + productId + " not found"));
     }
 
     @Override
@@ -76,16 +76,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public ProductDto createProduct(ProductDto productDto) {
-        ProductEntity productEntity = ProductMapper.getInstance().fromProducttoProductEntity(ProductMapper.getInstance().fromProductDtotoProduct(productDto));
-        ProductEntity createdProductEntity = productRepository.saveProduct(productEntity);
-        return ProductMapper.getInstance().fromProducttoProductDto(
-                ProductMapper.getInstance().fromProductEntitytoProduct(createdProductEntity)
-        );
-
-    }
-
-
+        public ProductDto createProduct(ProductDto productDto) {
+                if (productDto == null) {
+                        throw new IllegalArgumentException("ProductDto cannot be null");
+                }
+                ProductEntity productEntity = ProductMapper.getInstance().fromProducttoProductEntity(ProductMapper.getInstance().fromProductDtotoProduct(productDto));
+                ProductEntity createdProductEntity = productRepository.saveProduct(productEntity);
+                return ProductMapper.getInstance().fromProducttoProductDto(
+                                ProductMapper.getInstance().fromProductEntitytoProduct(createdProductEntity)
+                );
+        }
 
     @Override
     @Transactional
