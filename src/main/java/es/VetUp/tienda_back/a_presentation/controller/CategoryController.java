@@ -72,6 +72,7 @@ public class CategoryController {
     public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long id) {
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
+
     }
 
 

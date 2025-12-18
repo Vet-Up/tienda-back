@@ -5,6 +5,7 @@ import es.VetUp.tienda_back.b_domain.service.JwtService;
 import es.VetUp.tienda_back.b_domain.service.dto.UserDto;
 import es.VetUp.tienda_back.config.annotation.RequireAdmin;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -49,13 +50,19 @@ public class JwtFilter implements Filter {
 
         String token = authHeader.substring(7);
 
+        Claims claims;
+        UserDto user;
         try {
-            Claims claims = jwtService.validateToken(token);
+            claims = jwtService.validateToken(token);
+            user = jwtService.getUserFromToken(token);
+        } catch (JwtException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
 
-            UserDto user = jwtService.getUserFromToken(token);
+        boolean isAdmin = user.isAdmin() == UserRole.ADMIN;
 
-            boolean isAdmin = user.isAdmin() == UserRole.ADMIN;
-
+        try {
             HandlerExecutionChain handlerChain = handlerMapping.getHandler(httpRequest);
 
             if (handlerChain != null && handlerChain.getHandler() instanceof HandlerMethod handlerMethod) {
@@ -67,13 +74,12 @@ public class JwtFilter implements Filter {
                     return;
                 }
             }
-
-            httpRequest.setAttribute("isAdmin", isAdmin);
-            httpRequest.setAttribute("userId", user.id());
-            filterChain.doFilter(servletRequest, servletResponse);
-
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            // Error al obtener el handler, continuar con la petición
         }
+
+        httpRequest.setAttribute("isAdmin", isAdmin);
+        httpRequest.setAttribute("userId", user.id());
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 }
