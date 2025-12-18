@@ -8,6 +8,7 @@ import es.VetUp.tienda_back.a_presentation.controller.webModel.response.ProductS
 import es.VetUp.tienda_back.b_domain.model.Page;
 import es.VetUp.tienda_back.b_domain.service.ProductService;
 import es.VetUp.tienda_back.b_domain.service.dto.ProductDto;
+import es.VetUp.tienda_back.config.annotation.RequireAdmin;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,6 +52,7 @@ public class ProductController {
         return new ResponseEntity<>(productDetailResponse, HttpStatus.OK);
     }
 
+
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<ProductSummaryResponse>> getProductsByCategory(@PathVariable int categoryId,
                                                                               @RequestParam(required = false, defaultValue = "1") int page,
@@ -61,6 +63,7 @@ public class ProductController {
                 .toList();
         return new ResponseEntity<>(productSummaries, HttpStatus.OK);
     }
+
 
     @GetMapping("/brand/{brand}")
     public ResponseEntity<List<ProductSummaryResponse>> getProductsByBrand(@PathVariable String brand,
@@ -73,6 +76,7 @@ public class ProductController {
         return new ResponseEntity<>(productSummaries, HttpStatus.OK);
     }
 
+    @RequireAdmin
     @PostMapping
     public ResponseEntity<ProductDetailResponse> createProduct(@RequestBody ProductInsertRequest productInsertRequest) {
         ProductDto productDto = ProductPresentationMapper.getInstance()
@@ -81,6 +85,7 @@ public class ProductController {
         return new ResponseEntity<>(ProductPresentationMapper.getInstance().fromProductDtoToToProductDetailResponse(createdProductDto), HttpStatus.CREATED);
     }
 
+    @RequireAdmin
     @PutMapping("/{id}")
     public ResponseEntity<ProductDetailResponse> updateProduct(@PathVariable("id") long id, @RequestBody ProductUpdateRequest productUpdateRequest){
         ProductDto productDto = ProductPresentationMapper.getInstance()
@@ -89,6 +94,7 @@ public class ProductController {
         return new ResponseEntity<>(ProductPresentationMapper.getInstance().fromProductDtoToToProductDetailResponse(updatedProductDto), HttpStatus.OK);
     }
 
+    @RequireAdmin
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") long id) {
         productService.deleteProduct(id);

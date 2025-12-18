@@ -1,16 +1,13 @@
 package es.VetUp.tienda_back.config;
 
-import es.VetUp.tienda_back.b_domain.model.User;
 import es.VetUp.tienda_back.b_domain.repository.CategoryRepository;
 import es.VetUp.tienda_back.b_domain.repository.ProductRepository;
 import es.VetUp.tienda_back.b_domain.repository.OrderRepository;
 import es.VetUp.tienda_back.b_domain.repository.UserRepository;
-import es.VetUp.tienda_back.b_domain.service.impl.CategoryServiceImpl;
-import es.VetUp.tienda_back.b_domain.service.impl.ProductServiceImpl;
+import es.VetUp.tienda_back.b_domain.service.JwtService;
+import es.VetUp.tienda_back.b_domain.service.impl.*;
 import es.VetUp.tienda_back.b_domain.service.OrderService;
 import es.VetUp.tienda_back.b_domain.service.UserService;
-import es.VetUp.tienda_back.b_domain.service.impl.OrderServiceImpl;
-import es.VetUp.tienda_back.b_domain.service.impl.UserServiceImpl;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.CategoryJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.ProductJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.OrderJpaDao;
@@ -28,11 +25,18 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "es.VetUp.tienda_back.c_persistence.dao.jpa")
 @EntityScan(basePackages = "es.VetUp.tienda_back.c_persistence.dao.jpa.entity")
 public class SpringConfig {
+
+    @Bean
+    public JwtService jwtService(UserService userService) {
+        return new JwtServiceImpl(userService);
+    }
+
 
     @Bean
     public UserJpaDao userJpaDao() {
@@ -45,14 +49,13 @@ public class SpringConfig {
     }
 
     @Bean
-    public UserService userService(UserRepository userRepository, OrderService orderService) {
-        return new UserServiceImpl(userRepository, orderService);
+    public UserService userService(UserRepository userRepository, OrderService orderService, PasswordEncoder passwordEncoder) {
+        return new UserServiceImpl(userRepository, orderService, passwordEncoder);
     }
 
     @Bean
     public OrderJpaDao orderJpaDao() {
-        return new OrderJpaDaoImpl() {
-        };
+        return new OrderJpaDaoImpl();
     }
 
     @Bean
@@ -67,8 +70,7 @@ public class SpringConfig {
 
     @Bean
     public ProductJpaDao productJpaDao() {
-        return new ProductJpaDaoImpl() {
-        };
+        return new ProductJpaDaoImpl();
     }
 
     @Bean
@@ -83,8 +85,7 @@ public class SpringConfig {
 
     @Bean
     public CategoryJpaDao categoryJpaDao() {
-        return new CategoryJpaDaoImpl() {
-        };
+        return new CategoryJpaDaoImpl();
     }
 
     @Bean
@@ -96,6 +97,4 @@ public class SpringConfig {
     public CategoryServiceImpl categoryService(CategoryRepository categoryRepository, ProductRepository productRepository) {
         return new CategoryServiceImpl(categoryRepository, productRepository);
     }
-
-
 }

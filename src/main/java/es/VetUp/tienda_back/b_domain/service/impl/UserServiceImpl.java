@@ -10,6 +10,7 @@ import es.VetUp.tienda_back.b_domain.service.OrderService;
 import es.VetUp.tienda_back.b_domain.service.UserService;
 import es.VetUp.tienda_back.b_domain.service.dto.OrderDto;
 import es.VetUp.tienda_back.b_domain.service.dto.UserDto;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,15 +20,17 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final OrderService orderService;
-    public UserServiceImpl(UserRepository userRepository, OrderService orderService) {
+    private final PasswordEncoder passwordEncoder;
+    public UserServiceImpl(UserRepository userRepository, OrderService orderService, PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.orderService = orderService;
     }
 
 
     @Override
-    public List<UserDto> getAllUsersnotAdmin() {
-        return userRepository.getAllClientsnotAdmin()
+    public List<UserDto> getAllUsers() {
+        return userRepository.getAllUsers()
                 .stream()
                 .map(UserMapper.getInstance()::fromUserEntityToUser)
                 .map(UserMapper.getInstance()::fromUserToUserDto)
@@ -49,20 +52,53 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto getUserByUsername(String username) {
+        UserEntity userEntity = userRepository.getClientByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User with username " + username + " not found"));
+
+        return UserMapper.getInstance().fromUserToUserDto(
+                UserMapper.getInstance().fromUserEntityToUser(userEntity));
+    }
+
+    @Override
     public UserDto createUser(UserDto userDto) {
 
         if (getUserByEmail(userDto.email()).isPresent()) {
-            throw new BusinessException("User with email " + userDto.email() + " already exists");
+            throw new BusinessException(
+                    "User with email " + userDto.email() + " already exists"
+            );
         }
 
-        UserEntity userEntity = UserMapper.getInstance().fromUserToUserEntity(
-                UserMapper.getInstance().fromUserDtoToUser(userDto));
+        String hashedPassword = passwordEncoder.encode(userDto.password());
+
+        UserDto userDtoWithHashedPassword = new UserDto(
+                userDto.id(),
+                userDto.name(),
+                userDto.username(),
+                userDto.email(),
+                hashedPassword,
+                userDto.address(),
+                userDto.isAdmin(),
+                userDto.phone(),
+                userDto.country(),
+                userDto.profilePicture(),
+                userDto.birthdate()
+
+        );
+
+        UserEntity userEntity = UserMapper.getInstance()
+                .fromUserToUserEntity(
+                        UserMapper.getInstance()
+                                .fromUserDtoToUser(userDtoWithHashedPassword)
+                );
+
         UserEntity createdUserEntity = userRepository.createClient(userEntity);
 
-
-        UserDto createdUserDto = UserMapper.getInstance().fromUserToUserDto(
-                UserMapper.getInstance().fromUserEntityToUser(createdUserEntity));
-
+        UserDto createdUserDto = UserMapper.getInstance()
+                .fromUserToUserDto(
+                        UserMapper.getInstance()
+                                .fromUserEntityToUser(createdUserEntity)
+                );
 
         OrderDto initialOrder = new OrderDto(
                 null,
@@ -73,6 +109,7 @@ public class UserServiceImpl implements UserService {
         );
 
         orderService.createOrder(initialOrder);
+
         return createdUserDto;
     }
 
@@ -87,14 +124,35 @@ public class UserServiceImpl implements UserService {
                 .filter(u -> !u.id().equals(userDto.id()))
                 .ifPresent(u -> {throw new BusinessException("Another user with email " + userDto.email() + " already exists");});
 
+        // Encriptar la contraseña si se está actualizando
+        String hashedPassword = userDto.password();
+        if (hashedPassword != null && !hashedPassword.startsWith("$2a$")) {
+            hashedPassword = passwordEncoder.encode(hashedPassword);
+        }
+
+        UserDto userDtoWithHashedPassword = new UserDto(
+                userDto.id(),
+                userDto.name(),
+                userDto.username(),
+                userDto.email(),
+                hashedPassword,
+                userDto.address(),
+                userDto.isAdmin(),
+                userDto.phone(),
+                userDto.country(),
+                userDto.profilePicture(),
+                userDto.birthdate()
+        );
+
         UserEntity newUserEntity = UserMapper.getInstance().fromUserToUserEntity(
-                UserMapper.getInstance().fromUserDtoToUser(userDto));
+                UserMapper.getInstance().fromUserDtoToUser(userDtoWithHashedPassword));
 
         UserEntity updatedEntity = userRepository.updateClient(newUserEntity);
 
         return UserMapper.getInstance().fromUserToUserDto(
                 UserMapper.getInstance().fromUserEntityToUser(updatedEntity));
     }
+
 
     @Override
     public void deleteUser(Long id) {
@@ -103,4 +161,6 @@ public class UserServiceImpl implements UserService {
         );
         userRepository.deleteClient(id);
     }
+
+
 }

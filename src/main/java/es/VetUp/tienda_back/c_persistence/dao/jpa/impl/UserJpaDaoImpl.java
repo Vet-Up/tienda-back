@@ -18,10 +18,10 @@ public class UserJpaDaoImpl implements UserJpaDao {
     private EntityManager entityManager;
 
     @Override
-    public List<UserJpaEntity> getAllClientsnotAdmin() {
+    public List<UserJpaEntity> getAllUsers() {
         return entityManager.createQuery(
-                        "SELECT u FROM UserJpaEntity u WHERE u.isAdmin = :role", UserJpaEntity.class)
-                .setParameter("role", UserRole.CUSTOMER)
+                "SELECT u FROM UserJpaEntity",
+                UserJpaEntity.class)
                 .getResultList();
     }
 
@@ -37,6 +37,18 @@ public class UserJpaDaoImpl implements UserJpaDao {
         try {
             return Optional.of(entityManager.createQuery(sql, UserJpaEntity.class)
                     .setParameter("email", email)
+                    .getSingleResult());
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<UserJpaEntity> getClientByUsername(String username) {
+        String sql = "SELECT u FROM UserJpaEntity u WHERE u.username = :username";
+        try {
+            return Optional.of(entityManager.createQuery(sql, UserJpaEntity.class)
+                    .setParameter("username", username)
                     .getSingleResult());
         } catch (Exception e) {
             return Optional.empty();

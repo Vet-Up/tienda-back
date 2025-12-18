@@ -6,6 +6,7 @@ import es.VetUp.tienda_back.a_presentation.controller.webModel.request.UserUpdat
 import es.VetUp.tienda_back.a_presentation.controller.webModel.response.UserDetailResponse;
 import es.VetUp.tienda_back.b_domain.service.UserService;
 import es.VetUp.tienda_back.b_domain.service.dto.UserDto;
+import es.VetUp.tienda_back.config.annotation.RequireAdmin;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserService userService;
@@ -23,7 +25,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserDetailResponse>> findAllUsers() {
-        List<UserDto> users = userService.getAllUsersnotAdmin();
+        List<UserDto> users = userService.getAllUsers();
         List<UserDetailResponse> userResponses = users.stream().map(UserPresentationMapper.getInstance()::fromUserDtoToUserDetailResponse).toList();
         return new ResponseEntity<>(userResponses, HttpStatus.OK);
     }
@@ -39,6 +41,17 @@ public class UserController {
     }
 
 
+    @GetMapping("/by-email")
+    public ResponseEntity<UserDetailResponse> getUserByEmail(@RequestParam String email) {
+        UserDto userDto = userService.getUserByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        UserDetailResponse userDetailResponse =
+                UserPresentationMapper.getInstance().fromUserDtoToUserDetailResponse(userDto);
+        return new ResponseEntity<>(userDetailResponse, HttpStatus.OK);
+    }
+
+
+    @RequireAdmin
     @PostMapping
     public ResponseEntity<UserDetailResponse> createUser(@RequestBody UserInsertRequest userInsertRequest) {
         UserDto userDto = UserPresentationMapper.getInstance().fromUserInsertRequestToUserDto(userInsertRequest);
@@ -47,6 +60,7 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @RequireAdmin
     @PutMapping("/{id}")
     public ResponseEntity<UserDetailResponse> updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateRequest userUpdateRequest) {
         if (!id.equals(userUpdateRequest.id())) {
@@ -58,12 +72,11 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @RequireAdmin
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
-
-
 
 }

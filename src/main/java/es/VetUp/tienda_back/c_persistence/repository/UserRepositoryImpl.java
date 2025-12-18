@@ -17,8 +17,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<UserEntity> getAllClientsnotAdmin() {
-        return userJpaDao.getAllClientsnotAdmin().stream().map(UserPersistenceMapper.getInstance()::fromUserJpaEntityToUserEntity).toList();
+    public List<UserEntity> getAllUsers() {
+        return userJpaDao.getAllUsers().stream().map(UserPersistenceMapper.getInstance()::fromUserJpaEntityToUserEntity).toList();
     }
 
     @Override
@@ -29,6 +29,11 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<UserEntity> getClientByEmail(String email) {
         return userJpaDao.getClientByEmail(email).map(UserPersistenceMapper.getInstance()::fromUserJpaEntityToUserEntity);
+    }
+
+    @Override
+    public Optional<UserEntity> getClientByUsername(String username) {
+        return userJpaDao.getClientByUsername(username).map(UserPersistenceMapper.getInstance()::fromUserJpaEntityToUserEntity);
     }
 
     @Override

@@ -36,15 +36,15 @@ INSERT INTO products (name, product_description, price, discounted_price, pictur
                                                                                                                    ('Dental Chew Sticks', 'Chew snacks that help clean teeth', 7.99, 6.99, 'dental-chew-sticks-pedigree.jpg', 'Pedigree', 4),
                                                                                                                    ('Cat Litter Sand', 'Clumping sand with odor control', 16.50, 14.99, 'cat-litter-sand-sanicat.png', 'Sanicat', 4),
                                                                                                                    ('Flea Spray', 'Effective spray to prevent fleas', 12.99, 11.50, 'flea-spray-frontline.png', 'Frontline', 4),
-                                                                                                                   ('Shampoo for Long-Hair Dogs', 'Soft shampoo for long-haired dogs', 9.99, NULL, 'shampoo-long-hair-dogs-beaphar.png', 'Beaphar', 4);
+                                                                                                                   ('Shampoo Hair Dogs', 'Soft shampoo for long-haired dogs', 9.99, NULL, 'shampoo-long-hair-dogs-beaphar.png', 'Beaphar', 4);
 
 -- =====================================
 --                USERS
 -- =====================================
 INSERT INTO users (name, username, email, password, phone, address, profile_picture, birthdate, country, is_admin)
 VALUES
-    ('Admin User', 'admin', 'admin@vetup.com', 'adminpass', 123456789, 'Calle Admin 1', NULL, '1990-01-01', 'España', 'ADMIN'),
-    ('Juan Pérez', 'juanp', 'juanp@gmail.com', 'pass1234', 654123987, 'Avenida Siempre Viva 742', NULL, '1995-05-15', 'España', 'CUSTOMER'),
+    ('Admin User', 'admin', 'admin@vetup.com', '$2a$12$MxHbH00a6bDvv4DjiCmhKe3UwmH5Vn5aWzpXDtC/uq/LMRkcePNoe', 123456789, 'Calle Admin 1', NULL, '1990-01-01', 'España', 'ADMIN'),
+    ('Juan Pérez', 'juanp', 'juanp@gmail.com', '$2a$12$wOEtCkY2IaFwjgW/u8HEoOmWsHezFzTOm2HSMUEN2PpHbG4zAu95G', 654123987, 'Avenida Siempre Viva 742', NULL, '1995-05-15', 'España', 'CUSTOMER'),
     ('María Gómez', 'mariag', 'mariag@gmail.com', 'mariag@gmail.com', 612334455, 'Gran Vía 12', NULL, '1998-09-20', 'España', 'CUSTOMER');
 
 -- =====================================

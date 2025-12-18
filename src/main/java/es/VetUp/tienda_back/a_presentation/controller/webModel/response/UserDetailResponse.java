@@ -10,6 +10,7 @@ public record UserDetailResponse(
         String name,
         String username,
         String email,
+        String password,
         String address,
         UserRole isAdmin,
         Number phone,

@@ -6,6 +6,7 @@ import es.VetUp.tienda_back.a_presentation.controller.webModel.request.CategoryU
 import es.VetUp.tienda_back.a_presentation.controller.webModel.response.CategoryDetailResponse;
 import es.VetUp.tienda_back.b_domain.service.CategoryService;
 import es.VetUp.tienda_back.b_domain.service.dto.CategoryDto;
+import es.VetUp.tienda_back.config.annotation.RequireAdmin;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +41,9 @@ public class CategoryController {
         return new ResponseEntity<>(categoryDetailResponse, HttpStatus.OK);
     }
 
+
     @PostMapping
+    @RequireAdmin
     public ResponseEntity<CategoryDetailResponse> createCategory(@RequestBody CategoryInsertRequest categoryInsertRequest) {
         CategoryDto categoryDto = CategoryPresentationMapper.getInstance()
                 .fromCategoryInsertRequestToCategoryDto(categoryInsertRequest);
@@ -50,6 +53,7 @@ public class CategoryController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @RequireAdmin
     @PutMapping("/{id}")
     public ResponseEntity<CategoryDetailResponse> updateCategory(@PathVariable("id") Long id, @RequestBody CategoryUpdateRequest categoryUpdateRequest) {
         if (!id.equals(categoryUpdateRequest.categoryId())) {
@@ -63,6 +67,7 @@ public class CategoryController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @RequireAdmin
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long id) {
         categoryService.deleteCategory(id);

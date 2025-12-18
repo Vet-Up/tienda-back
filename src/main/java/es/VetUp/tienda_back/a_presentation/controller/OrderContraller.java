@@ -6,6 +6,7 @@ import es.VetUp.tienda_back.a_presentation.controller.webModel.request.OrderUpda
 import es.VetUp.tienda_back.a_presentation.controller.webModel.response.OrderDetailResponse;
 import es.VetUp.tienda_back.b_domain.service.OrderService;
 import es.VetUp.tienda_back.b_domain.service.dto.OrderDto;
+import es.VetUp.tienda_back.config.annotation.RequireAdmin;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,7 @@ public class OrderContraller {
         return new ResponseEntity<>(orderDetailResponse, HttpStatus.OK);
     }
 
+    @RequireAdmin
     @PostMapping
     public ResponseEntity<OrderDetailResponse> createOrder(@RequestBody OrderInsertRequest orderInsertRequest) {
         OrderDto orderDto = OrderPresentationMapper.getInstance().fromOrderInsertRequestToOrderDto(orderInsertRequest);
@@ -45,6 +47,7 @@ public class OrderContraller {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @RequireAdmin
     @PutMapping("/{id}")
     public ResponseEntity<OrderDetailResponse> updateOrder(@PathVariable("id") Long id, @RequestBody OrderUpdateRequest orderUpdateRequest) {
         if (!id.equals(orderUpdateRequest.id())) {
@@ -56,6 +59,7 @@ public class OrderContraller {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @RequireAdmin
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
         orderService.deleteOrder(id);

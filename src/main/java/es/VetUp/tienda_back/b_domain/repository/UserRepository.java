@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository {
-    List<UserEntity> getAllClientsnotAdmin();
+    List<UserEntity> getAllUsers();
     Optional<UserEntity> getClientById(Long id);
     Optional<UserEntity> getClientByEmail(String email);
+    Optional<UserEntity> getClientByUsername(String username);
     UserEntity createClient(UserEntity userEntity);
     UserEntity updateClient(UserEntity userEntity);
     void deleteClient(Long id);

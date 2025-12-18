@@ -25,6 +25,7 @@ public class UserPresentationMapper {
                 userDto.name(),
                 userDto.username(),
                 userDto.email(),
+                userDto.password(),
                 userDto.address(),
                 userDto.isAdmin(),
                 userDto.phone(),
