@@ -3,6 +3,7 @@ package es.VetUp.tienda_back.b_domain.service.impl;
 import es.VetUp.tienda_back.b_domain.exception.BusinessException;
 import es.VetUp.tienda_back.b_domain.exception.ResourceNotFoundException;
 import es.VetUp.tienda_back.b_domain.mapper.UserMapper;
+import es.VetUp.tienda_back.b_domain.model.Page;
 import es.VetUp.tienda_back.b_domain.model.enums.UserRole;
 import es.VetUp.tienda_back.b_domain.repository.UserRepository;
 import es.VetUp.tienda_back.b_domain.repository.entity.UserEntity;
@@ -46,8 +47,11 @@ class UserServiceImplTest {
     class GetAllUsersTests {
 
         @Test
-        @DisplayName("getAllUsers should return list of users")
+        @DisplayName("getAllUsers should return page of users")
         void testGetAllUsers() {
+            int page = 1;
+            int size = 10;
+
             UserEntity user1 = new UserEntity(
                     1L,
                     "John Doe",
@@ -75,28 +79,43 @@ class UserServiceImplTest {
                     LocalDate.of(1985, 8, 20));
 
             List<UserEntity> userEntities = List.of(user1, user2);
+            Page<UserEntity> userEntityPage = new Page<>(userEntities, page, size, 2L);
 
-            when(userRepository.getAllUsers()).thenReturn(userEntities);
+            when(userRepository.getAllUsers(page, size)).thenReturn(userEntityPage);
 
-            List<UserDto> result = userServiceImpl.getAllUsers();
+            Page<UserDto> result = userServiceImpl.getAllUsers(page, size);
 
             assertAll("result",
                     () -> assertNotNull(result, "Result should not be null"),
-                    () -> assertEquals(2, result.size(), "Result size should be 2"),
-                    () -> assertEquals("John Doe", result.get(0).name()),
-                    () -> assertEquals("Jane Smith", result.get(1).name()));
+                    () -> assertEquals(2, result.data().size(), "Result size should be 2"),
+                    () -> assertEquals("John Doe", result.data().get(0).name()),
+                    () -> assertEquals("Jane Smith", result.data().get(1).name()),
+                    () -> assertEquals(page, result.pageNumber()),
+                    () -> assertEquals(size, result.pageSize()),
+                    () -> assertEquals(2L, result.totalElements()));
         }
 
         @Test
-        @DisplayName("getAllUsers should return empty list when no users found")
+        @DisplayName("getAllUsers should return empty page when no users found")
         void testGetAllUsersEmpty() {
-            when(userRepository.getAllUsers()).thenReturn(List.of());
+            int page = 1;
+            int size = 10;
+            Page<UserEntity> emptyPage = new Page<>(List.of(), page, size, 0L);
 
-            List<UserDto> result = userServiceImpl.getAllUsers();
+            when(userRepository.getAllUsers(page, size)).thenReturn(emptyPage);
+
+            Page<UserDto> result = userServiceImpl.getAllUsers(page, size);
 
             assertAll("result",
                     () -> assertNotNull(result),
-                    () -> assertEquals(0, result.size()));
+                    () -> assertEquals(0, result.data().size()));
+        }
+
+        @Test
+        @DisplayName("getAllUsers should throw exception when page or size less than 1")
+        void testGetAllUsersInvalidParams() {
+            assertThrows(IllegalArgumentException.class, () -> userServiceImpl.getAllUsers(0, 10));
+            assertThrows(IllegalArgumentException.class, () -> userServiceImpl.getAllUsers(1, 0));
         }
     }
 

@@ -63,13 +63,41 @@ class UserJpaDaoImplTest {
         entityManager.flush();
 
         // Act
-        List<UserJpaEntity> result = userJpaDao.getAllUsers();
+        List<UserJpaEntity> result = userJpaDao.getAllUsers(1, 10);
 
         // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
         assertTrue(result.stream().anyMatch(u -> "John Doe".equals(u.getName())));
         assertTrue(result.stream().anyMatch(u -> "Jane Smith".equals(u.getName())));
+    }
+
+    @Test
+    void testCount() {
+        // Arrange: persiste usuarios en la BD en memoria
+        entityManager.createQuery("DELETE FROM UserJpaEntity").executeUpdate();
+        entityManager.flush();
+
+        UserJpaEntity user1 = new UserJpaEntity(
+                null,
+                "John Doe",
+                "johndoe",
+                "john@example.com",
+                "password123",
+                "123 Main St",
+                UserRole.CUSTOMER,
+                123456789,
+                "Spain",
+                "profile1.jpg",
+                LocalDate.of(1990, 5, 15));
+        entityManager.persist(user1);
+        entityManager.flush();
+
+        // Act
+        long count = userJpaDao.count();
+
+        // Assert
+        assertEquals(1, count);
     }
 
     @Test

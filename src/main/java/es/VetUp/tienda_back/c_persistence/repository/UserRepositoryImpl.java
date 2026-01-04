@@ -1,5 +1,6 @@
 package es.VetUp.tienda_back.c_persistence.repository;
 
+import es.VetUp.tienda_back.b_domain.model.Page;
 import es.VetUp.tienda_back.b_domain.repository.UserRepository;
 import es.VetUp.tienda_back.b_domain.repository.entity.UserEntity;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.UserJpaDao;
@@ -17,8 +18,18 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public List<UserEntity> getAllUsers() {
-        return userJpaDao.getAllUsers().stream().map(UserPersistenceMapper.getInstance()::fromUserJpaEntityToUserEntity).toList();
+    public Page<UserEntity> getAllUsers(int page, int size) {
+        List<UserEntity> content = userJpaDao.getAllUsers(page, size).stream().map(UserPersistenceMapper.getInstance()::fromUserJpaEntityToUserEntity).toList();
+        long totalElements = userJpaDao.count();
+        return new Page<>(content, page, size, totalElements);
+    }
+
+    @Override
+    public Page<UserEntity> searchByEmail(String email, int page, int size) {
+        List<UserEntity> content = userJpaDao.searchByEmail(email, page, size).stream()
+                .map(UserPersistenceMapper.getInstance()::fromUserJpaEntityToUserEntity).toList();
+        long totalElements = userJpaDao.countByEmail(email);
+        return new Page<>(content, page, size, totalElements);
     }
 
     @Override

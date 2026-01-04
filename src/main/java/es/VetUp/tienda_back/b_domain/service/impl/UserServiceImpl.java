@@ -3,6 +3,7 @@ package es.VetUp.tienda_back.b_domain.service.impl;
 import es.VetUp.tienda_back.b_domain.exception.BusinessException;
 import es.VetUp.tienda_back.b_domain.exception.ResourceNotFoundException;
 import es.VetUp.tienda_back.b_domain.mapper.UserMapper;
+import es.VetUp.tienda_back.b_domain.model.Page;
 import es.VetUp.tienda_back.b_domain.model.enums.OrderState;
 import es.VetUp.tienda_back.b_domain.repository.UserRepository;
 import es.VetUp.tienda_back.b_domain.repository.entity.UserEntity;
@@ -29,12 +30,42 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<UserDto> getAllUsers() {
-        return userRepository.getAllUsers()
+    public Page<UserDto> getAllUsers(int page, int size) {
+        if (page < 0 || size < 1) {
+            throw new IllegalArgumentException("Page and size must be greater than 0");
+        }
+        Page<UserEntity> userEntityPage = userRepository
+                .getAllUsers(page, size);
+        List<UserDto> itemsDto = userEntityPage.data()
                 .stream()
                 .map(UserMapper.getInstance()::fromUserEntityToUser)
                 .map(UserMapper.getInstance()::fromUserToUserDto)
                 .toList();
+        return new Page<>(
+                itemsDto,
+                userEntityPage.pageNumber(),
+                userEntityPage.pageSize(),
+                userEntityPage.totalElements()
+        );
+    }
+
+    @Override
+    public Page<UserDto> searchByEmail(String email, int page, int size) {
+        if (page < 0 || size < 1) {
+            throw new IllegalArgumentException("Page and size must be greater than 0");
+        }
+        Page<UserEntity> userEntityPage = userRepository.searchByEmail(email, page, size);
+        List<UserDto> itemsDto = userEntityPage.data()
+                .stream()
+                .map(UserMapper.getInstance()::fromUserEntityToUser)
+                .map(UserMapper.getInstance()::fromUserToUserDto)
+                .toList();
+        return new Page<>(
+                itemsDto,
+                userEntityPage.pageNumber(),
+                userEntityPage.pageSize(),
+                userEntityPage.totalElements()
+        );
     }
 
     @Override

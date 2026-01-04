@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import es.VetUp.tienda_back.b_domain.model.Page;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -68,33 +69,42 @@ public class UserRepositoryImplTest {
     @Nested
     class GetAllUsersTests {
         @Test
-        @DisplayName("getAllUsers should return all users")
+        @DisplayName("getAllUsers should return all users with pagination")
         void testGetAllUsers() {
             List<UserJpaEntity> expectedList = List.of(userJpaEntity1, userJpaEntity2);
+            int page = 1;
+            int size = 10;
 
-            when(userJpaDao.getAllUsers()).thenReturn(expectedList);
+            when(userJpaDao.getAllUsers(page, size)).thenReturn(expectedList);
+            when(userJpaDao.count()).thenReturn(2L);
 
-            List<UserEntity> actual = userRepositoryImpl.getAllUsers();
+            Page<UserEntity> actual = userRepositoryImpl.getAllUsers(page, size);
 
             List<UserEntity> expectedEntities = expectedList.stream()
                     .map(UserPersistenceMapper.getInstance()::fromUserJpaEntityToUserEntity)
                     .toList();
 
             assertAll(
-                    () -> assertEquals(expectedEntities.size(), actual.size()),
-                    () -> assertEquals(expectedEntities, actual));
+                    () -> assertEquals(expectedEntities.size(), actual.data().size()),
+                    () -> assertEquals(expectedEntities, actual.data()),
+                    () -> assertEquals(page, actual.pageNumber()),
+                    () -> assertEquals(size, actual.pageSize()),
+                    () -> assertEquals(2L, actual.totalElements()));
         }
 
         @Test
-        @DisplayName("getAllUsers should return empty list when no users exist")
+        @DisplayName("getAllUsers should return empty page when no users exist")
         void testGetAllUsersEmpty() {
             List<UserJpaEntity> expectedList = List.of();
+            int page = 1;
+            int size = 10;
 
-            when(userJpaDao.getAllUsers()).thenReturn(expectedList);
+            when(userJpaDao.getAllUsers(page, size)).thenReturn(expectedList);
+            when(userJpaDao.count()).thenReturn(0L);
 
-            List<UserEntity> actual = userRepositoryImpl.getAllUsers();
+            Page<UserEntity> actual = userRepositoryImpl.getAllUsers(page, size);
 
-            assertEquals(0, actual.size());
+            assertEquals(0, actual.data().size());
         }
     }
 

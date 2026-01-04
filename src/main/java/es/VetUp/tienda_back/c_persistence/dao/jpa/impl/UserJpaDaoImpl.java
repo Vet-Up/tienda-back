@@ -18,11 +18,41 @@ public class UserJpaDaoImpl implements UserJpaDao {
     private EntityManager entityManager;
 
     @Override
-    public List<UserJpaEntity> getAllUsers() {
+    public List<UserJpaEntity> getAllUsers(int page, int size) {
         return entityManager.createQuery(
                 "SELECT u FROM UserJpaEntity u",
                 UserJpaEntity.class)
+                .setFirstResult(page * size)
+                .setMaxResults(size)
                 .getResultList();
+    }
+
+    @Override
+    public long count() {
+        return entityManager.createQuery(
+                "SELECT COUNT(u) FROM UserJpaEntity u",
+                Long.class)
+                .getSingleResult();
+    }
+
+    @Override
+    public List<UserJpaEntity> searchByEmail(String email, int page, int size) {
+        return entityManager.createQuery(
+                "SELECT u FROM UserJpaEntity u WHERE LOWER(u.email) LIKE LOWER(:email)",
+                UserJpaEntity.class)
+                .setParameter("email", "%" + email + "%")
+                .setFirstResult(page * size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    @Override
+    public long countByEmail(String email) {
+        return entityManager.createQuery(
+                "SELECT COUNT(u) FROM UserJpaEntity u WHERE LOWER(u.email) LIKE LOWER(:email)",
+                Long.class)
+                .setParameter("email", "%" + email + "%")
+                .getSingleResult();
     }
 
 

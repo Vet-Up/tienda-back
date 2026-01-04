@@ -28,8 +28,8 @@ public record Page<T>(
     }
 
     private static int validatePageNumber(int pageNumber) {
-        if (pageNumber < 1) {
-            throw new RuntimeException("Page number cannot be less than one");
+        if (pageNumber < 0) {
+            throw new RuntimeException("Page number cannot be negative");
         }
         return pageNumber;
     }

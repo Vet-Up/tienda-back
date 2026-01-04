@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import es.VetUp.tienda_back.a_presentation.controller.webModel.request.UserInsertRequest;
 import es.VetUp.tienda_back.a_presentation.controller.webModel.request.UserUpdateRequest;
+import es.VetUp.tienda_back.b_domain.model.Page;
 import es.VetUp.tienda_back.b_domain.model.enums.UserRole;
 import es.VetUp.tienda_back.b_domain.service.JwtService;
 import es.VetUp.tienda_back.b_domain.service.UserService;
@@ -83,23 +84,28 @@ class UserControllerTest {
     @Test
     @DisplayName("GET /api/users - Success")
     void testGetAllUsersSuccess() throws Exception {
-        when(userService.getAllUsers()).thenReturn(List.of(userDto1, userDto2));
+        Page<UserDto> userPage = new Page<>(List.of(userDto1, userDto2), 1, 10, 2L);
+        when(userService.getAllUsers(1, 10)).thenReturn(userPage);
 
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].name").value("John Doe"))
-                .andExpect(jsonPath("$[1].name").value("Jane Smith"));
+                .andExpect(jsonPath("$.data.length()").value(2))
+                .andExpect(jsonPath("$.data[0].name").value("John Doe"))
+                .andExpect(jsonPath("$.data[1].name").value("Jane Smith"))
+                .andExpect(jsonPath("$.pageNumber").value(1))
+                .andExpect(jsonPath("$.pageSize").value(10))
+                .andExpect(jsonPath("$.totalElements").value(2));
     }
 
     @Test
     @DisplayName("GET /api/users - Empty List")
     void testGetAllUsersEmpty() throws Exception {
-        when(userService.getAllUsers()).thenReturn(List.of());
+        Page<UserDto> emptyPage = new Page<>(List.of(), 1, 10, 0L);
+        when(userService.getAllUsers(1, 10)).thenReturn(emptyPage);
 
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+                .andExpect(jsonPath("$.data.length()").value(0));
     }
 
     @Nested

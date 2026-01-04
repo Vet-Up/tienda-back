@@ -4,6 +4,7 @@ import es.VetUp.tienda_back.a_presentation.controller.mapper.UserPresentationMap
 import es.VetUp.tienda_back.a_presentation.controller.webModel.request.UserInsertRequest;
 import es.VetUp.tienda_back.a_presentation.controller.webModel.request.UserUpdateRequest;
 import es.VetUp.tienda_back.a_presentation.controller.webModel.response.UserDetailResponse;
+import es.VetUp.tienda_back.b_domain.model.Page;
 import es.VetUp.tienda_back.b_domain.service.UserService;
 import es.VetUp.tienda_back.b_domain.service.dto.UserDto;
 import es.VetUp.tienda_back.config.annotation.RequireAdmin;
@@ -24,10 +25,44 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserDetailResponse>> findAllUsers() {
-        List<UserDto> users = userService.getAllUsers();
-        List<UserDetailResponse> userResponses = users.stream().map(UserPresentationMapper.getInstance()::fromUserDtoToUserDetailResponse).toList();
-        return new ResponseEntity<>(userResponses, HttpStatus.OK);
+    public ResponseEntity<Page<UserDetailResponse>> findAllUsers(@RequestParam(required = false, defaultValue = "1") int page,
+                                                                 @RequestParam(required = false, defaultValue = "10") int size) {
+        Page<UserDto> userDtoPage = userService.getAllUsers(page, size);
+
+        List<UserDetailResponse> userResponses = userDtoPage.data().stream()
+                .map(UserPresentationMapper.getInstance()::fromUserDtoToUserDetailResponse)
+                .toList();
+
+        Page<UserDetailResponse> userResponsePage = new Page<>(
+                userResponses,
+                userDtoPage.pageNumber(),
+                userDtoPage.pageSize(),
+                userDtoPage.totalElements()
+        );
+        return new ResponseEntity<>(userResponsePage, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<UserDetailResponse>> searchUsersByEmail(
+            @RequestParam String email,
+            @RequestParam(required = false, defaultValue = "0") int page,
+            @RequestParam(required = false, defaultValue = "10") int size) {
+        if (email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("Email parameter cannot be empty");
+        }
+        Page<UserDto> userDtoPage = userService.searchByEmail(email.trim(), page, size);
+
+        List<UserDetailResponse> userResponses = userDtoPage.data().stream()
+                .map(UserPresentationMapper.getInstance()::fromUserDtoToUserDetailResponse)
+                .toList();
+
+        Page<UserDetailResponse> userResponsePage = new Page<>(
+                userResponses,
+                userDtoPage.pageNumber(),
+                userDtoPage.pageSize(),
+                userDtoPage.totalElements()
+        );
+        return new ResponseEntity<>(userResponsePage, HttpStatus.OK);
     }
 
 

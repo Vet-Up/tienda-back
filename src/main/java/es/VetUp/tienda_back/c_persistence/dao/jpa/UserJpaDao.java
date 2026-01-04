@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserJpaDao {
-    List<UserJpaEntity> getAllUsers();
+    List<UserJpaEntity> getAllUsers(int page, int size);
+    long count();
+    List<UserJpaEntity> searchByEmail(String email, int page, int size);
+    long countByEmail(String email);
     Optional<UserJpaEntity> getClientById(Long id);
     Optional<UserJpaEntity> getClientByEmail(String email);
     Optional<UserJpaEntity> getClientByUsername(String username);
