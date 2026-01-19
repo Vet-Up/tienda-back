@@ -80,7 +80,7 @@ public class ProductJpaEntity {
     public CategoryJpaEntity getCategory() { return category; }
     public void setCategory(CategoryJpaEntity category) { this.category = category; }
 
-    // Convenience methods for categoryId
+
     public Long getCategoryId() {
         return category != null ? category.getCategoryId() : null;
     }

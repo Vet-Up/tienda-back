@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public record ProductDto (
     Long productId,
 
-    @NotBlank(message = "Name is required")
+    @NotNull(message = "Product name is required")
     @Size(min = 2, max = 150, message = "Name must be between 2 and 150 characters")
     String name,
 
