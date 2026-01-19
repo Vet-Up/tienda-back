@@ -329,6 +329,7 @@ class ProductServiceImplTest {
                     "High quality dog food",
                     new java.math.BigDecimal("29.99"),
                     new java.math.BigDecimal("24.99"),
+                    null,
                     "dog_food.jpg",
                     "PetBrand",
                     2L);
@@ -379,6 +380,7 @@ class ProductServiceImplTest {
                     "Updated description",
                     new java.math.BigDecimal("31.99"),
                     new java.math.BigDecimal("26.99"),
+                    null,
                     "updated_dog_food.jpg",
                     "PetBrand",
                     2L);
@@ -429,6 +431,7 @@ class ProductServiceImplTest {
                     "Updated description",
                     new java.math.BigDecimal("31.99"),
                     new java.math.BigDecimal("26.99"),
+                    null,
                     "updated_dog_food.jpg",
                     "PetBrand",
                     2L);

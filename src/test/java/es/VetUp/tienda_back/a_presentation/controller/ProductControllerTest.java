@@ -1,14 +1,15 @@
 package es.VetUp.tienda_back.a_presentation.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import es.VetUp.tienda_back.b_domain.model.Page;
-import es.VetUp.tienda_back.b_domain.service.JwtService;
-import es.VetUp.tienda_back.b_domain.service.ProductService;
-import es.VetUp.tienda_back.b_domain.service.dto.ProductDto;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
+import java.math.BigDecimal;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,12 +17,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import es.VetUp.tienda_back.b_domain.service.ProductService;
+import es.VetUp.tienda_back.b_domain.service.JwtService;
+import es.VetUp.tienda_back.b_domain.service.dto.ProductDto;
+import es.VetUp.tienda_back.b_domain.model.Page;
 
 @WebMvcTest(ProductController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -47,6 +46,7 @@ class ProductControllerTest {
                 "Descripción producto 1",
                 new BigDecimal("19.99"),
                 new BigDecimal("15.99"),
+                new BigDecimal("15.99"),
                 "imagen1.jpg",
                 "Marca1",
                 1L);
@@ -56,6 +56,7 @@ class ProductControllerTest {
                 "Producto 2",
                 "Descripción producto 2",
                 new BigDecimal("29.99"),
+                new BigDecimal("25.99"),
                 new BigDecimal("25.99"),
                 "imagen2.jpg",
                 "Marca2",
@@ -85,35 +86,24 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$.totalElements").value(2));
     }
 
-    @Nested
-    class GetByIdTests {
-        @Test
-        @DisplayName("GET /api/products/{id} - Success")
-        void testGetProductByIdSuccess() throws Exception {
-            when(productService.getProductById(1L)).thenReturn(productDto1);
+    @Test
+    @DisplayName("GET /api/products/{id} - Success")
+    void testGetProductByIdSuccess() throws Exception {
+        when(productService.getProductById(1L)).thenReturn(productDto1);
 
-            mockMvc.perform(get("/api/products/{id}", 1L))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.name").value("Producto 1"))
-                    .andExpect(jsonPath("$.productDescription").value("Descripción producto 1"))
-                    .andExpect(jsonPath("$.price").value(19.99))
-                    .andExpect(jsonPath("$.discountedPrice").value(15.99))
-                    .andExpect(jsonPath("$.pictureProduct").value("imagen1.jpg"))
-                    .andExpect(jsonPath("$.brand").value("Marca1"))
-                    .andExpect(jsonPath("$.categoryId").value(1));
-        }
-
-        // @Test
-        // @DisplayName("GET /api/products/{id} - Not Found")
-        // void testGetProductByIdNotFound() throws Exception {
-        //     when(productService.getProductById(99L)).thenThrow(new RuntimeException("Product with id 99 not found"));
-
-        //     mockMvc.perform(get("/api/products/{id}", 99L))
-        //             .andExpect(status().isInternalServerError());
-        // }
+        mockMvc.perform(get("/api/products/{id}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Producto 1"))
+                .andExpect(jsonPath("$.productDescription").value("Descripción producto 1"))
+                .andExpect(jsonPath("$.basePrice").value(19.99))
+                .andExpect(jsonPath("$.discountedPrice").value(15.99))
+                .andExpect(jsonPath("$.price").value(15.99))
+                .andExpect(jsonPath("$.pictureProduct").value("imagen1.jpg"))
+                .andExpect(jsonPath("$.brand").value("Marca1"))
+                .andExpect(jsonPath("$.categoryId").value(1));
     }
 
-    @Test 
+    @Test
     @DisplayName("GET /api/products/category/{categoryId} - Success")
     void testGetProductsByCategorySuccess() throws Exception {
         when(productService.getProductByCategory(1, 1, 10)).thenReturn(List.of(productDto1));
@@ -148,6 +138,7 @@ class ProductControllerTest {
                 "Descripción producto 3",
                 new BigDecimal("39.99"),
                 new BigDecimal("35.99"),
+                new BigDecimal("35.99"),
                 "imagen3.jpg",
                 "Marca3",
                 3L);
@@ -158,19 +149,28 @@ class ProductControllerTest {
                 "Descripción producto 3",
                 new BigDecimal("39.99"),
                 new BigDecimal("35.99"),
+                new BigDecimal("35.99"),
                 "imagen3.jpg",
                 "Marca3",
                 3L);
 
-        when(productService.createProduct(newProductDto)).thenReturn(createdProductDto);
+        when(productService.createProduct(any(ProductDto.class))).thenReturn(createdProductDto);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        String newProductJson = objectMapper.writeValueAsString(newProductDto);
+        String productInsertRequestJson = """
+                {
+                    \"name\": \"Producto 3\",
+                    \"productDescription\": \"Descripción producto 3\",
+                    \"basePrice\": 39.99,
+                    \"discountedPrice\": 35.99,
+                    \"pictureProduct\": \"imagen3.jpg\",
+                    \"brand\": \"Marca3\",
+                    \"categoryId\": 3
+                }
+                """;
 
         mockMvc.perform(post("/api/products")
                 .contentType("application/json")
-                .content(newProductJson))
+                .content(productInsertRequestJson))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.productId").value(3))
                 .andExpect(jsonPath("$.name").value("Producto 3"));
@@ -185,33 +185,38 @@ class ProductControllerTest {
                 "Descripción producto 1 actualizada",
                 new BigDecimal("21.99"),
                 new BigDecimal("17.99"),
+                new BigDecimal("17.99"),
                 "imagen1_updated.jpg",
                 "Marca1",
                 1L);
 
-        when(productService.updateProduct(1L, updatedProductDto)).thenReturn(updatedProductDto);
+        when(productService.updateProduct(eq(1L), any(ProductDto.class))).thenReturn(updatedProductDto);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        String updatedProductJson = objectMapper.writeValueAsString(updatedProductDto);
+        String productUpdateRequestJson = """
+                {
+                    \"productId\": 1,
+                    \"name\": \"Producto 1 Actualizado\",
+                    \"productDescription\": \"Descripción producto 1 actualizada\",
+                    \"basePrice\": 21.99,
+                    \"discountedPrice\": 17.99,
+                    \"pictureProduct\": \"imagen1_updated.jpg\",
+                    \"brand\": \"Marca1\",
+                    \"categoryId\": 1
+                }
+                """;
 
         mockMvc.perform(put("/api/products/{id}", 1L)
                 .contentType("application/json")
-                .content(updatedProductJson))
+                .content(productUpdateRequestJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Producto 1 Actualizado"))
                 .andExpect(jsonPath("$.productDescription").value("Descripción producto 1 actualizada"));
     }
 
-        @Test
-        @DisplayName("DELETE /api/products/{id} - Success")
-        void testDeleteProductSuccess() throws Exception {
-                mockMvc.perform(delete("/api/products/{id}", 343L))
-                                .andExpect(status().isNoContent());
-        }
-
-    
-
-
-
+    @Test
+    @DisplayName("DELETE /api/products/{id} - Success")
+    void testDeleteProductSuccess() throws Exception {
+        mockMvc.perform(delete("/api/products/{id}", 343L))
+                .andExpect(status().isNoContent());
+    }
 }

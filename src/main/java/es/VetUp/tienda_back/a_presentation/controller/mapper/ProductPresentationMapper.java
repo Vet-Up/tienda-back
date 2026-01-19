@@ -24,12 +24,12 @@ public class ProductPresentationMapper {
                 productDto.productId(),
                 productDto.name(),
                 productDto.productDescription(),
-                productDto.price(),
+                productDto.basePrice(),
                 productDto.discountedPrice(),
+                productDto.price(),
                 productDto.pictureProduct(),
                 productDto.brand(),
-                productDto.categoryId()
-        );
+                productDto.categoryId());
     }
 
     public static ProductSummaryResponse fromProductDtoToProductSummaryResponse(ProductDto productDto) {
@@ -37,12 +37,12 @@ public class ProductPresentationMapper {
                 productDto.productId(),
                 productDto.name(),
                 productDto.productDescription(),
-                productDto.price(),
+                productDto.basePrice(),
                 productDto.discountedPrice(),
+                productDto.price(),
                 productDto.pictureProduct(),
                 productDto.brand(),
-                productDto.categoryId()
-        );
+                productDto.categoryId());
     }
 
     public ProductDto fromProductInsertRequestToProductDto(ProductInsertRequest productInsertRequest) {
@@ -50,13 +50,12 @@ public class ProductPresentationMapper {
                 null,
                 productInsertRequest.name(),
                 productInsertRequest.productDescription(),
-                productInsertRequest.price(),
+                productInsertRequest.basePrice(),
                 productInsertRequest.discountedPrice(),
+                null,
                 productInsertRequest.pictureProduct(),
                 productInsertRequest.brand(),
-                productInsertRequest.categoryId()
-
-        );
+                productInsertRequest.categoryId());
     }
 
     public ProductDto fromProductUpdateRequestToProductDto(ProductUpdateRequest productUpdateRequest) {
@@ -64,11 +63,11 @@ public class ProductPresentationMapper {
                 productUpdateRequest.productId(),
                 productUpdateRequest.name(),
                 productUpdateRequest.productDescription(),
-                productUpdateRequest.price(),
+                productUpdateRequest.basePrice(),
                 productUpdateRequest.discountedPrice(),
+                null,
                 productUpdateRequest.pictureProduct(),
                 productUpdateRequest.brand(),
-                productUpdateRequest.categoryId()
-        );
+                productUpdateRequest.categoryId());
     }
 }

@@ -69,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
                 .map(ProductMapper.getInstance()::fromProducttoProductDto)
                 .toList();
         if (result.isEmpty()) {
-            throw new RuntimeException("No products found for brand " + brand);
+            throw new es.VetUp.tienda_back.b_domain.exception.ResourceNotFoundException("No products found for brand " + brand);
         }
         return result;
     }

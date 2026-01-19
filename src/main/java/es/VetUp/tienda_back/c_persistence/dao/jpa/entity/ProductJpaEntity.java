@@ -23,9 +23,11 @@ public class ProductJpaEntity {
     private String productDescription;
 
     @Positive(message = "Price must be greater than 0")
-    private BigDecimal price;
+    @Column(name = "price")
+    private BigDecimal basePrice;
 
     @PositiveOrZero(message = "Discounted price must be zero or positive")
+    @Column(name = "discounted_price")
     private BigDecimal discountedPrice;
 
     @NotBlank(message = "Product picture URL is required")
@@ -42,40 +44,74 @@ public class ProductJpaEntity {
 
     public ProductJpaEntity() {}
 
-    public ProductJpaEntity(Long productId, String name, String productDescription,
-                            BigDecimal price, BigDecimal discountedPrice,
-                            String pictureProduct, String brand, CategoryJpaEntity category) {
+    public ProductJpaEntity(Long productId, String name, String productDescription, BigDecimal basePrice,
+                            BigDecimal discountedPrice, String pictureProduct, String brand,
+                            CategoryJpaEntity category) {
         this.productId = productId;
         this.name = name;
         this.productDescription = productDescription;
-        this.price = price;
+        this.basePrice = basePrice;
         this.discountedPrice = discountedPrice;
         this.pictureProduct = pictureProduct;
         this.brand = brand;
         this.category = category;
     }
 
-    // --- Getters & Setters ---
-    public Long getProductId() { return productId; }
-    public void setProductId(Long productId) { this.productId = productId; }
+    public Long getProductId() {
+        return productId;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
 
-    public String getProductDescription() { return productDescription; }
-    public void setProductDescription(String productDescription) { this.productDescription = productDescription; }
+    public String getName() {
+        return name;
+    }
 
-    public BigDecimal getPrice() { return price; }
-    public void setPrice(BigDecimal price) { this.price = price; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public BigDecimal getDiscountedPrice() { return discountedPrice; }
-    public void setDiscountedPrice(BigDecimal discountedPrice) { this.discountedPrice = discountedPrice; }
+    public String getProductDescription() {
+        return productDescription;
+    }
 
-    public String getPictureProduct() { return pictureProduct; }
-    public void setPictureProduct(String pictureProduct) { this.pictureProduct = pictureProduct; }
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
+    }
 
-    public String getBrand() { return brand; }
-    public void setBrand(String brand) { this.brand = brand; }
+    public BigDecimal getBasePrice() {
+        return basePrice;
+    }
+
+    public void setBasePrice(BigDecimal basePrice) {
+        this.basePrice = basePrice;
+    }
+
+    public BigDecimal getDiscountedPrice() {
+        return discountedPrice;
+    }
+
+    public void setDiscountedPrice(BigDecimal discountedPrice) {
+        this.discountedPrice = discountedPrice;
+    }
+
+    public String getPictureProduct() {
+        return pictureProduct;
+    }
+
+    public void setPictureProduct(String pictureProduct) {
+        this.pictureProduct = pictureProduct;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
 
     public CategoryJpaEntity getCategory() { return category; }
     public void setCategory(CategoryJpaEntity category) { this.category = category; }

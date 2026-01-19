@@ -21,10 +21,12 @@ public record ProductDto (
     String productDescription,
 
     @Positive(message = "Price must be greater than 0")
-    BigDecimal price,
+    BigDecimal basePrice,
 
     @PositiveOrZero(message = "Discounted price must be 0 or greater")
     BigDecimal  discountedPrice,
+
+    BigDecimal price,
 
     @NotBlank(message = "Product picture URL is required")
     String pictureProduct,

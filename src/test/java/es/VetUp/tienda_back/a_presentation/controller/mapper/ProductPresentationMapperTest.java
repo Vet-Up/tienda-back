@@ -21,6 +21,7 @@ class ProductPresentationMapperTest {
                 "Descripción producto 1",
                 new BigDecimal("19.99"),
                 new BigDecimal("15.99"),
+                null,
                 "imagen1.jpg",
                 "Marca1",
                 1L);
@@ -31,7 +32,7 @@ class ProductPresentationMapperTest {
         assertEquals(productDto.productId(), response.productId());
         assertEquals(productDto.name(), response.name());
         assertEquals(productDto.productDescription(), response.productDescription());
-        assertEquals(productDto.price(), response.price());
+        assertEquals(productDto.basePrice(), response.basePrice());
         assertEquals(productDto.discountedPrice(), response.discountedPrice());
         assertEquals(productDto.pictureProduct(), response.pictureProduct());
         assertEquals(productDto.brand(), response.brand());
@@ -48,6 +49,7 @@ class ProductPresentationMapperTest {
                 "Descripción producto 2",
                 new BigDecimal("29.99"),
                 new BigDecimal("25.99"),
+                null,
                 "imagen2.jpg",
                 "Marca2",
                 2L);
@@ -57,7 +59,7 @@ class ProductPresentationMapperTest {
         assertEquals(productDto.productId(), response.productId());
         assertEquals(productDto.name(), response.name());
         assertEquals(productDto.productDescription(), response.productDescription());
-        assertEquals(productDto.price(), response.price());
+        assertEquals(productDto.basePrice(), response.basePrice());
         assertEquals(productDto.discountedPrice(), response.discountedPrice());
         assertEquals(productDto.pictureProduct(), response.pictureProduct());
         assertEquals(productDto.brand(), response.brand());
@@ -82,7 +84,7 @@ class ProductPresentationMapperTest {
         assertNull(productDto.productId());
         assertEquals(productInsertRequest.name(), productDto.name());
         assertEquals(productInsertRequest.productDescription(), productDto.productDescription());
-        assertEquals(productInsertRequest.price(), productDto.price());
+        assertEquals(productInsertRequest.basePrice(), productDto.basePrice());
         assertEquals(productInsertRequest.discountedPrice(), productDto.discountedPrice());
         assertEquals(productInsertRequest.pictureProduct(), productDto.pictureProduct());
         assertEquals(productInsertRequest.brand(), productDto.brand());
@@ -108,7 +110,7 @@ class ProductPresentationMapperTest {
         assertEquals(productUpdateRequest.productId(), productDto.productId());
         assertEquals(productUpdateRequest.name(), productDto.name());
         assertEquals(productUpdateRequest.productDescription(), productDto.productDescription());
-        assertEquals(productUpdateRequest.price(), productDto.price());
+        assertEquals(productUpdateRequest.basePrice(), productDto.basePrice());
         assertEquals(productUpdateRequest.discountedPrice(), productDto.discountedPrice());
         assertEquals(productUpdateRequest.pictureProduct(), productDto.pictureProduct());
         assertEquals(productUpdateRequest.brand(), productDto.brand());

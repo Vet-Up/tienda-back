@@ -55,7 +55,7 @@ public class UserMapper {
         );
     }
 
-    public User fromUserEntityToUser(es.VetUp.tienda_back.b_domain.repository.entity.UserEntity userEntity) {
+    public User fromUserEntityToUser(UserEntity userEntity) {
         if (userEntity == null) {
             return null;
         }

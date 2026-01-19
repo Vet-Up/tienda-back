@@ -6,7 +6,7 @@ public record ProductUpdateRequest(
         Long productId,
         String name,
         String productDescription,
-        BigDecimal  price,
+        BigDecimal  basePrice,
         BigDecimal discountedPrice,
         String pictureProduct,
         String brand,

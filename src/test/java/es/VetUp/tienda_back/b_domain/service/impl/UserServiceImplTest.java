@@ -113,7 +113,7 @@ class UserServiceImplTest {
 
         @Test
         @DisplayName("getAllUsers should throw exception when page or size less than 1")
-        void testGetAllUsersInvalidParams() {
+            void testGetAllUsersInvalidParams() {
             assertThrows(IllegalArgumentException.class, () -> userServiceImpl.getAllUsers(0, 10));
             assertThrows(IllegalArgumentException.class, () -> userServiceImpl.getAllUsers(1, 0));
         }

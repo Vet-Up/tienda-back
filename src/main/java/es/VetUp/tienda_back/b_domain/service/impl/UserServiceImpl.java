@@ -31,11 +31,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserDto> getAllUsers(int page, int size) {
-        if (page < 0 || size < 1) {
-            throw new IllegalArgumentException("Page and size must be greater than 0");
+        if (page < 1 || size < 1) {
+            throw new IllegalArgumentException("Page and size must be greater than or equal to 1");
         }
-        Page<UserEntity> userEntityPage = userRepository
-                .getAllUsers(page, size);
+        Page<UserEntity> userEntityPage = userRepository.getAllUsers(page, size);
+        if (userEntityPage == null) {
+            throw new IllegalArgumentException("User page result cannot be null");
+        }
         List<UserDto> itemsDto = userEntityPage.data()
                 .stream()
                 .map(UserMapper.getInstance()::fromUserEntityToUser)

@@ -21,17 +21,17 @@ class ProductTest {
         Long categoryId = 2L;
 
         Product product = assertDoesNotThrow(() -> new Product(productId, name, productDescription, price,
-                discountedPrice, pictureProduct, brand, categoryId));
+            discountedPrice, null, pictureProduct, brand, categoryId));
 
         assertAll("product",
-                () -> assertEquals(productId, product.getProduct_id()),
-                () -> assertEquals(name, product.getName()),
-                () -> assertEquals(productDescription, product.getProduct_description()),
-                () -> assertEquals(0, price.compareTo(product.getPrice())),
-                () -> assertEquals(0, discountedPrice.compareTo(product.getDiscountedPrice())),
-                () -> assertEquals(pictureProduct, product.getPictureProduct()),
-                () -> assertEquals(brand, product.getBrand()),
-                () -> assertEquals(categoryId, product.getCategoryId()));
+            () -> assertEquals(productId, product.getProductId()),
+            () -> assertEquals(name, product.getName()),
+            () -> assertEquals(productDescription, product.getProductDescription()),
+            () -> assertEquals(0, price.compareTo(product.getBasePrice())),
+            () -> assertEquals(0, discountedPrice.compareTo(product.getDiscountedPrice())),
+            () -> assertEquals(pictureProduct, product.getPictureProduct()),
+            () -> assertEquals(brand, product.getBrand()),
+            () -> assertEquals(categoryId, product.getCategoryId()));
     }
 
 }

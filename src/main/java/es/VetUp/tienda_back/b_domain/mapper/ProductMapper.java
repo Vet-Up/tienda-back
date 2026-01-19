@@ -22,8 +22,9 @@ public class ProductMapper {
                 productEntity.productId(),
                 productEntity.name(),
                 productEntity.productDescription(),
-                productEntity.price(),
+                productEntity.basePrice(),
                 productEntity.discountedPrice(),
+                null, // price is calculated in Product
                 productEntity.pictureProduct(),
                 productEntity.brand(),
                 productEntity.categoryId()
@@ -32,10 +33,10 @@ public class ProductMapper {
 
     public ProductEntity fromProducttoProductEntity(Product product) {
         return new ProductEntity(
-                product.getProduct_id(),
+                product.getProductId(),
                 product.getName(),
-                product.getProduct_description(),
-                product.getPrice(),
+                product.getProductDescription(),
+                product.getBasePrice(),
                 product.getDiscountedPrice(),
                 product.getPictureProduct(),
                 product.getBrand(),
@@ -48,8 +49,9 @@ public class ProductMapper {
                 productDto.productId(),
                 productDto.name(),
                 productDto.productDescription(),
-                productDto.price(),
+                productDto.basePrice(),
                 productDto.discountedPrice(),
+                null, // price is calculated in Product
                 productDto.pictureProduct(),
                 productDto.brand(),
                 productDto.categoryId()
@@ -58,11 +60,12 @@ public class ProductMapper {
 
     public ProductDto fromProducttoProductDto(Product product) {
         return new ProductDto(
-                product.getProduct_id(),
+                product.getProductId(),
                 product.getName(),
-                product.getProduct_description(),
-                product.getPrice(),
+                product.getProductDescription(),
+                product.getBasePrice(),
                 product.getDiscountedPrice(),
+                null, // price is calculated in Product
                 product.getPictureProduct(),
                 product.getBrand(),
                 product.getCategoryId()

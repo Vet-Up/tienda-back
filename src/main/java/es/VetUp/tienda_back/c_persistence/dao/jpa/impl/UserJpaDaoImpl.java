@@ -20,11 +20,11 @@ public class UserJpaDaoImpl implements UserJpaDao {
     @Override
     public List<UserJpaEntity> getAllUsers(int page, int size) {
         return entityManager.createQuery(
-                "SELECT u FROM UserJpaEntity u",
-                UserJpaEntity.class)
-                .setFirstResult(page * size)
-                .setMaxResults(size)
-                .getResultList();
+            "SELECT u FROM UserJpaEntity u",
+            UserJpaEntity.class)
+            .setFirstResult((page - 1) * size)
+            .setMaxResults(size)
+            .getResultList();
     }
 
     @Override

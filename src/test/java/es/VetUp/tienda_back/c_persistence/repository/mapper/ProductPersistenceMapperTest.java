@@ -19,7 +19,7 @@ class ProductPersistenceMapperTest {
         jpaEntity.setProductId(1L);
         jpaEntity.setName("Producto 1");
         jpaEntity.setProductDescription("Descripción producto 1");
-        jpaEntity.setPrice(new BigDecimal("19.99"));
+        jpaEntity.setBasePrice(new BigDecimal("19.99"));
         jpaEntity.setDiscountedPrice(new BigDecimal("15.99"));
         jpaEntity.setPictureProduct("imagen1.jpg");
         jpaEntity.setBrand("Marca1");
@@ -32,7 +32,7 @@ class ProductPersistenceMapperTest {
         assertEquals(jpaEntity.getProductId(), entity.productId());
         assertEquals(jpaEntity.getName(), entity.name());
         assertEquals(jpaEntity.getProductDescription(), entity.productDescription());
-        assertEquals(jpaEntity.getPrice(), entity.price());
+        assertEquals(jpaEntity.getBasePrice(), entity.basePrice());
         assertEquals(jpaEntity.getDiscountedPrice(), entity.discountedPrice());
         assertEquals(jpaEntity.getPictureProduct(), entity.pictureProduct());
         assertEquals(jpaEntity.getBrand(), entity.brand());
@@ -60,7 +60,7 @@ class ProductPersistenceMapperTest {
         assertEquals(entity.productId(), jpaEntity.getProductId());
         assertEquals(entity.name(), jpaEntity.getName());
         assertEquals(entity.productDescription(), jpaEntity.getProductDescription());
-        assertEquals(entity.price(), jpaEntity.getPrice());
+        assertEquals(entity.basePrice(), jpaEntity.getBasePrice());
         assertEquals(entity.discountedPrice(), jpaEntity.getDiscountedPrice());
         assertEquals(entity.pictureProduct(), jpaEntity.getPictureProduct());
         assertEquals(entity.brand(), jpaEntity.getBrand());

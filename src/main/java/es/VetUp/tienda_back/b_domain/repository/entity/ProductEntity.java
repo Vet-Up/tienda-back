@@ -6,11 +6,10 @@ public record ProductEntity(
     Long productId,
     String name,
     String productDescription,
-    BigDecimal  price,
+    BigDecimal  basePrice,
     BigDecimal discountedPrice,
     String pictureProduct,
     String brand,
     Long categoryId
 ) {
-
 }
