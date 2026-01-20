@@ -41,20 +41,22 @@ INSERT INTO products (name, product_description, price, discounted_price, pictur
 -- =====================================
 --                USERS
 -- =====================================
+
+-- adminpass juanpass mariapass carlospass anapass pedrospass lauragpass miguelfpass sofiarpass diegorpass elenatpass adminpass2
 INSERT INTO users (name, username, email, password, phone, address, profile_picture, birthdate, country, is_admin)
 VALUES
     ('Admin User', 'admin', 'admin@vetup.com', '$2a$12$MxHbH00a6bDvv4DjiCmhKe3UwmH5Vn5aWzpXDtC/uq/LMRkcePNoe', 123456789, 'Calle Admin 1', NULL, '1990-01-01', 'España', 'ADMIN'),
-    ('Juan Pérez', 'juanp', 'juanp@gmail.com', '$2a$12$wOEtCkY2IaFwjgW/u8HEoOmWsHezFzTOm2HSMUEN2PpHbG4zAu95G', 654123987, 'Avenida Siempre Viva 742', NULL, '1995-05-15', 'España', 'CUSTOMER'),
-    ('María Gómez', 'mariag', 'mariag@gmail.com', '$2a$12$wOEtCkY2IaFwjgW/u8HEoOmWsHezFzTOm2HSMUEN2PpHbG4zAu95G', 612334455, 'Gran Vía 12', NULL, '1998-09-20', 'España', 'CUSTOMER'),
-    ('Carlos López', 'carlosl', 'carlosl@gmail.com', '$2a$12$wOEtCkY2IaFwjgW/u8HEoOmWsHezFzTOm2HSMUEN2PpHbG4zAu95G', 666777888, 'Calle Mayor 25', NULL, '1992-03-10', 'España', 'CUSTOMER'),
-    ('Ana Martínez', 'anam', 'anam@gmail.com', '$2a$12$wOEtCkY2IaFwjgW/u8HEoOmWsHezFzTOm2HSMUEN2PpHbG4zAu95G', 655443322, 'Paseo del Prado 8', NULL, '1988-07-22', 'España', 'CUSTOMER'),
-    ('Pedro Sánchez', 'pedros', 'pedros@gmail.com', '$2a$12$wOEtCkY2IaFwjgW/u8HEoOmWsHezFzTOm2HSMUEN2PpHbG4zAu95G', 699887766, 'Avenida Diagonal 120', NULL, '1990-11-05', 'España', 'CUSTOMER'),
-    ('Laura García', 'laurag', 'laurag@gmail.com', '$2a$12$wOEtCkY2IaFwjgW/u8HEoOmWsHezFzTOm2HSMUEN2PpHbG4zAu95G', 611223344, 'Calle Luna 15', NULL, '1997-02-14', 'España', 'CUSTOMER'),
-    ('Miguel Fernández', 'miguelf', 'miguelf@gmail.com', '$2a$12$wOEtCkY2IaFwjgW/u8HEoOmWsHezFzTOm2HSMUEN2PpHbG4zAu95G', 644556677, 'Plaza España 3', NULL, '1985-09-30', 'España', 'CUSTOMER'),
-    ('Sofía Rodríguez', 'sofiar', 'sofiar@gmail.com', '$2a$12$wOEtCkY2IaFwjgW/u8HEoOmWsHezFzTOm2HSMUEN2PpHbG4zAu95G', 677889900, 'Calle Sol 42', NULL, '1993-06-18', 'España', 'CUSTOMER'),
-    ('Diego Ruiz', 'diegor', 'diegor@gmail.com', '$2a$12$wOEtCkY2IaFwjgW/u8HEoOmWsHezFzTOm2HSMUEN2PpHbG4zAu95G', 622334455, 'Avenida Libertad 77', NULL, '1991-12-25', 'España', 'CUSTOMER'),
-    ('Elena Torres', 'elenat', 'elenat@gmail.com', '$2a$12$wOEtCkY2IaFwjgW/u8HEoOmWsHezFzTOm2HSMUEN2PpHbG4zAu95G', 688990011, 'Calle Flores 9', NULL, '1996-04-08', 'España', 'CUSTOMER'),
-    ('Admin Secundario', 'admin2', 'admin2@vetup.com', '$2a$12$MxHbH00a6bDvv4DjiCmhKe3UwmH5Vn5aWzpXDtC/uq/LMRkcePNoe', 600111222, 'Calle Admin 2', NULL, '1988-08-15', 'España', 'ADMIN');
+    ('Juan Pérez', 'juanp', 'juanp@gmail.com', '$2a$12$qHuycfsyeUJ1PtGfdcb0I.wwkklUuYYz5ay2HC1sjpdx5iBzwgXt6', 654123987, 'Avenida Siempre Viva 742', NULL, '1995-05-15', 'España', 'CUSTOMER'),
+    ('María Gómez', 'mariag', 'mariag@gmail.com', '$2a$12$e/IGrg0J0G9f0l/E/JBJAu/apz4G6J8FRC5mD1iiJaGDUiu9J1Cs.', 612334455, 'Gran Vía 12', NULL, '1998-09-20', 'España', 'CUSTOMER'),
+    ('Carlos López', 'carlosl', 'carlosl@gmail.com', '$2a$12$KffWVPnCNPHsUtE7EY9y6.a2qXalu0IFEKi3fH4C1/F5u2E.EKNXO', 666777888, 'Calle Mayor 25', NULL, '1992-03-10', 'España', 'CUSTOMER'),
+    ('Ana Martínez', 'anam', 'anam@gmail.com', '$2a$12$SpE.Vvn3.RuHQVrRpOxO8u6197SDu.rFdUcEKoMKsyywItQXO.7Y6', 655443322, 'Paseo del Prado 8', NULL, '1988-07-22', 'España', 'CUSTOMER'),
+    ('Pedro Sánchez', 'pedros', 'pedros@gmail.com', '$2a$12$UUa/1aHdqEG6v5EdDDeUvO9kbgRI8yxo2jsVao/BRvGqYOgiHpC8W', 699887766, 'Avenida Diagonal 120', NULL, '1990-11-05', 'España', 'CUSTOMER'),
+    ('Laura García', 'laurag', 'laurag@gmail.com', '$2a$12$NzjZcRDlqyYfKjnyZ3FxfeM.JFxbVg9UB2a3rQywvhsp1vTb5thxm', 611223344, 'Calle Luna 15', NULL, '1997-02-14', 'España', 'CUSTOMER'),
+    ('Miguel Fernández', 'miguelf', 'miguelf@gmail.com', '$2a$12$.YD1noihtgamoBGaOuJp/uK3V8DHqWsCACkNwyEzL6u9B1EnY3KKG', 644556677, 'Plaza España 3', NULL, '1985-09-30', 'España', 'CUSTOMER'),
+    ('Sofía Rodríguez', 'sofiar', 'sofiar@gmail.com', '$2a$12$HELDd8bOGI6BIr0EtzwVMuayEzOGbPwOFEjyg1lPa2my3WJ7hij7m', 677889900, 'Calle Sol 42', NULL, '1993-06-18', 'España', 'CUSTOMER'),
+    ('Diego Ruiz', 'diegor', 'diegor@gmail.com', '$2a$12$L3kj0EKk6ujAo.tME0zX6.2BYHHwWGBMSko5Zvm6CJB6kMRC/o7G.', 622334455, 'Avenida Libertad 77', NULL, '1991-12-25', 'España', 'CUSTOMER'),
+    ('Elena Torres', 'elenat', 'elenat@gmail.com', '$2a$12$dg3ywi9QtDAFYQ7/sdVzQu6lmoXlrvXlpeRbhl1wtQurAZ/WhTlm2', 688990011, 'Calle Flores 9', NULL, '1996-04-08', 'España', 'CUSTOMER'),
+    ('Admin Secundario', 'admin2', 'admin2@vetup.com', '$2a$12$lZH4UVftaZcZG/r/muz95.ka4ZsQ.onobUZeWtRIMKiSArCH/hUA2', 600111222, 'Calle Admin 2', NULL, '1988-08-15', 'España', 'ADMIN');
 
 -- =====================================
 --               ORDERS
