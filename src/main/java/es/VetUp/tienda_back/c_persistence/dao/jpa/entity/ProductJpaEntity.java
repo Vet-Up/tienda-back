@@ -28,7 +28,7 @@ public class ProductJpaEntity {
 
     @PositiveOrZero(message = "Discounted price must be zero or positive")
     @Column(name = "discounted_price")
-    private BigDecimal discountedPrice;
+    private BigDecimal price;
 
     @NotBlank(message = "Product picture URL is required")
     private String pictureProduct;
@@ -41,20 +41,25 @@ public class ProductJpaEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryJpaEntity category;
 
+    @PositiveOrZero(message = "Stock must be zero or positive")
+    @Column(name = "stock")
+    private Integer stock;
+
 
     public ProductJpaEntity() {}
 
     public ProductJpaEntity(Long productId, String name, String productDescription, BigDecimal basePrice,
-                            BigDecimal discountedPrice, String pictureProduct, String brand,
-                            CategoryJpaEntity category) {
+                            BigDecimal price, String pictureProduct, String brand,
+                            CategoryJpaEntity category, Integer stock) {
         this.productId = productId;
         this.name = name;
         this.productDescription = productDescription;
         this.basePrice = basePrice;
-        this.discountedPrice = discountedPrice;
+        this.price = price;
         this.pictureProduct = pictureProduct;
         this.brand = brand;
         this.category = category;
+        this.stock = stock;
     }
 
     public Long getProductId() {
@@ -89,12 +94,12 @@ public class ProductJpaEntity {
         this.basePrice = basePrice;
     }
 
-    public BigDecimal getDiscountedPrice() {
-        return discountedPrice;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    public void setDiscountedPrice(BigDecimal discountedPrice) {
-        this.discountedPrice = discountedPrice;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
     public String getPictureProduct() {
@@ -126,5 +131,13 @@ public class ProductJpaEntity {
             this.category = new CategoryJpaEntity();
         }
         this.category.setCategoryId(categoryId);
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 }

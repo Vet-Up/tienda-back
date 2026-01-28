@@ -16,4 +16,8 @@ public interface ProductService {
     ProductDto createProduct(ProductDto productDto);
     ProductDto updateProduct(Long productId, ProductDto productDto);
     void deleteProduct(Long productId);
+    List<ProductDto> findProductsByName(String name, int page, int size, String sort);
+    Page<ProductDto> findAllOrdered(String order, int page, int size);
+    Page<ProductDto> getProductsByPriceRange(double minPrice, double maxPrice, int page, int size, String order);
+    Page<ProductDto> getProductsByCategories(List<Integer> categoryIds, int page, int size, String order);
 }

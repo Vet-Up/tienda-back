@@ -29,14 +29,19 @@ public class JwtFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
         String path = httpRequest.getRequestURI();
         String method = httpRequest.getMethod();
 
-        if ("OPTIONS".equalsIgnoreCase(method) || path.startsWith("/api/auth")) {
+        if ("OPTIONS".equalsIgnoreCase(method)
+                || path.startsWith("/api/auth")
+                || (path.startsWith("/api/products") && "GET".equalsIgnoreCase(method))
+                || (path.startsWith("/api/categories") && "GET".equalsIgnoreCase(method))
+                || (path.startsWith("/api/reviews") && ("GET".equalsIgnoreCase(method) || "PUT".equalsIgnoreCase(method)))) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }

@@ -214,7 +214,9 @@ public class ProductRepositoryImplTest {
                     null,
                     null,
                     "Brand A",
-                    100L);
+                    100L,
+                    null,
+                    0);
 
             when(productJpaDao.insert(any(ProductJpaEntity.class))).thenReturn(productJpaEntity1);
 

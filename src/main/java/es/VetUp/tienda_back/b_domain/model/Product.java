@@ -9,24 +9,37 @@ public class Product {
     private final Long productId;
     private final String name;
     private final String productDescription;
-    private final BigDecimal  basePrice;
-    private final BigDecimal  discountedPrice;
-    private final BigDecimal  price;
+    private final BigDecimal basePrice;
+    private final BigDecimal discount;
+    private final BigDecimal price;
     private final String pictureProduct;
     private final String brand;
     private final Long categoryId;
+    private final int stock;
+    private final Double averageRating;
+    private final Integer reviewsCount;
 
-
-    public Product(Long productId, String name, String productDescription, BigDecimal basePrice, BigDecimal discountedPrice, BigDecimal price, String pictureProduct, String brand, Long categoryId) {
+    public Product(Long productId, String name, String productDescription, BigDecimal basePrice,
+            BigDecimal discount, String pictureProduct, String brand, Long categoryId, int stock,
+            Double averageRating, Integer reviewsCount) {
         this.productId = productId;
         this.name = name;
         this.productDescription = productDescription;
         this.basePrice = basePrice;
-        this.discountedPrice = discountedPrice;
+        this.discount = discount;
         this.price = calculateFinalPrice();
         this.pictureProduct = pictureProduct;
         this.brand = brand;
         this.categoryId = categoryId;
+        this.stock = stock;
+        this.averageRating = averageRating;
+        this.reviewsCount = reviewsCount;
+    }
+
+    // Constructor antiguo para compatibilidad
+    public Product(Long productId, String name, String productDescription, BigDecimal basePrice,
+            BigDecimal discount, String pictureProduct, String brand, Long categoryId, int stock) {
+        this(productId, name, productDescription, basePrice, discount, pictureProduct, brand, categoryId, stock, null, null);
     }
 
     public Long getProductId() {
@@ -45,8 +58,8 @@ public class Product {
         return basePrice;
     }
 
-    public BigDecimal getDiscountedPrice() {
-        return discountedPrice;
+    public BigDecimal getDiscount() {
+        return discount;
     }
 
     public BigDecimal getPrice() {
@@ -65,29 +78,50 @@ public class Product {
         return categoryId;
     }
 
+    public int getStock() {
+        return stock;
+    }
+
+    public Double getAverageRating() {
+        return averageRating;
+    }
+
+    public Integer getReviewsCount() {
+        return reviewsCount;
+    }
+
     public BigDecimal calculateFinalPrice() {
         if (basePrice == null) {
             return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
         }
-        if (discountedPrice == null) {
+        if (discount == null) {
             return basePrice.setScale(2, RoundingMode.HALF_UP);
         }
-        BigDecimal discount = basePrice
-                .multiply(discountedPrice)
+        BigDecimal discountValue = basePrice
+                .multiply(discount)
                 .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
-        return basePrice.subtract(discount).setScale(2, RoundingMode.HALF_UP);
+        return basePrice.subtract(discountValue).setScale(2, RoundingMode.HALF_UP);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Product product = (Product) o;
-        return Objects.equals(productId, product.productId) && Objects.equals(name, product.name) && Objects.equals(productDescription, product.productDescription) && Objects.equals(basePrice, product.basePrice) && Objects.equals(discountedPrice, product.discountedPrice) && Objects.equals(price, product.price) && Objects.equals(pictureProduct, product.pictureProduct) && Objects.equals(brand, product.brand) && Objects.equals(categoryId, product.categoryId);
+        return Objects.equals(productId, product.productId) && Objects.equals(name, product.name)
+                && Objects.equals(productDescription, product.productDescription)
+                && Objects.equals(basePrice, product.basePrice)
+                && Objects.equals(discount, product.discount) && Objects.equals(price, product.price)
+                && Objects.equals(pictureProduct, product.pictureProduct) && Objects.equals(brand, product.brand)
+                && Objects.equals(categoryId, product.categoryId) && stock == product.stock
+                && Objects.equals(averageRating, product.averageRating)
+                && Objects.equals(reviewsCount, product.reviewsCount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(productId, name, productDescription, basePrice, discountedPrice, price, pictureProduct, brand, categoryId);
+        return Objects.hash(productId, name, productDescription, basePrice, discount, price, pictureProduct,
+                brand, categoryId, stock, averageRating, reviewsCount);
     }
 
     @Override
@@ -97,13 +131,15 @@ public class Product {
                 ", name='" + name + '\'' +
                 ", productDescription='" + productDescription + '\'' +
                 ", basePrice=" + basePrice +
-                ", discountedPrice=" + discountedPrice +
+                ", discount=" + discount +
                 ", price=" + price +
                 ", pictureProduct='" + pictureProduct + '\'' +
                 ", brand='" + brand + '\'' +
                 ", categoryId=" + categoryId +
+                ", stock=" + stock +
+                ", averageRating=" + averageRating +
+                ", reviewsCount=" + reviewsCount +
                 '}';
     }
-
 
 }

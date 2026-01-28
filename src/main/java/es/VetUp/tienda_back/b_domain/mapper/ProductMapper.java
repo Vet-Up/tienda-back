@@ -23,11 +23,13 @@ public class ProductMapper {
                 productEntity.name(),
                 productEntity.productDescription(),
                 productEntity.basePrice(),
-                productEntity.discountedPrice(),
-                null, // price is calculated in Product
+                productEntity.discount(),
                 productEntity.pictureProduct(),
                 productEntity.brand(),
-                productEntity.categoryId()
+                productEntity.categoryId(),
+                productEntity.stock(),
+                null, // averageRating
+                null  // reviewsCount
         );
     }
 
@@ -37,11 +39,12 @@ public class ProductMapper {
                 product.getName(),
                 product.getProductDescription(),
                 product.getBasePrice(),
-                product.getDiscountedPrice(),
+                product.getDiscount(),
                 product.getPictureProduct(),
                 product.getBrand(),
-                product.getCategoryId()
-        );
+                product.getCategoryId(),
+                product.getPrice(), 
+                product.getStock());
     }
 
     public Product fromProductDtotoProduct(ProductDto productDto) {
@@ -50,11 +53,13 @@ public class ProductMapper {
                 productDto.name(),
                 productDto.productDescription(),
                 productDto.basePrice(),
-                productDto.discountedPrice(),
-                null, // price is calculated in Product
+                productDto.discount(),
                 productDto.pictureProduct(),
                 productDto.brand(),
-                productDto.categoryId()
+                productDto.categoryId(),
+                productDto.stock(),
+                productDto.averageRating(),
+                productDto.reviewsCount()
         );
     }
 
@@ -64,15 +69,14 @@ public class ProductMapper {
                 product.getName(),
                 product.getProductDescription(),
                 product.getBasePrice(),
-                product.getDiscountedPrice(),
-                null, // price is calculated in Product
+                product.getDiscount(),
+                product.getPrice(),
                 product.getPictureProduct(),
                 product.getBrand(),
-                product.getCategoryId()
+                product.getCategoryId(),
+                product.getStock(),
+                product.getAverageRating(),
+                product.getReviewsCount()
         );
     }
-
-
-
-
 }

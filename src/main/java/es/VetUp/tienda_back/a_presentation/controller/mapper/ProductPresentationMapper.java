@@ -25,11 +25,15 @@ public class ProductPresentationMapper {
                 productDto.name(),
                 productDto.productDescription(),
                 productDto.basePrice(),
-                productDto.discountedPrice(),
+                productDto.discount(),
                 productDto.price(),
                 productDto.pictureProduct(),
                 productDto.brand(),
-                productDto.categoryId());
+                productDto.categoryId(),
+                productDto.stock(),
+                productDto.averageRating(),
+                productDto.reviewsCount()
+        );
     }
 
     public static ProductSummaryResponse fromProductDtoToProductSummaryResponse(ProductDto productDto) {
@@ -38,11 +42,15 @@ public class ProductPresentationMapper {
                 productDto.name(),
                 productDto.productDescription(),
                 productDto.basePrice(),
-                productDto.discountedPrice(),
+                productDto.discount(),
                 productDto.price(),
                 productDto.pictureProduct(),
                 productDto.brand(),
-                productDto.categoryId());
+                productDto.categoryId(),
+                productDto.stock(),
+                productDto.averageRating(),
+                productDto.reviewsCount()
+        );
     }
 
     public ProductDto fromProductInsertRequestToProductDto(ProductInsertRequest productInsertRequest) {
@@ -51,11 +59,15 @@ public class ProductPresentationMapper {
                 productInsertRequest.name(),
                 productInsertRequest.productDescription(),
                 productInsertRequest.basePrice(),
-                productInsertRequest.discountedPrice(),
+                productInsertRequest.discount(),
                 null,
                 productInsertRequest.pictureProduct(),
                 productInsertRequest.brand(),
-                productInsertRequest.categoryId());
+                productInsertRequest.categoryId(),
+                productInsertRequest.stock(),
+                null,
+                null
+        );
     }
 
     public ProductDto fromProductUpdateRequestToProductDto(ProductUpdateRequest productUpdateRequest) {
@@ -64,10 +76,14 @@ public class ProductPresentationMapper {
                 productUpdateRequest.name(),
                 productUpdateRequest.productDescription(),
                 productUpdateRequest.basePrice(),
-                productUpdateRequest.discountedPrice(),
+                productUpdateRequest.discount(),
                 null,
                 productUpdateRequest.pictureProduct(),
                 productUpdateRequest.brand(),
-                productUpdateRequest.categoryId());
+                productUpdateRequest.categoryId(),
+                productUpdateRequest.stock(),
+                null,
+                null
+        );
     }
 }

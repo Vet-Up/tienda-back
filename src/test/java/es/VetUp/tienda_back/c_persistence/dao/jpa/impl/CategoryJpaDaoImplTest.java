@@ -31,8 +31,7 @@ class CategoryJpaDaoImplTest {
         CategoryJpaEntity category = new CategoryJpaEntity(
                 null,
                 "Categoría Test",
-                "Descripción Test"
-        );
+                "Descripción Test");
 
         entityManager.persist(category);
         entityManager.flush();
@@ -51,8 +50,7 @@ class CategoryJpaDaoImplTest {
         CategoryJpaEntity category = new CategoryJpaEntity(
                 null,
                 "Categoría Test",
-                "Descripción Test"
-        );
+                "Descripción Test");
 
         entityManager.persist(category);
         entityManager.flush();
@@ -71,8 +69,7 @@ class CategoryJpaDaoImplTest {
         CategoryJpaEntity category = new CategoryJpaEntity(
                 null,
                 "Categoría Nueva",
-                "Descripción Nueva"
-        );
+                "Descripción Nueva");
 
         // Act
         CategoryJpaEntity result = categoryJpaDao.insert(category);
@@ -80,7 +77,7 @@ class CategoryJpaDaoImplTest {
         // Assert
         assertNotNull(result.getCategoryId());
         assertEquals("Categoría Nueva", result.getName());
-    }   
+    }
 
     @Test
     void testUpdate() {
@@ -88,8 +85,7 @@ class CategoryJpaDaoImplTest {
         CategoryJpaEntity category = new CategoryJpaEntity(
                 null,
                 "Categoría Original",
-                "Descripción Original"
-        );
+                "Descripción Original");
 
         entityManager.persist(category);
         entityManager.flush();
@@ -112,8 +108,7 @@ class CategoryJpaDaoImplTest {
         CategoryJpaEntity category = new CategoryJpaEntity(
                 null,
                 "Categoría A Eliminar",
-                "Descripción A Eliminar"
-        );
+                "Descripción A Eliminar");
 
         entityManager.persist(category);
         entityManager.flush();
@@ -127,8 +122,5 @@ class CategoryJpaDaoImplTest {
         CategoryJpaEntity deletedCategory = entityManager.find(CategoryJpaEntity.class, categoryIdToDelete);
         assertNull(deletedCategory);
     }
-
-
-
 
 }

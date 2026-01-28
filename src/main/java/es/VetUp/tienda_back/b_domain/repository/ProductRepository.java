@@ -16,6 +16,12 @@ public interface ProductRepository {
     ProductEntity updateProduct(Long productId, ProductEntity productEntity);
     void deleteProduct(Long productId);
     boolean existsByCategoryId(Long categoryId);
+    List<ProductEntity> findProductsByName(String name, int page, int size, String sort);
+    List<ProductEntity> findAllOrdered(String order, int page, int size);
+    Page<ProductEntity> getProductsByPriceRange(double minPrice, double maxPrice, int page, int size, String order);
+    long count();
+    List<ProductEntity> findByCategoryIds(List<Integer> categoryIds, int page, int size, String order);
+
 
 
 }

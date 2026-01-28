@@ -154,7 +154,7 @@ class CategoryRepositoryImplTest {
 
             when(categoryJpaDao.update(any(CategoryJpaEntity.class))).thenReturn(categoryJpaEntity1);
 
-            CategoryEntity actual = categoryRepositoryImpl.updateCategory(1L,categoryEntityToUpdate);
+            CategoryEntity actual = categoryRepositoryImpl.updateCategory(1L, categoryEntityToUpdate);
 
             CategoryEntity expected = CategoryPersistenceMapper.getInstance()
                     .fromCategoryJpaEntitytoToCategoryEntity(categoryJpaEntity1);

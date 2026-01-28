@@ -19,40 +19,49 @@ public class ProductRepositoryImpl implements ProductRepository {
 
     @Override
     public Page<ProductEntity> findAllProducts(int page, int size) {
-        List<ProductEntity> content = productJpaDao.findAll(page, size).stream().map(ProductPersistenceMapper.getInstance()::fromProductJpaEntitytoToProductEntity).toList();
+        List<ProductEntity> content = productJpaDao.findAll(page, size).stream()
+                .map(ProductPersistenceMapper.getInstance()::fromProductJpaEntitytoToProductEntity).toList();
         long totalElements = productJpaDao.count();
         return new Page<>(content, page, size, totalElements);
     }
 
     @Override
     public Optional<ProductEntity> findProductById(Long productId) {
-        return productJpaDao.findById((long) productId).map(ProductPersistenceMapper.getInstance()::fromProductJpaEntitytoToProductEntity);
+        return productJpaDao.findById((long) productId)
+                .map(ProductPersistenceMapper.getInstance()::fromProductJpaEntitytoToProductEntity);
     }
 
     @Override
     public List<ProductEntity> getProductByCategory(int categoryId, int page, int size) {
-        return productJpaDao.findByCategoryId(categoryId,page,size).stream().map(ProductPersistenceMapper.getInstance()::fromProductJpaEntitytoToProductEntity).toList();
+        return productJpaDao.findByCategoryId(categoryId, page, size).stream()
+                .map(ProductPersistenceMapper.getInstance()::fromProductJpaEntitytoToProductEntity).toList();
     }
 
     @Override
     public List<ProductEntity> getProductByBrand(String brand, int page, int size) {
-        return productJpaDao.findByBrandId(brand, page, size).stream().map(ProductPersistenceMapper.getInstance()::fromProductJpaEntitytoToProductEntity).toList();
+        return productJpaDao.findByBrandId(brand, page, size).stream()
+                .map(ProductPersistenceMapper.getInstance()::fromProductJpaEntitytoToProductEntity).toList();
     }
 
     @Override
     public ProductEntity saveProduct(ProductEntity productEntity) {
-        ProductJpaEntity productJpaEntity = ProductPersistenceMapper.getInstance().fromProductEntitytoToProductJpaEntity(productEntity);
-        if(productEntity.productId() == null){
-            return ProductPersistenceMapper.getInstance().fromProductJpaEntitytoToProductEntity(productJpaDao.insert(productJpaEntity));
+        ProductJpaEntity productJpaEntity = ProductPersistenceMapper.getInstance()
+                .fromProductEntitytoToProductJpaEntity(productEntity);
+        if (productEntity.productId() == null) {
+            return ProductPersistenceMapper.getInstance()
+                    .fromProductJpaEntitytoToProductEntity(productJpaDao.insert(productJpaEntity));
         }
-        return ProductPersistenceMapper.getInstance().fromProductJpaEntitytoToProductEntity(productJpaDao.update(productJpaEntity));
+        return ProductPersistenceMapper.getInstance()
+                .fromProductJpaEntitytoToProductEntity(productJpaDao.update(productJpaEntity));
     }
 
     @Override
     public ProductEntity updateProduct(Long productId, ProductEntity productEntity) {
-        ProductJpaEntity productJpaEntity = ProductPersistenceMapper.getInstance().fromProductEntitytoToProductJpaEntity(productEntity);
+        ProductJpaEntity productJpaEntity = ProductPersistenceMapper.getInstance()
+                .fromProductEntitytoToProductJpaEntity(productEntity);
         productJpaEntity.setProductId((long) productId);
-        return ProductPersistenceMapper.getInstance().fromProductJpaEntitytoToProductEntity(productJpaDao.update(productJpaEntity));
+        return ProductPersistenceMapper.getInstance()
+                .fromProductJpaEntitytoToProductEntity(productJpaDao.update(productJpaEntity));
 
     }
 
@@ -65,5 +74,41 @@ public class ProductRepositoryImpl implements ProductRepository {
     @Override
     public boolean existsByCategoryId(Long categoryId) {
         return productJpaDao.existsByCategoryId(categoryId);
+    }
+
+    @Override
+    public List<ProductEntity> findProductsByName(String name, int page, int size, String sort) {
+        return productJpaDao.findByName(name, page, size, sort).stream()
+                .map(ProductPersistenceMapper.getInstance()::fromProductJpaEntitytoToProductEntity)
+                .toList();
+    }
+
+    @Override
+    public List<ProductEntity> findAllOrdered(String order, int page, int size) {
+        return productJpaDao.findAllOrdered(order, page, size)
+                .stream()
+                .map(ProductPersistenceMapper.getInstance()::fromProductJpaEntitytoToProductEntity)
+                .toList();
+    }
+
+    @Override
+    public Page<ProductEntity> getProductsByPriceRange(double minPrice, double maxPrice, int page, int size, String order) {
+        List<ProductEntity> content = productJpaDao.findByPriceRange(minPrice, maxPrice, page, size, order).stream()
+                .map(ProductPersistenceMapper.getInstance()::fromProductJpaEntitytoToProductEntity).toList();
+        long totalElements = productJpaDao.countByPriceRange(minPrice, maxPrice);
+        return new Page<>(content, page, size, totalElements);
+    }
+
+    @Override
+    public long count() {
+        return productJpaDao.count();
+    }
+
+    @Override
+    public List<ProductEntity> findByCategoryIds(List<Integer> categoryIds, int page, int size, String order) {
+        if (categoryIds == null || categoryIds.isEmpty()) return List.of();
+        return productJpaDao.findByCategoryIds(categoryIds, page, size, order).stream()
+                .map(ProductPersistenceMapper.getInstance()::fromProductJpaEntitytoToProductEntity)
+                .toList();
     }
 }

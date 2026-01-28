@@ -18,10 +18,12 @@ class ProductTest {
         BigDecimal discountedPrice = new BigDecimal("24.99");
         String pictureProduct = "dog_food.jpg";
         String brand = "PetBrand";
+        int stock = 50;
         Long categoryId = 2L;
 
+
         Product product = assertDoesNotThrow(() -> new Product(productId, name, productDescription, price,
-            discountedPrice, null, pictureProduct, brand, categoryId));
+            discountedPrice, null, pictureProduct, brand, categoryId,stock));
 
         assertAll("product",
             () -> assertEquals(productId, product.getProductId()),

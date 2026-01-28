@@ -17,7 +17,7 @@ class ProductMapperTest {
         void testMapProductToProductDTO() {
                 Product product = new Product(1L, "Dog Food", "High quality dog food",
                                 new BigDecimal("29.99"), new BigDecimal("24.99"),
-                                null, "dog_food.jpg", "PetBrand", 2L);
+                                null, "dog_food.jpg", "PetBrand", 2L, 100);
 
                 var productDTO = ProductMapper.getInstance().fromProducttoProductDto(product);
                 assertAll("productDTO",
@@ -29,7 +29,8 @@ class ProductMapperTest {
                                                 product.getDiscountedPrice().compareTo(productDTO.discountedPrice())),
                                 () -> assertEquals(product.getPictureProduct(), productDTO.pictureProduct()),
                                 () -> assertEquals(product.getBrand(), productDTO.brand()),
-                                () -> assertEquals(product.getCategoryId(), productDTO.categoryId()));
+                                () -> assertEquals(product.getCategoryId(), productDTO.categoryId()),
+                                () -> assertEquals(product.getStock(), productDTO.stock()));
 
         }
 
@@ -48,7 +49,9 @@ class ProductMapperTest {
         void testMapProductEntityToProduct() {
                 var productEntity = new ProductEntity(1L, "Dog Food", "High quality dog food",
                                 new BigDecimal("29.99"), new BigDecimal("24.99"),
-                                "dog_food.jpg", "PetBrand", 2L);
+                                "dog_food.jpg", "PetBrand", 2L,
+                                new BigDecimal("24.99"),
+                                100);
                 var product = ProductMapper.getInstance().fromProductEntitytoProduct(productEntity);
                 assertAll("product",
                                 () -> assertEquals(productEntity.productId(), product.getProductId()),
@@ -57,11 +60,12 @@ class ProductMapperTest {
                                                 product.getProductDescription()),
                                 () -> assertEquals(0, productEntity.basePrice().compareTo(product.getBasePrice())),
                                 () -> assertEquals(0,
-                                                productEntity.discountedPrice()
-                                                                .compareTo(product.getDiscountedPrice())),
+                                                productEntity.price()
+                                                                .compareTo(product.getPrice())),
                                 () -> assertEquals(productEntity.pictureProduct(), product.getPictureProduct()),
                                 () -> assertEquals(productEntity.brand(), product.getBrand()),
-                                () -> assertEquals(productEntity.categoryId(), product.getCategoryId()));
+                                () -> assertEquals(productEntity.categoryId(), product.getCategoryId()),
+                                () -> assertEquals(productEntity.stock(), product.getStock()));
 
         }
 }
