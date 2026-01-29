@@ -130,12 +130,17 @@ public class UserServiceImpl implements UserService {
                                                 UserMapper.getInstance()
                                                                 .fromUserEntityToUser(createdUserEntity));
 
-                OrderDto initialOrder = new OrderDto(
-                                null,
-                                0,
-                                BigDecimal.ZERO,
-                                OrderState.CART,
-                                createdUserDto);
+        OrderDto initialOrder = new OrderDto(
+                null,
+                0,
+                BigDecimal.ZERO,
+                OrderState.CART,
+                createdUserDto,
+                null,
+                null,
+                null,
+                null
+        );
 
                 orderService.createOrder(initialOrder);
 
@@ -187,5 +192,6 @@ public class UserServiceImpl implements UserService {
                                 () -> new ResourceNotFoundException("User with id " + id + " not found"));
                 userRepository.deleteClient(id);
         }
+
 
 }

@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface OrderJpaDao {
     List<OrderJpaEntity> getAllOrders();
     Optional<OrderJpaEntity> getOrderById(Long id);
+    List<OrderJpaEntity> getOrdersByUserId(Long userId);
     Optional<OrderJpaEntity> findCartByUserId(Long userId);
     OrderJpaEntity createOrder(OrderJpaEntity orderJpaEntity);
     OrderJpaEntity updateOrder(OrderJpaEntity orderJpaEntity);

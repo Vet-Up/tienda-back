@@ -1,11 +1,14 @@
 package es.VetUp.tienda_back.a_presentation.controller;
 
 import es.VetUp.tienda_back.a_presentation.controller.mapper.OrderPresentationMapper;
+import es.VetUp.tienda_back.a_presentation.controller.webModel.request.CheckoutRequest;
 import es.VetUp.tienda_back.a_presentation.controller.webModel.request.OrderInsertRequest;
 import es.VetUp.tienda_back.a_presentation.controller.webModel.request.OrderUpdateRequest;
 import es.VetUp.tienda_back.a_presentation.controller.webModel.response.OrderDetailResponse;
+import es.VetUp.tienda_back.b_domain.service.JwtService;
 import es.VetUp.tienda_back.b_domain.service.OrderService;
 import es.VetUp.tienda_back.b_domain.service.dto.OrderDto;
+import es.VetUp.tienda_back.b_domain.service.dto.UserDto;
 import es.VetUp.tienda_back.config.annotation.RequireAdmin;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +21,11 @@ import java.util.List;
 public class OrderContraller {
 
     private final OrderService orderService;
-    public OrderContraller(OrderService orderService) {
+    private final JwtService jwtService;
+
+    public OrderContraller(OrderService orderService, JwtService jwtService) {
         this.orderService = orderService;
+        this.jwtService = jwtService;
     }
 
     @GetMapping
@@ -36,6 +42,15 @@ public class OrderContraller {
         OrderDetailResponse orderDetailResponse =
                 OrderPresentationMapper.getInstance().fromOrderDtoToOrderDetailResponse(orderDto);
         return new ResponseEntity<>(orderDetailResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<OrderDetailResponse>> getOrdersByUserId(@PathVariable Long userId) {
+        List<OrderDto> orders = orderService.getOrdersByUserId(userId);
+        List<OrderDetailResponse> orderResponses = orders.stream()
+                .map(OrderPresentationMapper.getInstance()::fromOrderDtoToOrderDetailResponse)
+                .toList();
+        return new ResponseEntity<>(orderResponses, HttpStatus.OK);
     }
 
     @RequireAdmin
@@ -64,5 +79,22 @@ public class OrderContraller {
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
         orderService.deleteOrder(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/checkout")
+    public ResponseEntity<OrderDetailResponse> checkout(
+            @RequestHeader("Authorization") String token,
+            @RequestBody CheckoutRequest request) {
+
+        String jwtToken = token.replace("Bearer ", "");
+
+        UserDto user = jwtService.getUserFromToken(jwtToken);
+
+        OrderDto order = orderService.checkout(user.id(), request.address());
+
+        OrderDetailResponse response = OrderPresentationMapper.getInstance()
+                .fromOrderDtoToOrderDetailResponse(order);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

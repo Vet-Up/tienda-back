@@ -4,17 +4,22 @@ import es.VetUp.tienda_back.b_domain.model.enums.OrderState;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public record OrderDto(
         Long id,
-        @NotNull
         Integer totalProducts,
-        @NotNull
         BigDecimal totalPrice,
         @NotNull
         OrderState state,
         @NotNull
-        UserDto user
+        UserDto user,
+        LocalDateTime createdAt,
+        LocalDateTime orderAt,
+        @NotNull
+        String address,
+        List<OrderItemDto> orderItems
 ) {
 
 }

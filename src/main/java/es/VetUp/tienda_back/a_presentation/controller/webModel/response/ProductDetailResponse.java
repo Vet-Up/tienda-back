@@ -16,3 +16,5 @@ public record ProductDetailResponse(
         Double averageRating,
         Integer reviewsCount) {
 }
+
+

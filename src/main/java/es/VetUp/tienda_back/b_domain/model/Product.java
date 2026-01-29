@@ -36,7 +36,6 @@ public class Product {
         this.reviewsCount = reviewsCount;
     }
 
-    // Constructor antiguo para compatibilidad
     public Product(Long productId, String name, String productDescription, BigDecimal basePrice,
             BigDecimal discount, String pictureProduct, String brand, Long categoryId, int stock) {
         this(productId, name, productDescription, basePrice, discount, pictureProduct, brand, categoryId, stock, null, null);
@@ -141,5 +140,6 @@ public class Product {
                 ", reviewsCount=" + reviewsCount +
                 '}';
     }
+
 
 }

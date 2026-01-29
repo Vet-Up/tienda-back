@@ -8,6 +8,7 @@ public record OrderInsertRequest(
         Integer totalProducts,
         BigDecimal totalPrice,
         OrderState state,
-        Long userId
+        Long userId,
+        String address
 ) {
 }

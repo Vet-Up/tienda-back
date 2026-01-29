@@ -29,7 +29,14 @@ public class OrderPresentationMapper {
                 orderDto.totalProducts(),
                 orderDto.totalPrice(),
                 orderDto.state(),
-                UserPresentationMapper.getInstance().fromUserDtoToUserDetailResponse(orderDto.user())
+                UserPresentationMapper.getInstance().fromUserDtoToUserDetailResponse(orderDto.user()),
+                orderDto.createdAt(),
+                orderDto.orderAt(),
+                orderDto.address(),
+                orderDto.orderItems() == null ? null :
+                    orderDto.orderItems().stream()
+                        .map(OrderItemPresentationMapper.getInstance()::fromOrderItemDtoToOrderItemDetailResponse)
+                        .toList()
         );
     }
 
@@ -42,7 +49,11 @@ public class OrderPresentationMapper {
                 orderInsertRequest.totalProducts(),
                 orderInsertRequest.totalPrice(),
                 orderInsertRequest.state(),
-                mapUser(orderInsertRequest.userId())
+                mapUser(orderInsertRequest.userId()),
+                null, // createdAt se genera automáticamente
+                null, // orderAt
+                orderInsertRequest.address(),
+                null  // orderItems se manejan separadamente
         );
     }
 
@@ -55,7 +66,11 @@ public class OrderPresentationMapper {
                 orderUpdateRequest.totalProducts(),
                 orderUpdateRequest.totalPrice(),
                 orderUpdateRequest.state(),
-                mapUser(orderUpdateRequest.userId())
+                mapUser(orderUpdateRequest.userId()),
+                null, // createdAt no se actualiza
+                orderUpdateRequest.orderAt(),
+                orderUpdateRequest.address(),
+                null  // orderItems se manejan separadamente
         );
     }
 

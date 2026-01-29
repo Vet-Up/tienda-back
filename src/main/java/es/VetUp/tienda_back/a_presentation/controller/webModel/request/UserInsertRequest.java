@@ -16,7 +16,7 @@ public record UserInsertRequest(
         Integer phone,
         String country,
         String profilePicture,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         LocalDate birthdate
 ) {
 }

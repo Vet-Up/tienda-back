@@ -1,6 +1,5 @@
 package es.VetUp.tienda_back.c_persistence.dao.jpa;
 
-import es.VetUp.tienda_back.b_domain.model.Page;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.entity.ProductJpaEntity;
 
 import java.util.List;

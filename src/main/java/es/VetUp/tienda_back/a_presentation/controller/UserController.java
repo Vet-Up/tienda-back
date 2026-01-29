@@ -86,7 +86,7 @@ public class UserController {
     }
 
 
-    @RequireAdmin
+
     @PostMapping
     public ResponseEntity<UserDetailResponse> createUser(@RequestBody UserInsertRequest userInsertRequest) {
         UserDto userDto = UserPresentationMapper.getInstance().fromUserInsertRequestToUserDto(userInsertRequest);

@@ -18,6 +18,9 @@ public class ProductMapper {
     }
 
     public Product fromProductEntitytoProduct(ProductEntity productEntity) {
+        if (productEntity == null) {
+            return null;
+        }
         return new Product(
                 productEntity.productId(),
                 productEntity.name(),
@@ -34,6 +37,9 @@ public class ProductMapper {
     }
 
     public ProductEntity fromProducttoProductEntity(Product product) {
+        if (product == null) {
+            return null;
+        }
         return new ProductEntity(
                 product.getProductId(),
                 product.getName(),
@@ -43,11 +49,16 @@ public class ProductMapper {
                 product.getPictureProduct(),
                 product.getBrand(),
                 product.getCategoryId(),
-                product.getPrice(), 
+                product.getPrice(),
                 product.getStock());
     }
 
     public Product fromProductDtotoProduct(ProductDto productDto) {
+        if (productDto == null) {
+            return null;
+        }
+        Integer stockNullable = productDto.stock();
+        int stockVal = stockNullable != null ? stockNullable : 0;
         return new Product(
                 productDto.productId(),
                 productDto.name(),
@@ -64,6 +75,9 @@ public class ProductMapper {
     }
 
     public ProductDto fromProducttoProductDto(Product product) {
+        if (product == null) {
+            return null;
+        }
         return new ProductDto(
                 product.getProductId(),
                 product.getName(),
@@ -79,4 +93,8 @@ public class ProductMapper {
                 product.getReviewsCount()
         );
     }
+
+
+
+
 }

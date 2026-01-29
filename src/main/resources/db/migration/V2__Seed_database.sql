@@ -62,6 +62,37 @@ VALUES
         ('Admin Secundario', 'admin2', 'admin2@vetup.com', '$2a$12$lZH4UVftaZcZG/r/muz95.ka4ZsQ.onobUZeWtRIMKiSArCH/hUA2', 600111222, 'Calle Admin 2', NULL, '1988-08-15', 'España', 'ADMIN');
 
 -- =====================================
+--                CART
+-- =====================================
+INSERT INTO cart (total_products, total_price, user_id)
+VALUES
+    (3, 52.48, 2),  -- id_cart = 1 (Juan Pérez)
+    (2, 29.98, 3),  -- id_cart = 2 (María Gómez)
+    (0, 0.00, 4),   -- id_cart = 3 (Carlos López - carrito vacío)
+    (1, 22.50, 5);  -- id_cart = 4 (Ana Martínez)
+
+-- =====================================
+--             CART ITEM
+-- =====================================
+-- Para id_cart = 1 (Juan Pérez)
+INSERT INTO cart_item (quantity, id_cart, product_id)
+VALUES
+    (1, 1, 1),  -- Dog Premium Food
+    (2, 1, 3),  -- Chew Toy Bone
+    (1, 1, 6);  -- Pet Shampoo
+
+-- Para id_cart = 2 (María Gómez)
+INSERT INTO cart_item (quantity, id_cart, product_id)
+VALUES
+    (1, 2, 2),  -- Cat Tuna Pack
+    (1, 2, 4);  -- Cat Feather Wand
+
+-- Para id_cart = 4 (Ana Martínez)
+INSERT INTO cart_item (quantity, id_cart, product_id)
+VALUES
+    (1, 4, 8);  -- Senior Dog Chicken Mix
+
+-- =====================================
 --               ORDERS
 -- =====================================
 -- Insertando primero los pedidos para que existan los id_order

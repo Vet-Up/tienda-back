@@ -19,6 +19,7 @@ import java.util.List;
 @RequestMapping("/api/products")
 @CrossOrigin(origins = "*")
 public class ProductController {
+
     private final ProductService productService;
 
     public ProductController(ProductService productService) {
@@ -51,6 +52,7 @@ public class ProductController {
         return new ResponseEntity<>(productDetailResponse, HttpStatus.OK);
     }
 
+
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<ProductSummaryResponse>> getProductsByCategory(@PathVariable int categoryId,
             @RequestParam(required = false, defaultValue = "1") int page,
@@ -61,6 +63,7 @@ public class ProductController {
                 .toList();
         return new ResponseEntity<>(productSummaries, HttpStatus.OK);
     }
+
 
     @GetMapping("/brand/{brand}")
     public ResponseEntity<List<ProductSummaryResponse>> getProductsByBrand(@PathVariable String brand,

@@ -19,18 +19,32 @@ public class OrderJpaDaoImpl implements OrderJpaDao {
 
     @Override
     public List<OrderJpaEntity> getAllOrders() {
-        return entityManager.createQuery("SELECT o FROM OrderJpaEntity o", OrderJpaEntity.class)
+        return entityManager.createQuery(
+                "SELECT DISTINCT o FROM OrderJpaEntity o LEFT JOIN FETCH o.orderItems",
+                OrderJpaEntity.class)
                 .getResultList();
     }
 
     @Override
     public Optional<OrderJpaEntity> getOrderById(Long id) {
-        return Optional.ofNullable(entityManager.find(OrderJpaEntity.class, id));
+        String jpql = "SELECT o FROM OrderJpaEntity o LEFT JOIN FETCH o.orderItems WHERE o.id = :id";
+        List<OrderJpaEntity> results = entityManager.createQuery(jpql, OrderJpaEntity.class)
+                .setParameter("id", id)
+                .getResultList();
+        return results.isEmpty() ? Optional.empty() : Optional.of(results.get(0));
+    }
+
+    @Override
+    public List<OrderJpaEntity> getOrdersByUserId(Long userId) {
+        String jpql = "SELECT DISTINCT o FROM OrderJpaEntity o LEFT JOIN FETCH o.orderItems WHERE o.user.id = :userId ORDER BY COALESCE(o.orderAt, o.createdAt) DESC";
+        return entityManager.createQuery(jpql, OrderJpaEntity.class)
+                .setParameter("userId", userId)
+                .getResultList();
     }
 
     @Override
     public Optional<OrderJpaEntity> findCartByUserId(Long userId) {
-        String jpql = "SELECT o FROM OrderJpaEntity o WHERE o.user.id = :userId AND o.status = :state";
+        String jpql = "SELECT o FROM OrderJpaEntity o LEFT JOIN FETCH o.orderItems WHERE o.user.id = :userId AND o.status = :state";
         return entityManager.createQuery(jpql, OrderJpaEntity.class)
                 .setParameter("userId", userId)
                 .setParameter("state", OrderState.CART)

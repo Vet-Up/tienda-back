@@ -61,18 +61,48 @@ CREATE TABLE product_images (
 );
 
 -- =====================================
+--                CART
+-- =====================================
+CREATE TABLE cart (
+                      id_cart BIGINT AUTO_INCREMENT PRIMARY KEY,
+                      total_products INT DEFAULT 0,
+                      total_price DECIMAL(10,2) DEFAULT 0,
+                      user_id BIGINT NULL,
+                      FOREIGN KEY (user_id)
+                          REFERENCES users(id)
+                          ON DELETE CASCADE
+);
+
+-- =====================================
+--           CART ITEM
+-- =====================================
+CREATE TABLE cart_item (
+                           id_cart_item BIGINT AUTO_INCREMENT PRIMARY KEY,
+                           quantity INT NOT NULL,
+                           id_cart BIGINT NOT NULL,
+                           product_id BIGINT NOT NULL,
+                           FOREIGN KEY (id_cart)
+                               REFERENCES cart(id_cart) ON DELETE CASCADE,
+                           FOREIGN KEY (product_id)
+                               REFERENCES products(product_id) ON DELETE CASCADE
+);
+
+-- =====================================
 --                ORDER
 -- =====================================
-CREATE TABLE orders (
-    id_order BIGINT AUTO_INCREMENT PRIMARY KEY,
-    total_products INT DEFAULT 0,
-    total_price DECIMAL(10,2) DEFAULT 0,
-    user_id BIGINT NULL,
-    state ENUM('CART','ORDER') DEFAULT 'CART',
 
-    FOREIGN KEY (user_id)
-        REFERENCES users(id)
-        ON DELETE SET NULL
+CREATE TABLE orders (
+                        id_order BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        total_products INT DEFAULT 0,
+                        total_price DECIMAL(10,2) DEFAULT 0,
+                        user_id BIGINT NULL,
+                        state ENUM('CART','ORDER') DEFAULT 'CART',
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        order_at TIMESTAMP NULL,
+                        address VARCHAR(255),
+                        FOREIGN KEY (user_id)
+                            REFERENCES users(id)
+                            ON DELETE SET NULL
 );
 
 -- =====================================

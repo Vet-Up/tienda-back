@@ -26,5 +26,4 @@ public interface ReviewService {
 
     List<ReviewDto> getAllReviews();
 
-
 }

@@ -26,6 +26,11 @@ public class OrderRepositoryImpl implements OrderRepository {
     }
 
     @Override
+    public List<OrderEntity> getOrdersByUserId(Long userId) {
+        return orderJpaDao.getOrdersByUserId(userId).stream().map(OrderPersistenceMapper.getInstance()::fromOrderJpaEntityToOrderEntity).toList();
+    }
+
+    @Override
     public Optional<OrderEntity> findCartByUserId(Long userId) {
         return orderJpaDao.findCartByUserId(userId).map(OrderPersistenceMapper.getInstance()::fromOrderJpaEntityToOrderEntity);
     }

@@ -39,6 +39,7 @@ public class JwtFilter implements Filter {
 
         if ("OPTIONS".equalsIgnoreCase(method)
                 || path.startsWith("/api/auth")
+                || (path.startsWith("/api/users") && "POST".equalsIgnoreCase(method))
                 || (path.startsWith("/api/products") && "GET".equalsIgnoreCase(method))
                 || (path.startsWith("/api/categories") && "GET".equalsIgnoreCase(method))
                 || (path.startsWith("/api/reviews") && ("GET".equalsIgnoreCase(method) || "PUT".equalsIgnoreCase(method)))) {

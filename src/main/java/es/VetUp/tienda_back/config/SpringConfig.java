@@ -4,26 +4,39 @@ import es.VetUp.tienda_back.b_domain.repository.CategoryRepository;
 import es.VetUp.tienda_back.b_domain.repository.ProductRepository;
 import es.VetUp.tienda_back.b_domain.repository.ReviewRepository;
 import es.VetUp.tienda_back.b_domain.repository.OrderRepository;
+import es.VetUp.tienda_back.b_domain.repository.OrderItemRepository;
 import es.VetUp.tienda_back.b_domain.repository.UserRepository;
+import es.VetUp.tienda_back.b_domain.repository.CartRepository;
+import es.VetUp.tienda_back.b_domain.repository.CartItemRepository;
 import es.VetUp.tienda_back.b_domain.service.JwtService;
 import es.VetUp.tienda_back.b_domain.service.impl.*;
 import es.VetUp.tienda_back.b_domain.service.OrderService;
 import es.VetUp.tienda_back.b_domain.service.UserService;
+import es.VetUp.tienda_back.b_domain.service.CartService;
+import es.VetUp.tienda_back.b_domain.service.CartItemService;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.CategoryJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.ProductJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.ReviewJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.OrderJpaDao;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.OrderItemJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.UserJpaDao;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.CartJpaDao;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.CartItemJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.CategoryJpaDaoImpl;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.ProductJpaDaoImpl;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.ReviewJpaDaoImpl;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.OrderJpaDaoImpl;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.UserJpaDaoImpl;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.CartJpaDaoImpl;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.CartItemJpaDaoImpl;
 import es.VetUp.tienda_back.c_persistence.repository.CategoryRepositoryImpl;
 import es.VetUp.tienda_back.c_persistence.repository.ProductRepositoryImpl;
 import es.VetUp.tienda_back.c_persistence.repository.ReviewRepositoryImpl;
 import es.VetUp.tienda_back.c_persistence.repository.OrderRepositoryImpl;
+import es.VetUp.tienda_back.c_persistence.repository.OrderItemRepositoryImpl;
 import es.VetUp.tienda_back.c_persistence.repository.UserRepositoryImpl;
+import es.VetUp.tienda_back.c_persistence.repository.CartRepositoryImpl;
+import es.VetUp.tienda_back.c_persistence.repository.CartItemRepositoryImpl;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +53,7 @@ public class SpringConfig {
     public JwtService jwtService(UserService userService) {
         return new JwtServiceImpl(userService);
     }
+
 
     @Bean
     public UserJpaDao userJpaDao() {
@@ -68,8 +82,11 @@ public class SpringConfig {
     }
 
     @Bean
-    public OrderService orderService(OrderRepository orderRepository) {
-        return new OrderServiceImpl(orderRepository);
+    public OrderService orderService(OrderRepository orderRepository, CartRepository cartRepository,
+                                    CartItemRepository cartItemRepository, OrderItemRepository orderItemRepository,
+                                    UserRepository userRepository) {
+        return new OrderServiceImpl(orderRepository, cartRepository, cartItemRepository,
+                                   orderItemRepository, userRepository);
     }
 
     @Bean
@@ -120,5 +137,41 @@ public class SpringConfig {
     public ReviewServiceImpl reviewService(
             ReviewRepository reviewRepository) {
         return new ReviewServiceImpl(reviewRepository);
+    }
+
+    @Bean
+    public CartJpaDao cartJpaDao() {
+        return new CartJpaDaoImpl();
+    }
+
+    @Bean
+    public CartRepository cartRepository(CartJpaDao cartJpaDao) {
+        return new CartRepositoryImpl(cartJpaDao);
+    }
+
+    @Bean
+    public CartService cartService(CartRepository cartRepository, CartItemRepository cartItemRepository,
+                                   ProductRepository productRepository, UserRepository userRepository) {
+        return new CartServiceImpl(cartRepository, cartItemRepository, productRepository, userRepository);
+    }
+
+    @Bean
+    public CartItemJpaDao cartItemJpaDao() {
+        return new CartItemJpaDaoImpl();
+    }
+
+    @Bean
+    public CartItemRepository cartItemRepository(CartItemJpaDao cartItemJpaDao) {
+        return new CartItemRepositoryImpl(cartItemJpaDao);
+    }
+
+    @Bean
+    public CartItemService cartItemService(CartItemRepository cartItemRepository, CartRepository cartRepository, ProductRepository productRepository) {
+        return new CartItemServiceImpl(cartItemRepository, cartRepository, productRepository);
+    }
+
+    @Bean
+    public OrderItemRepository orderItemRepository(OrderItemJpaDao orderItemJpaDao) {
+        return new OrderItemRepositoryImpl(orderItemJpaDao);
     }
 }

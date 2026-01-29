@@ -16,7 +16,7 @@ public record UserDetailResponse(
         Number phone,
         String country,
         String profilePicture,
-        @JsonFormat(pattern = "dd-MM-yyyy")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         LocalDate birthdate
 ) {
 }
