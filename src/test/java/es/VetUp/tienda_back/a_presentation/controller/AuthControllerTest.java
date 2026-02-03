@@ -20,11 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -130,13 +126,11 @@ class AuthControllerTest {
 
             String requestJson = objectMapper.writeValueAsString(loginRequest);
 
-            Exception exception = assertThrows(Exception.class, () ->
-                    mockMvc.perform(post("/api/auth/login/CUSTOMER")
+            mockMvc.perform(post("/api/auth/login/CUSTOMER")
                             .contentType("application/json")
-                            .content(requestJson)));
-
-            assertNotNull(exception);
-            assertTrue(exception.getCause().getMessage().contains("Invalid username or password"));
+                            .content(requestJson))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.details").value("Invalid username or password"));
         }
 
         @Test
@@ -149,13 +143,11 @@ class AuthControllerTest {
 
             String requestJson = objectMapper.writeValueAsString(loginRequest);
 
-            Exception exception = assertThrows(Exception.class, () ->
-                    mockMvc.perform(post("/api/auth/login/ADMIN")
+            mockMvc.perform(post("/api/auth/login/ADMIN")
                             .contentType("application/json")
-                            .content(requestJson)));
-
-            assertNotNull(exception);
-            assertTrue(exception.getCause().getMessage().contains("User is not an admin"));
+                            .content(requestJson))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.details").value("User is not an admin"));
         }
     }
 
@@ -176,18 +168,14 @@ class AuthControllerTest {
         }
 
         @Test
-        @DisplayName("GET /api/auth/validate - Invalid Token")
+        @DisplayName("GET /api/auth/validate - Invalid")
         void testValidateTokenInvalid() throws Exception {
             when(jwtService.getUserFromToken("invalid.token")).thenThrow(new RuntimeException("Invalid token"));
 
-            Exception exception = assertThrows(Exception.class, () ->
-                    mockMvc.perform(get("/api/auth/validate")
-                            .header("Authorization", "Bearer invalid.token")));
-
-            assertNotNull(exception);
-            Throwable cause = exception.getCause();
-            assertNotNull(cause);
-            assertTrue(cause.getMessage().contains("Invalid token"));
+            mockMvc.perform(get("/api/auth/validate")
+                            .header("Authorization", "Bearer invalid.token"))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.details").value("Invalid token"));
         }
     }
 }

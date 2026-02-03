@@ -3,6 +3,8 @@ package es.VetUp.tienda_back.c_persistence.repository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.stereotype.Repository;
+
 import es.VetUp.tienda_back.b_domain.repository.ReviewRepository;
 import es.VetUp.tienda_back.b_domain.repository.entity.ReviewEntity;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.ReviewJpaDao;
@@ -13,6 +15,7 @@ import es.VetUp.tienda_back.c_persistence.dao.jpa.entity.ReviewJpaEntity;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.entity.UserJpaEntity;
 import es.VetUp.tienda_back.c_persistence.repository.mapper.ReviewPersistenceMapper;
 
+@Repository
 public class ReviewRepositoryImpl implements ReviewRepository {
 
     private final ReviewJpaDao reviewJpaDao;
@@ -33,8 +36,14 @@ public class ReviewRepositoryImpl implements ReviewRepository {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         ReviewJpaEntity reviewJpaEntity = ReviewPersistenceMapper.getInstance()
                 .fromReviewEntityToReviewJpaEntity(review, product, user);
-        ReviewJpaEntity savedEntity = reviewJpaDao.insert(reviewJpaEntity);
-        return ReviewPersistenceMapper.getInstance().fromReviewJpaEntityToReviewEntity(savedEntity);
+
+        if (review.reviewId() == null) {
+            ReviewJpaEntity savedEntity = reviewJpaDao.insert(reviewJpaEntity);
+            return ReviewPersistenceMapper.getInstance().fromReviewJpaEntityToReviewEntity(savedEntity);
+        }
+
+        ReviewJpaEntity updatedEntity = reviewJpaDao.update(reviewJpaEntity);
+        return ReviewPersistenceMapper.getInstance().fromReviewJpaEntityToReviewEntity(updatedEntity);
     }
 
     @Override

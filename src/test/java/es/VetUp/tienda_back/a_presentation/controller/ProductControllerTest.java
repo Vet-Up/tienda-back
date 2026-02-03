@@ -45,24 +45,28 @@ class ProductControllerTest {
                                 "Producto 1",
                                 "Descripción producto 1",
                                 new BigDecimal("19.99"),
-                                new BigDecimal("15.99"),
+                                new BigDecimal("5.00"),
                                 new BigDecimal("15.99"),
                                 "imagen1.jpg",
                                 "Marca1",
                                 1L,
-                                100);
+                                100,
+                                null,
+                                null);
 
                 productDto2 = new ProductDto(
                                 2L,
                                 "Producto 2",
                                 "Descripción producto 2",
                                 new BigDecimal("29.99"),
-                                new BigDecimal("25.99"),
+                                new BigDecimal("5.00"),
                                 new BigDecimal("25.99"),
                                 "imagen2.jpg",
                                 "Marca2",
                                 2L,
-                                100);
+                                100,
+                                null,
+                                null);
         }
 
         @Test
@@ -98,11 +102,12 @@ class ProductControllerTest {
                                 .andExpect(jsonPath("$.name").value("Producto 1"))
                                 .andExpect(jsonPath("$.productDescription").value("Descripción producto 1"))
                                 .andExpect(jsonPath("$.basePrice").value(19.99))
-                                .andExpect(jsonPath("$.discountedPrice").value(15.99))
+                                .andExpect(jsonPath("$.discount").value(5.00))
                                 .andExpect(jsonPath("$.price").value(15.99))
                                 .andExpect(jsonPath("$.pictureProduct").value("imagen1.jpg"))
                                 .andExpect(jsonPath("$.brand").value("Marca1"))
-                                .andExpect(jsonPath("$.categoryId").value(1));
+                                .andExpect(jsonPath("$.categoryId").value(1))
+                                .andExpect(jsonPath("$.stock").value(100));
         }
 
         @Test
@@ -134,41 +139,32 @@ class ProductControllerTest {
         @Test
         @DisplayName("POST /api/products - Success")
         void testCreateProductSuccess() throws Exception {
-                ProductDto newProductDto = new ProductDto(
-                                null,
-                                "Producto 3",
-                                "Descripción producto 3",
-                                new BigDecimal("39.99"),
-                                new BigDecimal("35.99"),
-                                new BigDecimal("35.99"),
-                                "imagen3.jpg",
-                                "Marca3",
-                                3L,
-                                50);
-
                 ProductDto createdProductDto = new ProductDto(
                                 3L,
                                 "Producto 3",
                                 "Descripción producto 3",
                                 new BigDecimal("39.99"),
-                                new BigDecimal("35.99"),
+                                new BigDecimal("5.00"),
                                 new BigDecimal("35.99"),
                                 "imagen3.jpg",
                                 "Marca3",
                                 3L,
-                                50);
+                                50,
+                                null,
+                                null);
 
                 when(productService.createProduct(any(ProductDto.class))).thenReturn(createdProductDto);
 
                 String productInsertRequestJson = """
                                 {
-                                    \"name\": \"Producto 3\",
-                                    \"productDescription\": \"Descripción producto 3\",
-                                    \"basePrice\": 39.99,
-                                    \"discountedPrice\": 35.99,
-                                    \"pictureProduct\": \"imagen3.jpg\",
-                                    \"brand\": \"Marca3\",
-                                    \"categoryId\": 3
+                                    "name": "Producto 3",
+                                    "productDescription": "Descripción producto 3",
+                                    "basePrice": 39.99,
+                                    "discount": 5.00,
+                                    "pictureProduct": "imagen3.jpg",
+                                    "brand": "Marca3",
+                                    "categoryId": 3,
+                                    "stock": 50
                                 }
                                 """;
 
@@ -188,25 +184,28 @@ class ProductControllerTest {
                                 "Producto 1 Actualizado",
                                 "Descripción producto 1 actualizada",
                                 new BigDecimal("21.99"),
-                                new BigDecimal("17.99"),
+                                new BigDecimal("5.00"),
                                 new BigDecimal("17.99"),
                                 "imagen1_updated.jpg",
                                 "Marca1",
                                 1L,
-                                100);
+                                100,
+                                null,
+                                null);
 
                 when(productService.updateProduct(eq(1L), any(ProductDto.class))).thenReturn(updatedProductDto);
 
                 String productUpdateRequestJson = """
                                 {
-                                    \"productId\": 1,
-                                    \"name\": \"Producto 1 Actualizado\",
-                                    \"productDescription\": \"Descripción producto 1 actualizada\",
-                                    \"basePrice\": 21.99,
-                                    \"discountedPrice\": 17.99,
-                                    \"pictureProduct\": \"imagen1_updated.jpg\",
-                                    \"brand\": \"Marca1\",
-                                    \"categoryId\": 1
+                                    "productId": 1,
+                                    "name": "Producto 1 Actualizado",
+                                    "productDescription": "Descripción producto 1 actualizada",
+                                    "basePrice": 21.99,
+                                    "discount": 5.00,
+                                    "pictureProduct": "imagen1_updated.jpg",
+                                    "brand": "Marca1",
+                                    "categoryId": 1,
+                                    "stock": 100
                                 }
                                 """;
 

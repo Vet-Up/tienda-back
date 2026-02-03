@@ -23,9 +23,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -131,13 +128,9 @@ class UserControllerTest {
         void testGetUserByIdNotFound() throws Exception {
             when(userService.getUserById(99L)).thenReturn(Optional.empty());
 
-            Exception exception = assertThrows(Exception.class, () ->
-                    mockMvc.perform(get("/api/users/{id}", 99L)));
-
-            assertNotNull(exception);
-            Throwable cause = exception.getCause();
-            assertNotNull(cause);
-            assertTrue(cause.getMessage().contains("User not found"));
+            mockMvc.perform(get("/api/users/{id}", 99L))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.details").value("User not found"));
         }
     }
 
@@ -160,11 +153,10 @@ class UserControllerTest {
         void testGetUserByEmailNotFound() throws Exception {
             when(userService.getUserByEmail("notfound@example.com")).thenReturn(Optional.empty());
 
-            Exception exception = assertThrows(Exception.class, () ->
-                    mockMvc.perform(get("/api/users/by-email")
-                            .param("email", "notfound@example.com")));
-
-            assertTrue(exception.getCause().getMessage().contains("User not found"));
+            mockMvc.perform(get("/api/users/by-email")
+                            .param("email", "notfound@example.com"))
+                    .andExpect(status().isInternalServerError())
+                    .andExpect(jsonPath("$.details").value("User not found"));
         }
     }
 
@@ -268,12 +260,11 @@ class UserControllerTest {
 
         String updateRequestJson = objectMapper.writeValueAsString(updateRequest);
 
-        Exception exception = assertThrows(Exception.class, () ->
-                mockMvc.perform(put("/api/users/{id}", 1L)
+        mockMvc.perform(put("/api/users/{id}", 1L)
                         .contentType("application/json")
-                        .content(updateRequestJson)));
-
-        assertTrue(exception.getCause().getMessage().contains("ID in path and request body must match"));
+                        .content(updateRequestJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("ID in path and request body must match"));
     }
 
     @Test

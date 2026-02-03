@@ -5,6 +5,7 @@ import es.VetUp.tienda_back.b_domain.model.Page;
 import es.VetUp.tienda_back.b_domain.repository.ProductRepository;
 import es.VetUp.tienda_back.b_domain.repository.entity.ProductEntity;
 import es.VetUp.tienda_back.b_domain.service.dto.ProductDto;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,8 +29,18 @@ class ProductServiceImplTest {
         @Mock
         private ProductRepository productRepository;
 
+        @Mock
+        private es.VetUp.tienda_back.b_domain.repository.ReviewRepository reviewRepository;
+
         @InjectMocks
         private ProductServiceImpl productServiceImpl;
+
+        @BeforeEach
+        void setUp() {
+                // Configurar comportamiento por defecto del reviewRepository
+                lenient().when(reviewRepository.averageRatingByProductId(anyLong())).thenReturn(0.0);
+                lenient().when(reviewRepository.countByProductId(anyLong())).thenReturn(0L);
+        }
 
         @Nested
         class GetAllTests {
@@ -43,11 +56,11 @@ class ProductServiceImplTest {
                                         "Dog Food",
                                         "High quality dog food",
                                         new java.math.BigDecimal("29.99"),
-                                        new java.math.BigDecimal("24.99"),
+                                        new java.math.BigDecimal("5.00"),
                                         "dog_food.jpg",
                                         "PetBrand",
                                         2L,
-                                        new java.math.BigDecimal("24.99"), 
+                                        new java.math.BigDecimal("28.49"),
                                         100);
 
                         ProductEntity product2 = new ProductEntity(
@@ -55,11 +68,11 @@ class ProductServiceImplTest {
                                         "Cat Food",
                                         "Premium cat food",
                                         new java.math.BigDecimal("19.99"),
-                                        new java.math.BigDecimal("15.99"),
+                                        new java.math.BigDecimal("4.00"),
                                         "cat_food.jpg",
                                         "CatBrand",
                                         3L,
-                                        new java.math.BigDecimal("15.99"), 
+                                        new java.math.BigDecimal("19.19"),
                                         100);
 
                         List<ProductEntity> productEntities = List.of(product1, product2);
@@ -91,11 +104,11 @@ class ProductServiceImplTest {
                                         "Product 1",
                                         "Description 1",
                                         new java.math.BigDecimal("10.00"),
-                                        new java.math.BigDecimal("8.00"),
+                                        new java.math.BigDecimal("2.00"),
                                         "pic1.jpg",
                                         "Brand1",
                                         1L,
-                                        new java.math.BigDecimal("8.00"), 
+                                        new java.math.BigDecimal("9.80"),
                                         100);
 
                         List<ProductEntity> productEntities = List.of(product1);
@@ -161,21 +174,23 @@ class ProductServiceImplTest {
                                         "Dog Food",
                                         "High quality dog food",
                                         new java.math.BigDecimal("29.99"),
-                                        new java.math.BigDecimal("24.99"),
+                                        new java.math.BigDecimal("5.00"),
                                         "dog_food.jpg",
                                         "PetBrand",
                                         2L,
-                                        new java.math.BigDecimal("24.99"),
+                                        new java.math.BigDecimal("28.49"),
                                         100);
 
-                        ProductDto expected = ProductMapper.getInstance()
-                                        .fromProducttoProductDto(ProductMapper.getInstance()
-                                                        .fromProductEntitytoProduct(productEntity));
                         when(productRepository.findProductById(productId)).thenReturn(Optional.of(productEntity));
 
                         ProductDto result = productServiceImpl.getProductById(productId);
 
-                        assertEquals(expected, result);
+                        assertAll("result",
+                                () -> assertNotNull(result),
+                                () -> assertEquals(productId, result.productId()),
+                                () -> assertEquals("Dog Food", result.name()),
+                                () -> assertEquals(0.0, result.averageRating()),
+                                () -> assertEquals(0, result.reviewsCount()));
 
                 }
 
@@ -203,19 +218,23 @@ class ProductServiceImplTest {
                                         "Dog Food",
                                         "High quality dog food",
                                         new java.math.BigDecimal("29.99"),
-                                        new java.math.BigDecimal("24.99"),
+                                        new java.math.BigDecimal("5.00"),
                                         "dog_food.jpg",
                                         "PetBrand",
                                         2L,
-                                        new java.math.BigDecimal("24.99"), 
+                                        new java.math.BigDecimal("28.49"),
                                         100);
-                        ProductDto expected = ProductMapper.getInstance()
-                                        .fromProducttoProductDto(ProductMapper.getInstance()
-                                                        .fromProductEntitytoProduct(productEntity));
+
                         when(productRepository.findProductById(productId)).thenReturn(Optional.of(productEntity));
+
                         Optional<ProductDto> result = productServiceImpl.findProductById(productId);
-                        assertTrue(result.isPresent());
-                        assertEquals(expected, result.get());
+
+                        assertAll("result",
+                                () -> assertTrue(result.isPresent()),
+                                () -> assertEquals(productId, result.get().productId()),
+                                () -> assertEquals("Dog Food", result.get().name()),
+                                () -> assertEquals(0.0, result.get().averageRating()),
+                                () -> assertEquals(0, result.get().reviewsCount()));
                 }
 
                 @Test
@@ -243,22 +262,22 @@ class ProductServiceImplTest {
                                         "Dog Food",
                                         "High quality dog food",
                                         new java.math.BigDecimal("29.99"),
-                                        new java.math.BigDecimal("24.99"),
+                                        new java.math.BigDecimal("5.00"),
                                         "dog_food.jpg",
                                         "PetBrand",
                                         2L,
-                                        new java.math.BigDecimal("24.99"), 
+                                        new java.math.BigDecimal("28.49"),
                                         100);
                         ProductEntity product2 = new ProductEntity(
                                         2L,
                                         "Dog Toy",
                                         "Fun dog toy",
                                         new java.math.BigDecimal("9.99"),
-                                        new java.math.BigDecimal("7.99"),
+                                        new java.math.BigDecimal("2.00"),
                                         "dog_toy.jpg",
                                         "ToyBrand",
                                         2L,
-                                        new java.math.BigDecimal("7.99"), 
+                                        new java.math.BigDecimal("9.79"),
                                         100);
 
                         List<ProductEntity> productEntities = List.of(product1, product2);
@@ -304,11 +323,11 @@ class ProductServiceImplTest {
                                         "Dog Food",
                                         "High quality dog food",
                                         new java.math.BigDecimal("29.99"),
-                                        new java.math.BigDecimal("24.99"),
+                                        new java.math.BigDecimal("5.00"),
                                         "dog_food.jpg",
                                         "PetBrand",
                                         2L,
-                                        new java.math.BigDecimal("24.99"), 
+                                        new java.math.BigDecimal("28.49"),
                                         100);
 
                         List<ProductEntity> productEntities = List.of(product1);
@@ -347,12 +366,14 @@ class ProductServiceImplTest {
                                         "Dog Food",
                                         "High quality dog food",
                                         new java.math.BigDecimal("29.99"),
-                                        new java.math.BigDecimal("24.99"),
+                                        new java.math.BigDecimal("5.00"),
                                         null,
                                         "dog_food.jpg",
                                         "PetBrand",
                                         2L,
-                                        100);
+                                        100,
+                                        null,
+                                        null);
 
                         ProductEntity productEntityToCreate = ProductMapper.getInstance()
                                         .fromProducttoProductEntity(
@@ -364,11 +385,11 @@ class ProductServiceImplTest {
                                         "Dog Food",
                                         "High quality dog food",
                                         new java.math.BigDecimal("29.99"),
-                                        new java.math.BigDecimal("24.99"),
+                                        new java.math.BigDecimal("5.00"),
                                         "dog_food.jpg",
                                         "PetBrand",
                                         2L,
-                                        new java.math.BigDecimal("24.99"), 
+                                        new java.math.BigDecimal("28.49"),
                                         100);
 
                         when(productRepository.saveProduct(productEntityToCreate)).thenReturn(createdProductEntity);
@@ -402,23 +423,25 @@ class ProductServiceImplTest {
                                         "Updated Dog Food",
                                         "Updated description",
                                         new java.math.BigDecimal("31.99"),
-                                        new java.math.BigDecimal("26.99"),
+                                        new java.math.BigDecimal("5.00"),
                                         null,
                                         "updated_dog_food.jpg",
                                         "PetBrand",
                                         2L,
-                                        100);
+                                        100,
+                                        null,
+                                        null);
 
                         ProductEntity existingProductEntity = new ProductEntity(
                                         productIdToUpdate,
                                         "Dog Food",
                                         "High quality dog food",
                                         new java.math.BigDecimal("29.99"),
-                                        new java.math.BigDecimal("24.99"),
+                                        new java.math.BigDecimal("5.00"),
                                         "dog_food.jpg",
                                         "PetBrand",
                                         2L,
-                                        new java.math.BigDecimal("24.99"), 
+                                        new java.math.BigDecimal("28.49"),
                                         100);
 
                         ProductEntity productEntityToUpdate = ProductMapper.getInstance()
@@ -431,11 +454,11 @@ class ProductServiceImplTest {
                                         "Updated Dog Food",
                                         "Updated description",
                                         new java.math.BigDecimal("31.99"),
-                                        new java.math.BigDecimal("26.99"),
+                                        new java.math.BigDecimal("5.00"),
                                         "updated_dog_food.jpg",
                                         "PetBrand",
                                         2L,
-                                        new java.math.BigDecimal("26.99"), 
+                                        new java.math.BigDecimal("30.39"),
                                         100);
 
                         when(productRepository.findProductById(productIdToUpdate))
@@ -461,12 +484,14 @@ class ProductServiceImplTest {
                                         "Updated Dog Food",
                                         "Updated description",
                                         new java.math.BigDecimal("31.99"),
-                                        new java.math.BigDecimal("26.99"),
+                                        new java.math.BigDecimal("5.00"),
                                         null,
                                         "updated_dog_food.jpg",
                                         "PetBrand",
                                         2L,
-                                        100);
+                                        100,
+                                        null,
+                                        null);
 
                         when(productRepository.findProductById(productIdToUpdate)).thenReturn(Optional.empty());
 
@@ -490,11 +515,11 @@ class ProductServiceImplTest {
                                         "Dog Food",
                                         "High quality dog food",
                                         new java.math.BigDecimal("29.99"),
-                                        new java.math.BigDecimal("24.99"),
+                                        new java.math.BigDecimal("5.00"),
                                         "dog_food.jpg",
                                         "PetBrand",
                                         2L,
-                                        new java.math.BigDecimal("24.99"), 
+                                        new java.math.BigDecimal("28.49"),
                                         100);
 
                         when(productRepository.findProductById(productIdToDelete))

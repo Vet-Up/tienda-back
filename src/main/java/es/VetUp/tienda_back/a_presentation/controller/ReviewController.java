@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.math.BigDecimal;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -30,14 +29,20 @@ public class ReviewController {
         ReviewDto dto = ReviewPresentationMapper.getInstance().fromInsertRequestToDto(request);
         ReviewDetailResponse response = ReviewPresentationMapper.getInstance()
                 .fromDtoToDetailResponse(reviewService.saveReview(dto));
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(201).body(response);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ReviewDetailResponse> updateReview(
             @PathVariable Long id,
             @RequestBody ReviewUpdateRequest request) {
         ReviewDto dto = ReviewPresentationMapper.getInstance().fromUpdateRequestToDto(request);
+
+        // Validar que el ID del path coincida con el ID del body
+        if (dto != null && dto.reviewId() != null && !dto.reviewId().equals(id)) {
+            throw new IllegalArgumentException("ID in path and request body must match");
+        }
+
         dto = reviewService.saveReview(dto);
         ReviewDetailResponse response = ReviewPresentationMapper.getInstance()
                 .fromDtoToDetailResponse(dto);
@@ -55,13 +60,12 @@ public class ReviewController {
     @GetMapping("/product/{productId}")
     public ResponseEntity<Page<ReviewSummaryResponse>> getReviewsByProduct(
             @PathVariable Long productId,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "4") int size) {
-        if (page < 1) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        if (page < 0 || size < 1) {
             return ResponseEntity.badRequest().build();
         }
-        int realPage = page - 1;
-        List<ReviewDto> reviewDtos = reviewService.getReviewsByProductId(productId, realPage, size);
+        List<ReviewDto> reviewDtos = reviewService.getReviewsByProductId(productId, page, size);
         List<ReviewSummaryResponse> responses = reviewDtos.stream()
                 .map(ReviewPresentationMapper.getInstance()::fromDtoToSummaryResponse)
                 .collect(Collectors.toList());
@@ -74,13 +78,12 @@ public class ReviewController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<Page<ReviewSummaryResponse>> getReviewsByUser(
             @PathVariable Long userId,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "4") int size) {
-        if (page < 1) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        if (page < 0 || size < 1) {
             return ResponseEntity.badRequest().build();
         }
-        int realPage = page - 1;
-        List<ReviewDto> reviewDtos = reviewService.getReviewsByUserId(userId, realPage, size);
+        List<ReviewDto> reviewDtos = reviewService.getReviewsByUserId(userId, page, size);
         List<ReviewSummaryResponse> responses = reviewDtos.stream()
                 .map(ReviewPresentationMapper.getInstance()::fromDtoToSummaryResponse)
                 .collect(Collectors.toList());
@@ -105,6 +108,27 @@ public class ReviewController {
     public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
         reviewService.deleteReview(reviewId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ReviewSummaryResponse>> getAllReviews() {
+        List<ReviewDto> reviewDtos = reviewService.getAllReviews();
+        List<ReviewSummaryResponse> responses = reviewDtos.stream()
+                .map(ReviewPresentationMapper.getInstance()::fromDtoToSummaryResponse)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/product/{productId}/count")
+    public ResponseEntity<Long> getReviewCountByProductId(@PathVariable Long productId) {
+        long count = reviewService.countReviewsByProductId(productId);
+        return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("/user/{userId}/count")
+    public ResponseEntity<Long> getReviewCountByUserId(@PathVariable Long userId) {
+        long count = reviewService.countReviewsByUserId(userId);
+        return ResponseEntity.ok(count);
     }
 
 

@@ -1,16 +1,11 @@
 package es.VetUp.tienda_back.c_persistence;
 
+import es.VetUp.tienda_back.c_persistence.dao.jpa.*;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.*;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-
-import es.VetUp.tienda_back.c_persistence.dao.jpa.CategoryJpaDao;
-import es.VetUp.tienda_back.c_persistence.dao.jpa.ProductJpaDao;
-import es.VetUp.tienda_back.c_persistence.dao.jpa.UserJpaDao;
-import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.CategoryJpaDaoImpl;
-import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.ProductJpaDaoImpl;
-import es.VetUp.tienda_back.c_persistence.dao.jpa.impl.UserJpaDaoImpl;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "es.VetUp.tienda_back.c_persistence.dao.jpa")
@@ -31,5 +26,25 @@ public class TestConfig {
     public UserJpaDao userJpaDao() {
         return new UserJpaDaoImpl();
     }
-    
+
+    @Bean
+    public ReviewJpaDao reviewJpaDao() {
+        return new ReviewJpaDaoImpl();
+    }
+
+    @Bean
+    public CartJpaDao cartJpaDao() {
+        return new CartJpaDaoImpl();
+    }
+
+    @Bean
+    public CartItemJpaDao cartItemJpaDao() {
+        return new CartItemJpaDaoImpl();
+    }
+
+    @Bean
+    public OrderJpaDao orderJpaDao() {
+        return new OrderJpaDaoImpl();
+    }
+
 }

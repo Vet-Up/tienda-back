@@ -46,7 +46,8 @@ class ProductJpaDaoImplTest {
                                 new java.math.BigDecimal("15.99"),
                                 "imagen.jpg",
                                 "MarcaTest",
-                                category);
+                                category,
+                                10);
                 entityManager.persist(entity);
                 entityManager.flush();
 
@@ -72,7 +73,8 @@ class ProductJpaDaoImplTest {
                                 new java.math.BigDecimal("15.99"),
                                 "imagen.jpg",
                                 "MarcaTest",
-                                category);
+                                category,
+                                10);
                 entityManager.persist(entity);
                 entityManager.flush();
 
@@ -102,7 +104,8 @@ class ProductJpaDaoImplTest {
                                 new java.math.BigDecimal("15.99"),
                                 "imagen.jpg",
                                 "MarcaTest",
-                                category);
+                                category,
+                                10);
                 entityManager.persist(entity);
                 entityManager.flush();
 
@@ -131,7 +134,8 @@ class ProductJpaDaoImplTest {
                                 new java.math.BigDecimal("25.99"),
                                 "imagen_insert.jpg",
                                 "MarcaInsert",
-                                category);
+                                category,
+                                10);
 
                 // Act
                 ProductJpaEntity insertedEntity = productJpaDao.insert(entity);
@@ -157,7 +161,8 @@ class ProductJpaDaoImplTest {
                                 new java.math.BigDecimal("35.99"),
                                 "imagen_original.jpg",
                                 "MarcaOriginal",
-                                category);
+                                category,
+                                10);
                 entityManager.persist(entity);
                 entityManager.flush();
 
@@ -185,7 +190,8 @@ class ProductJpaDaoImplTest {
                                 new java.math.BigDecimal("45.99"),
                                 "imagen_eliminar.jpg",
                                 "MarcaEliminar",
-                                category);
+                                category,
+                                10);
                 entityManager.persist(entity);
                 entityManager.flush();
                 Long productId = entity.getProductId();
@@ -214,7 +220,8 @@ class ProductJpaDaoImplTest {
                                 new java.math.BigDecimal("55.99"),
                                 "imagen_buscar.jpg",
                                 "MarcaBuscar",
-                                category);
+                                category,
+                                10);
                 entityManager.persist(entity);
                 entityManager.flush();
                 Long productId = entity.getProductId();
