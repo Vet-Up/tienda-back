@@ -18,6 +18,7 @@ import es.VetUp.tienda_back.b_domain.service.dto.CartDto;
 import es.VetUp.tienda_back.b_domain.service.dto.UserDto;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -143,12 +144,13 @@ public class CartServiceImpl implements CartService {
         int totalProducts = allItems.stream().mapToInt(CartItemEntity::quantity).sum();
         BigDecimal totalPrice = allItems.stream()
                 .map(item -> {
-                    BigDecimal price = item.product().price() != null
+                    BigDecimal effectivePrice = (item.product().price() != null && item.product().price().compareTo(BigDecimal.ZERO) > 0)
                             ? item.product().price()
                             : item.product().basePrice();
-                    return price.multiply(BigDecimal.valueOf(item.quantity()));
+                    return effectivePrice.multiply(BigDecimal.valueOf(item.quantity()));
                 })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
 
         CartEntity updatedCart = new CartEntity(
                 cartEntity.id(),
