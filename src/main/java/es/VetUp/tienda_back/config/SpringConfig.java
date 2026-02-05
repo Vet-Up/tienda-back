@@ -135,8 +135,9 @@ public class SpringConfig {
 
     @Bean
     public ReviewServiceImpl reviewService(
-            ReviewRepository reviewRepository) {
-        return new ReviewServiceImpl(reviewRepository);
+            ReviewRepository reviewRepository,
+            OrderRepository orderRepository) {
+        return new ReviewServiceImpl(reviewRepository, orderRepository);
     }
 
     @Bean

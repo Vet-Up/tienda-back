@@ -13,4 +13,5 @@ public interface OrderService {
     OrderDto updateOrder(OrderDto orderDto);
     void deleteOrder(Long id);
     OrderDto checkout(Long userId, String address);
+    boolean hasUserPurchasedProduct(Long userId, Long productId);
 }

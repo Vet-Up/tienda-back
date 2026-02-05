@@ -163,4 +163,9 @@ public class OrderServiceImpl implements OrderService {
                 OrderMapper.getInstance().fromOrderEntityToOrder(finalOrder)
         );
     }
+
+    @Override
+    public boolean hasUserPurchasedProduct(Long userId, Long productId) {
+        return orderRepository.hasUserPurchasedProduct(userId, productId);
+    }
 }

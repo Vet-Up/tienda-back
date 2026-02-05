@@ -13,4 +13,5 @@ public interface OrderRepository {
     OrderEntity createOrder(OrderEntity orderEntity);
     OrderEntity updateOrder(OrderEntity orderEntity);
     void deleteOrder(Long id);
+    boolean hasUserPurchasedProduct(Long userId, Long productId);
 }

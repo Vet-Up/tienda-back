@@ -13,4 +13,5 @@ public interface OrderJpaDao {
     OrderJpaEntity createOrder(OrderJpaEntity orderJpaEntity);
     OrderJpaEntity updateOrder(OrderJpaEntity orderJpaEntity);
     void deleteOrder(Long id);
+    boolean hasUserPurchasedProduct(Long userId, Long productId);
 }
