@@ -14,6 +14,9 @@ import es.VetUp.tienda_back.b_domain.service.OrderService;
 import es.VetUp.tienda_back.b_domain.service.UserService;
 import es.VetUp.tienda_back.b_domain.service.CartService;
 import es.VetUp.tienda_back.b_domain.service.CartItemService;
+import es.VetUp.tienda_back.b_domain.service.PaymentService;
+import es.VetUp.tienda_back.infrastructure.PaymentGateway;
+import es.VetUp.tienda_back.infrastructure.impl.PaymentGatewayImpl;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.CategoryJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.ProductJpaDao;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.ReviewJpaDao;
@@ -38,16 +41,21 @@ import es.VetUp.tienda_back.c_persistence.repository.UserRepositoryImpl;
 import es.VetUp.tienda_back.c_persistence.repository.CartRepositoryImpl;
 import es.VetUp.tienda_back.c_persistence.repository.CartItemRepositoryImpl;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableJpaRepositories(basePackages = "es.VetUp.tienda_back.c_persistence.dao.jpa")
 @EntityScan(basePackages = "es.VetUp.tienda_back.c_persistence.dao.jpa.entity")
 public class SpringConfig {
+
+    @Value("${bank.api.url}")
+    private String bankApiUrl;
 
     @Bean
     public JwtService jwtService(UserService userService) {
@@ -174,5 +182,15 @@ public class SpringConfig {
     @Bean
     public OrderItemRepository orderItemRepository(OrderItemJpaDao orderItemJpaDao) {
         return new OrderItemRepositoryImpl(orderItemJpaDao);
+    }
+
+    @Bean
+    public PaymentGateway paymentGateway(RestTemplate restTemplate) {
+        return new PaymentGatewayImpl(restTemplate, bankApiUrl);
+    }
+
+    @Bean
+    public PaymentService paymentService(PaymentGateway paymentGateway) {
+        return new PaymentServiceImpl(paymentGateway);
     }
 }
