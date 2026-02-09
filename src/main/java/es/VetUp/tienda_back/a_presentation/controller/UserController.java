@@ -8,6 +8,7 @@ import es.VetUp.tienda_back.b_domain.model.Page;
 import es.VetUp.tienda_back.b_domain.service.UserService;
 import es.VetUp.tienda_back.b_domain.service.dto.UserDto;
 import es.VetUp.tienda_back.config.annotation.RequireAdmin;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -88,7 +89,7 @@ public class UserController {
 
 
     @PostMapping
-    public ResponseEntity<UserDetailResponse> createUser(@RequestBody UserInsertRequest userInsertRequest) {
+    public ResponseEntity<UserDetailResponse> createUser(@Valid @RequestBody UserInsertRequest userInsertRequest) {
         UserDto userDto = UserPresentationMapper.getInstance().fromUserInsertRequestToUserDto(userInsertRequest);
         UserDto createdUser = userService.createUser(userDto);
         UserDetailResponse response = UserPresentationMapper.getInstance().fromUserDtoToUserDetailResponse(createdUser);
@@ -97,7 +98,7 @@ public class UserController {
 
     @RequireAdmin
     @PutMapping("/{id}")
-    public ResponseEntity<UserDetailResponse> updateUser(@PathVariable("id") Long id, @RequestBody UserUpdateRequest userUpdateRequest) {
+    public ResponseEntity<UserDetailResponse> updateUser(@PathVariable("id") Long id, @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
         if (!id.equals(userUpdateRequest.id())) {
             throw new IllegalArgumentException("ID in path and request body must match");
         }

@@ -95,7 +95,6 @@ public class UserServiceImpl implements UserService {
 
         @Override
         public UserDto createUser(UserDto userDto) {
-
                 if (getUserByEmail(userDto.email()).isPresent()) {
                         throw new BusinessException(
                                         "User with email " + userDto.email() + " already exists");
@@ -114,37 +113,15 @@ public class UserServiceImpl implements UserService {
                                 userDto.phone(),
                                 userDto.country(),
                                 userDto.profilePicture(),
-                                userDto.birthdate()
+                                userDto.birthdate());
 
-                );
-
-                UserEntity userEntity = UserMapper.getInstance()
-                                .fromUserToUserEntity(
-                                                UserMapper.getInstance()
-                                                                .fromUserDtoToUser(userDtoWithHashedPassword));
+                UserEntity userEntity = UserMapper.getInstance().fromUserToUserEntity(
+                                UserMapper.getInstance().fromUserDtoToUser(userDtoWithHashedPassword));
 
                 UserEntity createdUserEntity = userRepository.createClient(userEntity);
 
-                UserDto createdUserDto = UserMapper.getInstance()
-                                .fromUserToUserDto(
-                                                UserMapper.getInstance()
-                                                                .fromUserEntityToUser(createdUserEntity));
-
-        OrderDto initialOrder = new OrderDto(
-                null,
-                0,
-                BigDecimal.ZERO,
-                OrderState.CART,
-                createdUserDto,
-                null,
-                null,
-                null,
-                null
-        );
-
-                orderService.createOrder(initialOrder);
-
-                return createdUserDto;
+                return UserMapper.getInstance().fromUserToUserDto(
+                                UserMapper.getInstance().fromUserEntityToUser(createdUserEntity));
         }
 
         @Override
@@ -158,7 +135,6 @@ public class UserServiceImpl implements UserService {
                                                         + " already exists");
                                 });
 
-                // Encriptar la contraseña si se está actualizando
                 String hashedPassword = userDto.password();
                 if (hashedPassword != null && !hashedPassword.startsWith("$2a$")) {
                         hashedPassword = passwordEncoder.encode(hashedPassword);
