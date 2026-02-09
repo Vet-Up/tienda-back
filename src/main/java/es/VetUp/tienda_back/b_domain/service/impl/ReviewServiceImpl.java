@@ -5,9 +5,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import es.VetUp.tienda_back.b_domain.exception.ProductNotPurchasedException;
 import es.VetUp.tienda_back.b_domain.exception.ReviewNotFoundException;
 import es.VetUp.tienda_back.b_domain.mapper.ReviewMapper;
 import es.VetUp.tienda_back.b_domain.model.Review;
+import es.VetUp.tienda_back.b_domain.repository.OrderRepository;
 import es.VetUp.tienda_back.b_domain.repository.ReviewRepository;
 import es.VetUp.tienda_back.b_domain.repository.entity.ReviewEntity;
 import es.VetUp.tienda_back.b_domain.service.ReviewService;
@@ -26,15 +28,16 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     private final ReviewRepository reviewRepository;
+    private final OrderRepository orderRepository;
 
-    public ReviewServiceImpl(ReviewRepository reviewRepository) {
+    public ReviewServiceImpl(ReviewRepository reviewRepository, OrderRepository orderRepository) {
         this.reviewRepository = reviewRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Override
     @Transactional
     public ReviewDto saveReview(ReviewDto reviewDto) {
-        // Validaciones de negocio
         if (reviewDto.rating() < 1 || reviewDto.rating() > 5) {
             throw new IllegalArgumentException("La puntuación debe estar entre 1 y 5.");
         }
@@ -47,7 +50,14 @@ public class ReviewServiceImpl implements ReviewService {
 
         ReviewDto reviewDtoToSave = reviewDto;
         if (reviewDto.reviewId() == null) {
-            // Crear nueva review: no permitir más de una review por usuario-producto
+            boolean hasPurchased = orderRepository.hasUserPurchasedProduct(
+                reviewDto.userId(), 
+                reviewDto.productId()
+            );
+            if (!hasPurchased) {
+                throw new ProductNotPurchasedException(reviewDto.userId(), reviewDto.productId());
+            }
+            
             boolean exists = getReviewsByUserId(reviewDto.userId(), 0, Integer.MAX_VALUE).stream()
                     .anyMatch(r -> r.productId().equals(reviewDto.productId()));
             if (exists) {
@@ -69,7 +79,6 @@ public class ReviewServiceImpl implements ReviewService {
             Review savedReview = ReviewMapper.getInstance().fromReviewEntityToReview(savedReviewEntity);
             return ReviewMapper.getInstance().fromReviewToReviewDto(savedReview);
         } else {
-            // Actualizar review existente: solo el autor puede actualizar
             Optional<ReviewEntity> existing = reviewRepository.findById(reviewDto.reviewId());
             if (existing.isEmpty()) {
                 throw new IllegalArgumentException("No existe la review a actualizar.");

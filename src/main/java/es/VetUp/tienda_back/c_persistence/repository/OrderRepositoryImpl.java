@@ -57,4 +57,9 @@ public class OrderRepositoryImpl implements OrderRepository {
     public void deleteOrder(Long id) {
         orderJpaDao.deleteOrder(id);
     }
+
+    @Override
+    public boolean hasUserPurchasedProduct(Long userId, Long productId) {
+        return orderJpaDao.hasUserPurchasedProduct(userId, productId);
+    }
 }

@@ -19,12 +19,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/orders")
 @CrossOrigin(origins = "*")
-public class OrderContraller {
+public class OrderController {
 
     private final OrderService orderService;
     private final JwtService jwtService;
 
-    public OrderContraller(OrderService orderService, JwtService jwtService) {
+    public OrderController(OrderService orderService, JwtService jwtService) {
         this.orderService = orderService;
         this.jwtService = jwtService;
     }
@@ -52,6 +52,14 @@ public class OrderContraller {
                 .map(OrderPresentationMapper.getInstance()::fromOrderDtoToOrderDetailResponse)
                 .toList();
         return new ResponseEntity<>(orderResponses, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{userId}/product/{productId}/purchased")
+    public ResponseEntity<Boolean> hasUserPurchasedProduct(
+            @PathVariable Long userId,
+            @PathVariable Long productId) {
+        boolean hasPurchased = orderService.hasUserPurchasedProduct(userId, productId);
+        return new ResponseEntity<>(hasPurchased, HttpStatus.OK);
     }
 
     @RequireAdmin

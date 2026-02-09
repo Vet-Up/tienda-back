@@ -75,4 +75,17 @@ public class OrderJpaDaoImpl implements OrderJpaDao {
         }
     }
 
+    @Override
+    public boolean hasUserPurchasedProduct(Long userId, Long productId) {
+        String sql = "SELECT COUNT(*) FROM orders o " +
+                "JOIN orders_item oi ON o.id_order = oi.id_order " +
+                "WHERE o.user_id = :userId AND oi.product_id = :productId AND o.state != :cartState";
+        Long count = (Long) entityManager.createNativeQuery(sql)
+                .setParameter("userId", userId)
+                .setParameter("productId", productId)
+                .setParameter("cartState", OrderState.CART.name())
+                .getSingleResult();
+        return count > 0;
+    }
+
 }

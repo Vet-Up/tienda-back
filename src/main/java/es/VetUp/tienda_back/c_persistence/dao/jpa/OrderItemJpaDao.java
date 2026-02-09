@@ -9,3 +9,4 @@ public interface OrderItemJpaDao extends JpaRepository<OrderItemJpaEntity, Long>
     List<OrderItemJpaEntity> findByOrderId(Long orderId);
 }
 
+
