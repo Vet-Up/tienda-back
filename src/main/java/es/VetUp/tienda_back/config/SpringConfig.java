@@ -14,7 +14,6 @@ import es.VetUp.tienda_back.b_domain.service.OrderService;
 import es.VetUp.tienda_back.b_domain.service.UserService;
 import es.VetUp.tienda_back.b_domain.service.CartService;
 import es.VetUp.tienda_back.b_domain.service.CartItemService;
-import es.VetUp.tienda_back.b_domain.service.PaymentService;
 import es.VetUp.tienda_back.infrastructure.PaymentGateway;
 import es.VetUp.tienda_back.infrastructure.impl.PaymentGatewayImpl;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.CategoryJpaDao;
@@ -92,9 +91,9 @@ public class SpringConfig {
     @Bean
     public OrderService orderService(OrderRepository orderRepository, CartRepository cartRepository,
                                     CartItemRepository cartItemRepository, OrderItemRepository orderItemRepository,
-                                    UserRepository userRepository) {
+                                    UserRepository userRepository, PaymentGateway paymentGateway) {
         return new OrderServiceImpl(orderRepository, cartRepository, cartItemRepository,
-                                   orderItemRepository, userRepository);
+                                   orderItemRepository, userRepository, paymentGateway);
     }
 
     @Bean
@@ -189,8 +188,4 @@ public class SpringConfig {
         return new PaymentGatewayImpl(restTemplate, bankApiUrl);
     }
 
-    @Bean
-    public PaymentService paymentService(PaymentGateway paymentGateway) {
-        return new PaymentServiceImpl(paymentGateway);
-    }
 }

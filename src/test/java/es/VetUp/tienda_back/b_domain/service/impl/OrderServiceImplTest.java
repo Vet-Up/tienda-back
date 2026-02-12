@@ -34,6 +34,9 @@ import es.VetUp.tienda_back.b_domain.repository.entity.OrderItemEntity;
 import es.VetUp.tienda_back.b_domain.repository.entity.ProductEntity;
 import es.VetUp.tienda_back.b_domain.repository.entity.UserEntity;
 import es.VetUp.tienda_back.b_domain.service.dto.OrderDto;
+import es.VetUp.tienda_back.infrastructure.PaymentGateway;
+import es.VetUp.tienda_back.infrastructure.model.CardPaymentRequest;
+import es.VetUp.tienda_back.infrastructure.model.CardPaymentResponse;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {
@@ -52,6 +55,9 @@ class OrderServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PaymentGateway paymentGateway;
 
     @InjectMocks
     private OrderServiceImpl orderServiceImpl;
@@ -354,6 +360,9 @@ class OrderServiceImplTest {
         void testCheckout() {
             Long userId = 1L;
             String address = "123 Delivery St";
+            CardPaymentRequest paymentRequest = new CardPaymentRequest(null, null, null, null);
+            CardPaymentResponse paymentResponse = new CardPaymentResponse("txn123", "success", "Payment successful");
+
             UserEntity userEntity = createUserEntity();
             CartEntity cartEntity = new CartEntity(
                     1L,
@@ -379,6 +388,7 @@ class OrderServiceImplTest {
             CartItemEntity cartItem = new CartItemEntity(1L, 2, 1L, product);
             OrderEntity createdOrder = createOrderEntity();
 
+            when(paymentGateway.payment(paymentRequest)).thenReturn(paymentResponse);
             when(userRepository.getClientById(userId)).thenReturn(Optional.of(userEntity));
             when(cartRepository.getCartByUserId(userId)).thenReturn(Optional.of(cartEntity));
             when(cartItemRepository.getCartItemsByCartId(1L)).thenReturn(List.of(cartItem));
@@ -388,10 +398,11 @@ class OrderServiceImplTest {
             when(cartRepository.updateCart(any(CartEntity.class))).thenReturn(cartEntity);
             when(orderRepository.getOrderById(1L)).thenReturn(Optional.of(createdOrder));
 
-            OrderDto result = orderServiceImpl.checkout(userId, address);
+            OrderDto result = orderServiceImpl.checkout(userId, address, paymentRequest);
 
             assertNotNull(result);
             assertEquals(1L, result.id());
+            verify(paymentGateway).payment(paymentRequest);
             verify(orderRepository).createOrder(any(OrderEntity.class));
             verify(orderItemRepository).createOrderItem(any(OrderItemEntity.class));
             verify(cartItemRepository).deleteCartItem(1L);
@@ -402,16 +413,40 @@ class OrderServiceImplTest {
         @DisplayName("checkout should throw exception when address is null")
         void testCheckoutNullAddress() {
             Long userId = 1L;
+            CardPaymentRequest paymentRequest = new CardPaymentRequest(null, null, null, null);
 
-            assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, null));
+            assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, null, paymentRequest));
         }
 
         @Test
         @DisplayName("checkout should throw exception when address is blank")
         void testCheckoutBlankAddress() {
             Long userId = 1L;
+            CardPaymentRequest paymentRequest = new CardPaymentRequest(null, null, null, null);
 
-            assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, "   "));
+            assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, "   ", paymentRequest));
+        }
+
+        @Test
+        @DisplayName("checkout should throw exception when payment request is null")
+        void testCheckoutNullPaymentRequest() {
+            Long userId = 1L;
+            String address = "123 Delivery St";
+
+            assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, address, null));
+        }
+
+        @Test
+        @DisplayName("checkout should throw exception when payment fails")
+        void testCheckoutPaymentFailed() {
+            Long userId = 1L;
+            String address = "123 Delivery St";
+            CardPaymentRequest paymentRequest = new CardPaymentRequest(null, null, null, null);
+            CardPaymentResponse paymentResponse = new CardPaymentResponse("txn123", "failed", "Insufficient funds");
+
+            when(paymentGateway.payment(paymentRequest)).thenReturn(paymentResponse);
+
+            assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, address, paymentRequest));
         }
 
         @Test
@@ -419,10 +454,13 @@ class OrderServiceImplTest {
         void testCheckoutUserNotFound() {
             Long userId = 999L;
             String address = "123 Delivery St";
+            CardPaymentRequest paymentRequest = new CardPaymentRequest(null, null, null, null);
+            CardPaymentResponse paymentResponse = new CardPaymentResponse("txn123", "success", "Payment successful");
 
+            when(paymentGateway.payment(paymentRequest)).thenReturn(paymentResponse);
             when(userRepository.getClientById(userId)).thenReturn(Optional.empty());
 
-            assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, address));
+            assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, address, paymentRequest));
         }
 
         @Test
@@ -430,12 +468,15 @@ class OrderServiceImplTest {
         void testCheckoutCartNotFound() {
             Long userId = 1L;
             String address = "123 Delivery St";
+            CardPaymentRequest paymentRequest = new CardPaymentRequest(null, null, null, null);
+            CardPaymentResponse paymentResponse = new CardPaymentResponse("txn123", "success", "Payment successful");
             UserEntity userEntity = createUserEntity();
 
+            when(paymentGateway.payment(paymentRequest)).thenReturn(paymentResponse);
             when(userRepository.getClientById(userId)).thenReturn(Optional.of(userEntity));
             when(cartRepository.getCartByUserId(userId)).thenReturn(Optional.empty());
 
-            assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, address));
+            assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, address, paymentRequest));
         }
 
         @Test
@@ -443,6 +484,8 @@ class OrderServiceImplTest {
         void testCheckoutEmptyCart() {
             Long userId = 1L;
             String address = "123 Delivery St";
+            CardPaymentRequest paymentRequest = new CardPaymentRequest(null, null, null, null);
+            CardPaymentResponse paymentResponse = new CardPaymentResponse("txn123", "success", "Payment successful");
             UserEntity userEntity = createUserEntity();
             CartEntity cartEntity = new CartEntity(
                     1L,
@@ -452,11 +495,12 @@ class OrderServiceImplTest {
                     null
             );
 
+            when(paymentGateway.payment(paymentRequest)).thenReturn(paymentResponse);
             when(userRepository.getClientById(userId)).thenReturn(Optional.of(userEntity));
             when(cartRepository.getCartByUserId(userId)).thenReturn(Optional.of(cartEntity));
             when(cartItemRepository.getCartItemsByCartId(1L)).thenReturn(List.of());
 
-            assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, address));
+            assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, address, paymentRequest));
         }
     }
 }

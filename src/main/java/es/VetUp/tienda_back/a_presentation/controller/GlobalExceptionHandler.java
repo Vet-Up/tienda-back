@@ -1,5 +1,6 @@
 package es.VetUp.tienda_back.a_presentation.controller;
 
+import es.VetUp.tienda_back.b_domain.exception.BusinessException;
 import es.VetUp.tienda_back.b_domain.exception.ReviewNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -123,6 +124,18 @@ public class GlobalExceptionHandler {
         error.put("timestamp", LocalDateTime.now().toString());
         error.put("status", 404);
         error.put("error", "Review not found");
+        error.put("details", ex.getMessage());
+        return error;
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public Map<String, Object> handleBusinessException(BusinessException ex) {
+        Map<String, Object> error = new HashMap<>();
+        error.put("timestamp", LocalDateTime.now().toString());
+        error.put("status", 400);
+        error.put("error", "Business logic error");
         error.put("details", ex.getMessage());
         return error;
     }

@@ -10,6 +10,8 @@ import es.VetUp.tienda_back.b_domain.service.OrderService;
 import es.VetUp.tienda_back.b_domain.service.dto.OrderDto;
 import es.VetUp.tienda_back.b_domain.service.dto.UserDto;
 import es.VetUp.tienda_back.config.annotation.RequireAdmin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,7 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class OrderController {
 
+    private static final Logger log = LoggerFactory.getLogger(OrderController.class);
     private final OrderService orderService;
     private final JwtService jwtService;
 
@@ -92,18 +95,30 @@ public class OrderController {
 
     @PostMapping("/checkout")
     public ResponseEntity<OrderDetailResponse> checkout(
-            @RequestHeader("Authorization") String token,
+            @RequestAttribute(value = "userId", required = false) Long userId,
             @RequestBody CheckoutRequest request) {
 
-        String jwtToken = token.replace("Bearer ", "");
+        log.info("OrderController.checkout - Starting checkout");
+        log.info("OrderController.checkout - userId from RequestAttribute: {}", userId);
+        log.info("OrderController.checkout - Address: {}", request.address());
+        log.info("OrderController.checkout - CardPaymentRequest present: {}", request.cardPaymentRequest() != null);
 
-        UserDto user = jwtService.getUserFromToken(jwtToken);
+        if (userId == null) {
+            log.error("OrderController.checkout - userId is null! RequestAttribute not set by filter");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
 
-        OrderDto order = orderService.checkout(user.id(), request.address());
+        try {
+            OrderDto order = orderService.checkout(userId, request.address(), request.cardPaymentRequest());
+            log.info("OrderController.checkout - Order created successfully with ID: {}", order.id());
 
-        OrderDetailResponse response = OrderPresentationMapper.getInstance()
-                .fromOrderDtoToOrderDetailResponse(order);
+            OrderDetailResponse response = OrderPresentationMapper.getInstance()
+                    .fromOrderDtoToOrderDetailResponse(order);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (Exception e) {
+            log.error("OrderController.checkout - Error during checkout: {}", e.getMessage(), e);
+            throw e;
+        }
     }
 }

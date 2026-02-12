@@ -1,6 +1,7 @@
 package es.VetUp.tienda_back.b_domain.service;
 
 import es.VetUp.tienda_back.b_domain.service.dto.OrderDto;
+import es.VetUp.tienda_back.infrastructure.model.CardPaymentRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,6 @@ public interface OrderService {
     OrderDto createOrder(OrderDto orderDto);
     OrderDto updateOrder(OrderDto orderDto);
     void deleteOrder(Long id);
-    OrderDto checkout(Long userId, String address);
+    OrderDto checkout(Long userId, String address, CardPaymentRequest cardPaymentRequest);
     boolean hasUserPurchasedProduct(Long userId, Long productId);
 }

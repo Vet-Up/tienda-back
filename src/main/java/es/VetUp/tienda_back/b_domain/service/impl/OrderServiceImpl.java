@@ -18,6 +18,9 @@ import es.VetUp.tienda_back.b_domain.repository.entity.UserEntity;
 import es.VetUp.tienda_back.b_domain.service.OrderService;
 import es.VetUp.tienda_back.b_domain.service.dto.OrderDto;
 import es.VetUp.tienda_back.b_domain.service.dto.UserDto;
+import es.VetUp.tienda_back.infrastructure.PaymentGateway;
+import es.VetUp.tienda_back.infrastructure.model.CardPaymentRequest;
+import es.VetUp.tienda_back.infrastructure.model.CardPaymentResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,15 +33,17 @@ public class OrderServiceImpl implements OrderService {
     private final CartItemRepository cartItemRepository;
     private final OrderItemRepository orderItemRepository;
     private final UserRepository userRepository;
+    private final PaymentGateway paymentGateway;
 
     public OrderServiceImpl(OrderRepository orderRepository, CartRepository cartRepository,
                            CartItemRepository cartItemRepository, OrderItemRepository orderItemRepository,
-                           UserRepository userRepository) {
+                           UserRepository userRepository, PaymentGateway paymentGateway) {
         this.orderRepository = orderRepository;
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.orderItemRepository = orderItemRepository;
         this.userRepository = userRepository;
+        this.paymentGateway = paymentGateway;
     }
     @Override
     public List<OrderDto> getAllOrders() {
@@ -104,9 +109,33 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDto checkout(Long userId, String address) {
+    public OrderDto checkout(Long userId, String address, CardPaymentRequest cardPaymentRequest) {
         if (address == null || address.isBlank()) {
             throw new BusinessException("Address is required for checkout");
+        }
+
+        if (cardPaymentRequest == null || cardPaymentRequest.origin() == null) {
+            throw new BusinessException("Payment information is required for checkout");
+        }
+
+        // Forzar los datos de autorización y destino de la tienda (mroberts - propietario)
+        CardPaymentRequest securePaymentRequest = new CardPaymentRequest(
+            new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization(
+                "mroberts",
+                "token_mroberts_002"
+            ),
+            cardPaymentRequest.origin(), // Mantener los datos de origen (tarjeta del usuario)
+            new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination(
+                "ES1200492352123456789012"
+            ),
+            cardPaymentRequest.payment() // Mantener el monto y concepto
+        );
+
+        CardPaymentResponse paymentResponse = paymentGateway.payment(securePaymentRequest);
+
+        if (paymentResponse == null || !"success".equalsIgnoreCase(paymentResponse.status())) {
+            String errorMessage = paymentResponse != null ? paymentResponse.message() : "Payment failed";
+            throw new BusinessException("Payment processing failed: " + errorMessage);
         }
 
         UserEntity userEntity = userRepository.getClientById(userId)
