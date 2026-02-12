@@ -29,15 +29,20 @@ public class ReviewController {
         ReviewDto dto = ReviewPresentationMapper.getInstance().fromInsertRequestToDto(request);
         ReviewDetailResponse response = ReviewPresentationMapper.getInstance()
                 .fromDtoToDetailResponse(reviewService.saveReview(dto));
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(org.springframework.http.HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReviewDetailResponse> updateReview(
+    public ResponseEntity<?> updateReview(
             @PathVariable Long id,
             @RequestBody ReviewUpdateRequest request) {
-        ReviewDto dto = ReviewPresentationMapper.getInstance().fromUpdateRequestToDto(request);
 
+        if (!id.equals(request.reviewId())) {
+            return ResponseEntity.badRequest()
+                    .body(java.util.Map.of("error", "ID in path and request body must match"));
+        }
+
+        ReviewDto dto = ReviewPresentationMapper.getInstance().fromUpdateRequestToDto(request);
         dto = reviewService.saveReview(dto);
         ReviewDetailResponse response = ReviewPresentationMapper.getInstance()
                 .fromDtoToDetailResponse(dto);
@@ -57,11 +62,10 @@ public class ReviewController {
             @PathVariable Long productId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "4") int size) {
-        if (page < 1) {
+        if (page < 0) {
             return ResponseEntity.badRequest().build();
         }
-        int realPage = page - 1;
-        List<ReviewDto> reviewDtos = reviewService.getReviewsByProductId(productId, realPage, size);
+        List<ReviewDto> reviewDtos = reviewService.getReviewsByProductId(productId, page, size);
         List<ReviewSummaryResponse> responses = reviewDtos.stream()
                 .map(ReviewPresentationMapper.getInstance()::fromDtoToSummaryResponse)
                 .collect(Collectors.toList());
@@ -76,11 +80,10 @@ public class ReviewController {
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "4") int size) {
-        if (page < 1) {
+        if (page < 0) {
             return ResponseEntity.badRequest().build();
         }
-        int realPage = page - 1;
-        List<ReviewDto> reviewDtos = reviewService.getReviewsByUserId(userId, realPage, size);
+        List<ReviewDto> reviewDtos = reviewService.getReviewsByUserId(userId, page, size);
         List<ReviewSummaryResponse> responses = reviewDtos.stream()
                 .map(ReviewPresentationMapper.getInstance()::fromDtoToSummaryResponse)
                 .collect(Collectors.toList());

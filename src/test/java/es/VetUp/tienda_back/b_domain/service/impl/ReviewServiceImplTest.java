@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import es.VetUp.tienda_back.b_domain.repository.OrderRepository;
 import es.VetUp.tienda_back.b_domain.repository.ReviewRepository;
 import es.VetUp.tienda_back.b_domain.repository.entity.ReviewEntity;
 import es.VetUp.tienda_back.b_domain.service.dto.ReviewDto;
@@ -26,6 +27,9 @@ class ReviewServiceImplTest {
 
     @Mock
     private ReviewRepository reviewRepository;
+
+    @Mock
+    private OrderRepository orderRepository;
 
     @InjectMocks
     private ReviewServiceImpl reviewServiceImpl;
@@ -54,6 +58,8 @@ class ReviewServiceImplTest {
                     "Excellent product!",
                     createdAt);
 
+            // Mock para verificar que el usuario ha comprado el producto
+            when(orderRepository.hasUserPurchasedProduct(5L, 10L)).thenReturn(true);
             when(reviewRepository.save(any(ReviewEntity.class))).thenReturn(createdReviewEntity);
 
             ReviewDto createdReviewDto = reviewServiceImpl.saveReview(reviewDtoToCreate);

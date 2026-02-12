@@ -360,7 +360,14 @@ class OrderServiceImplTest {
         void testCheckout() {
             Long userId = 1L;
             String address = "123 Delivery St";
-            CardPaymentRequest paymentRequest = new CardPaymentRequest(null, null, null, null);
+
+            // Crear un CardPaymentRequest válido con todos los campos
+            CardPaymentRequest paymentRequest = new CardPaymentRequest(
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12", "123", "John Doe"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment")
+            );
             CardPaymentResponse paymentResponse = new CardPaymentResponse("txn123", "success", "Payment successful");
 
             UserEntity userEntity = createUserEntity();
@@ -388,7 +395,7 @@ class OrderServiceImplTest {
             CartItemEntity cartItem = new CartItemEntity(1L, 2, 1L, product);
             OrderEntity createdOrder = createOrderEntity();
 
-            when(paymentGateway.payment(paymentRequest)).thenReturn(paymentResponse);
+            when(paymentGateway.payment(any(CardPaymentRequest.class))).thenReturn(paymentResponse);
             when(userRepository.getClientById(userId)).thenReturn(Optional.of(userEntity));
             when(cartRepository.getCartByUserId(userId)).thenReturn(Optional.of(cartEntity));
             when(cartItemRepository.getCartItemsByCartId(1L)).thenReturn(List.of(cartItem));
@@ -402,7 +409,7 @@ class OrderServiceImplTest {
 
             assertNotNull(result);
             assertEquals(1L, result.id());
-            verify(paymentGateway).payment(paymentRequest);
+            verify(paymentGateway).payment(any(CardPaymentRequest.class));
             verify(orderRepository).createOrder(any(OrderEntity.class));
             verify(orderItemRepository).createOrderItem(any(OrderItemEntity.class));
             verify(cartItemRepository).deleteCartItem(1L);
@@ -413,7 +420,12 @@ class OrderServiceImplTest {
         @DisplayName("checkout should throw exception when address is null")
         void testCheckoutNullAddress() {
             Long userId = 1L;
-            CardPaymentRequest paymentRequest = new CardPaymentRequest(null, null, null, null);
+            CardPaymentRequest paymentRequest = new CardPaymentRequest(
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12", "123", "John Doe"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment")
+            );
 
             assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, null, paymentRequest));
         }
@@ -422,7 +434,12 @@ class OrderServiceImplTest {
         @DisplayName("checkout should throw exception when address is blank")
         void testCheckoutBlankAddress() {
             Long userId = 1L;
-            CardPaymentRequest paymentRequest = new CardPaymentRequest(null, null, null, null);
+            CardPaymentRequest paymentRequest = new CardPaymentRequest(
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12", "123", "John Doe"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment")
+            );
 
             assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, "   ", paymentRequest));
         }
@@ -441,12 +458,19 @@ class OrderServiceImplTest {
         void testCheckoutPaymentFailed() {
             Long userId = 1L;
             String address = "123 Delivery St";
-            CardPaymentRequest paymentRequest = new CardPaymentRequest(null, null, null, null);
+            CardPaymentRequest paymentRequest = new CardPaymentRequest(
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12", "123", "John Doe"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment")
+            );
             CardPaymentResponse paymentResponse = new CardPaymentResponse("txn123", "failed", "Insufficient funds");
 
-            when(paymentGateway.payment(paymentRequest)).thenReturn(paymentResponse);
+            when(paymentGateway.payment(any(CardPaymentRequest.class))).thenReturn(paymentResponse);
 
             assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, address, paymentRequest));
+
+            verify(paymentGateway).payment(any(CardPaymentRequest.class));
         }
 
         @Test
@@ -454,13 +478,21 @@ class OrderServiceImplTest {
         void testCheckoutUserNotFound() {
             Long userId = 999L;
             String address = "123 Delivery St";
-            CardPaymentRequest paymentRequest = new CardPaymentRequest(null, null, null, null);
+            CardPaymentRequest paymentRequest = new CardPaymentRequest(
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12", "123", "John Doe"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment")
+            );
             CardPaymentResponse paymentResponse = new CardPaymentResponse("txn123", "success", "Payment successful");
 
-            when(paymentGateway.payment(paymentRequest)).thenReturn(paymentResponse);
+            when(paymentGateway.payment(any(CardPaymentRequest.class))).thenReturn(paymentResponse);
             when(userRepository.getClientById(userId)).thenReturn(Optional.empty());
 
             assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, address, paymentRequest));
+
+            verify(paymentGateway).payment(any(CardPaymentRequest.class));
+            verify(userRepository).getClientById(userId);
         }
 
         @Test
@@ -468,15 +500,24 @@ class OrderServiceImplTest {
         void testCheckoutCartNotFound() {
             Long userId = 1L;
             String address = "123 Delivery St";
-            CardPaymentRequest paymentRequest = new CardPaymentRequest(null, null, null, null);
+            CardPaymentRequest paymentRequest = new CardPaymentRequest(
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12", "123", "John Doe"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment")
+            );
             CardPaymentResponse paymentResponse = new CardPaymentResponse("txn123", "success", "Payment successful");
             UserEntity userEntity = createUserEntity();
 
-            when(paymentGateway.payment(paymentRequest)).thenReturn(paymentResponse);
+            when(paymentGateway.payment(any(CardPaymentRequest.class))).thenReturn(paymentResponse);
             when(userRepository.getClientById(userId)).thenReturn(Optional.of(userEntity));
             when(cartRepository.getCartByUserId(userId)).thenReturn(Optional.empty());
 
             assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, address, paymentRequest));
+
+            verify(paymentGateway).payment(any(CardPaymentRequest.class));
+            verify(userRepository).getClientById(userId);
+            verify(cartRepository).getCartByUserId(userId);
         }
 
         @Test
@@ -484,7 +525,12 @@ class OrderServiceImplTest {
         void testCheckoutEmptyCart() {
             Long userId = 1L;
             String address = "123 Delivery St";
-            CardPaymentRequest paymentRequest = new CardPaymentRequest(null, null, null, null);
+            CardPaymentRequest paymentRequest = new CardPaymentRequest(
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12", "123", "John Doe"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
+                new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment")
+            );
             CardPaymentResponse paymentResponse = new CardPaymentResponse("txn123", "success", "Payment successful");
             UserEntity userEntity = createUserEntity();
             CartEntity cartEntity = new CartEntity(
@@ -495,12 +541,17 @@ class OrderServiceImplTest {
                     null
             );
 
-            when(paymentGateway.payment(paymentRequest)).thenReturn(paymentResponse);
+            when(paymentGateway.payment(any(CardPaymentRequest.class))).thenReturn(paymentResponse);
             when(userRepository.getClientById(userId)).thenReturn(Optional.of(userEntity));
             when(cartRepository.getCartByUserId(userId)).thenReturn(Optional.of(cartEntity));
             when(cartItemRepository.getCartItemsByCartId(1L)).thenReturn(List.of());
 
             assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, address, paymentRequest));
+
+            verify(paymentGateway).payment(any(CardPaymentRequest.class));
+            verify(userRepository).getClientById(userId);
+            verify(cartRepository).getCartByUserId(userId);
+            verify(cartItemRepository).getCartItemsByCartId(1L);
         }
     }
 }

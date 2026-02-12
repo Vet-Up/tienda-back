@@ -223,7 +223,7 @@ class ReviewRepositoryImplTest {
         }
 
         @Test
-        @DisplayName("Save with existing review should update it")
+        @DisplayName("Update existing review should update it")
         void testUpdateReview() {
             ReviewEntity reviewEntityToUpdate = new ReviewEntity(
                     1L,
@@ -239,7 +239,7 @@ class ReviewRepositoryImplTest {
             when(userJpaDao.getClientById(5L)).thenReturn(Optional.of(userJpaEntity));
             when(reviewJpaDao.update(any(ReviewJpaEntity.class))).thenReturn(reviewJpaEntity1);
 
-            ReviewEntity actual = reviewRepositoryImpl.save(reviewEntityToUpdate);
+            ReviewEntity actual = reviewRepositoryImpl.update(reviewEntityToUpdate);
 
             ReviewEntity expected = ReviewPersistenceMapper.getInstance()
                     .fromReviewJpaEntityToReviewEntity(reviewJpaEntity1);
