@@ -58,8 +58,8 @@ class ReviewServiceImplTest {
                     "Excellent product!",
                     createdAt);
 
-            // Mock para verificar que el usuario ha comprado el producto
             when(orderRepository.hasUserPurchasedProduct(5L, 10L)).thenReturn(true);
+            when(reviewRepository.findByUserId(5L, 0, Integer.MAX_VALUE)).thenReturn(List.of());
             when(reviewRepository.save(any(ReviewEntity.class))).thenReturn(createdReviewEntity);
 
             ReviewDto createdReviewDto = reviewServiceImpl.saveReview(reviewDtoToCreate);
@@ -267,6 +267,35 @@ class ReviewServiceImplTest {
 
             assertEquals(3L, count);
         }
+
+        @Nested
+        class GetReviewByUserAndProductTests {
+            @Test
+            @DisplayName("getReviewByUserAndProduct should return review when it exists")
+            void testGetReviewByUserAndProduct() {
+                Long userId = 1L;
+                Long productId = 10L;
+                LocalDateTime createdAt = LocalDateTime.now();
+                ReviewEntity reviewEntity = new ReviewEntity(1L, productId, userId, "John Doe", 5, "Great!", createdAt);
+
+                when(reviewRepository.findByUserAndProduct(userId, productId)).thenReturn(Optional.of(reviewEntity));
+
+                Optional<ReviewDto> result = reviewServiceImpl.getReviewByUserAndProduct(userId, productId);
+
+                assertTrue(result.isPresent());
+                assertEquals(1L, result.get().reviewId());
+            }
+
+            @Test
+            @DisplayName("getReviewByUserAndProduct should throw ReviewNotFoundException when not found")
+            void testGetReviewByUserAndProductNotFound() {
+                Long userId = 1L;
+                Long productId = 10L;
+                when(reviewRepository.findByUserAndProduct(userId, productId)).thenReturn(Optional.empty());
+
+                assertThrows(es.VetUp.tienda_back.b_domain.exception.ReviewNotFoundException.class,
+                        () -> reviewServiceImpl.getReviewByUserAndProduct(userId, productId));
+            }
+        }
     }
 }
-

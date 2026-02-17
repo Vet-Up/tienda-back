@@ -319,5 +319,37 @@ class UserJpaDaoImplTest {
 
         // Assert
         assertNull(deletedUser);
+
+    }
+
+    @Test
+    void testSearchByEmail() {
+        // Arrange
+        UserJpaEntity user = new UserJpaEntity(null, "John", "john", "john@test.com", "pass", "addr", UserRole.CUSTOMER,
+                123, "ES", "pic", LocalDate.now());
+        entityManager.persist(user);
+        entityManager.flush();
+
+        // Act
+        List<UserJpaEntity> result = userJpaDao.searchByEmail("john", 0, 10);
+
+        // Assert
+        assertEquals(1, result.size());
+        assertEquals("john@test.com", result.get(0).getEmail());
+    }
+
+    @Test
+    void testCountByEmail() {
+        // Arrange
+        UserJpaEntity user = new UserJpaEntity(null, "John", "john", "john@test.com", "pass", "addr", UserRole.CUSTOMER,
+                123, "ES", "pic", LocalDate.now());
+        entityManager.persist(user);
+        entityManager.flush();
+
+        // Act
+        long count = userJpaDao.countByEmail("john");
+
+        // Assert
+        assertEquals(1, count);
     }
 }

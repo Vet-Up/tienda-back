@@ -26,17 +26,24 @@ class ProductJpaDaoImplTest {
         @Autowired
         private ProductJpaDao productJpaDao;
 
-        @Test
-        void testFindAll() {
-                // Limpia la tabla antes de persistir
+        private void cleanUp() {
+                entityManager.createQuery("DELETE FROM ReviewJpaEntity").executeUpdate();
                 entityManager.createQuery("DELETE FROM ProductJpaEntity").executeUpdate();
                 entityManager.createQuery("DELETE FROM CategoryJpaEntity").executeUpdate();
                 entityManager.flush();
+                entityManager.clear();
+        }
+
+        @Test
+        void testFindAll() {
+                // Limpia la tabla antes de persistir
+                cleanUp();
 
                 CategoryJpaEntity category = new CategoryJpaEntity();
                 category.setName("Categoría Test");
                 entityManager.persist(category);
                 entityManager.flush();
+                entityManager.clear();
 
                 ProductJpaEntity entity = new ProductJpaEntity(
                                 null,
@@ -234,4 +241,102 @@ class ProductJpaDaoImplTest {
                 assertEquals("Producto Buscar", result.get().getName());
         }
 
+        @Test
+        void testFindByName() {
+                // Arrange
+                cleanUp();
+                CategoryJpaEntity category = new CategoryJpaEntity(null, "Test Cat", "Desc");
+                entityManager.persist(category);
+
+                ProductJpaEntity p1 = new ProductJpaEntity(null, "Dog Food", "Desc", new java.math.BigDecimal("10.00"),
+                                new java.math.BigDecimal("10.00"), "pic", "Brand", category, 10);
+                ProductJpaEntity p2 = new ProductJpaEntity(null, "Cat Food", "Desc", new java.math.BigDecimal("12.00"),
+                                new java.math.BigDecimal("12.00"), "pic", "Brand", category, 10);
+                entityManager.persist(p1);
+                entityManager.persist(p2);
+                entityManager.flush();
+                entityManager.clear();
+
+                // Act
+                List<ProductJpaEntity> result = productJpaDao.findByName("food", 0, 10, "name-asc");
+
+                // Assert
+                assertEquals(2, result.size());
+                assertEquals("Cat Food", result.get(0).getName());
+        }
+
+        @Test
+        void testFindAllOrdered() {
+                // Arrange
+                cleanUp();
+                CategoryJpaEntity category = new CategoryJpaEntity(null, "Test Cat", "Desc");
+                entityManager.persist(category);
+
+                ProductJpaEntity p1 = new ProductJpaEntity(null, "Product B", "Desc", new java.math.BigDecimal("20.00"),
+                                new java.math.BigDecimal("20.00"), "pic", "Brand", category, 10);
+                ProductJpaEntity p2 = new ProductJpaEntity(null, "Product A", "Desc", new java.math.BigDecimal("10.00"),
+                                new java.math.BigDecimal("10.00"), "pic", "Brand", category, 10);
+                entityManager.persist(p1);
+                entityManager.persist(p2);
+                entityManager.flush();
+                entityManager.clear();
+
+                // Act
+                List<ProductJpaEntity> result = productJpaDao.findAllOrdered("price-asc", 1, 10);
+
+                // Assert
+                assertEquals(2, result.size());
+                assertEquals("Product A", result.get(0).getName());
+        }
+
+        @Test
+        void testFindByPriceRange() {
+                // Arrange
+                cleanUp();
+                CategoryJpaEntity category = new CategoryJpaEntity(null, "Test Cat", "Desc");
+                entityManager.persist(category);
+
+                ProductJpaEntity p1 = new ProductJpaEntity(null, "Prod 1", "Desc", new java.math.BigDecimal("10.00"),
+                                new java.math.BigDecimal("10.00"), "pic", "Brand", category, 10);
+                ProductJpaEntity p2 = new ProductJpaEntity(null, "Prod 2", "Desc", new java.math.BigDecimal("30.00"),
+                                new java.math.BigDecimal("30.00"), "pic", "Brand", category, 10);
+                entityManager.persist(p1);
+                entityManager.persist(p2);
+                entityManager.flush();
+                entityManager.clear();
+
+                // Act
+                List<ProductJpaEntity> result = productJpaDao.findByPriceRange(5.0, 15.0, 1, 10, "price-asc");
+
+                // Assert
+                assertEquals(1, result.size());
+                assertEquals("Prod 1", result.get(0).getName());
+        }
+
+        @Test
+        void testFindByCategoryIds() {
+                // Arrange
+                cleanUp();
+                CategoryJpaEntity c1 = new CategoryJpaEntity(null, "C1", "Desc");
+                CategoryJpaEntity c2 = new CategoryJpaEntity(null, "C2", "Desc");
+                entityManager.persist(c1);
+                entityManager.persist(c2);
+
+                ProductJpaEntity p1 = new ProductJpaEntity(null, "Prod 1", "Desc", new java.math.BigDecimal("10.00"),
+                                new java.math.BigDecimal("10.00"), "pic", "Brand", c1, 10);
+                ProductJpaEntity p2 = new ProductJpaEntity(null, "Prod 2", "Desc", new java.math.BigDecimal("20.00"),
+                                new java.math.BigDecimal("20.00"), "pic", "Brand", c2, 10);
+                entityManager.persist(p1);
+                entityManager.persist(p2);
+                entityManager.flush();
+                entityManager.clear();
+
+                // Act
+                List<ProductJpaEntity> result = productJpaDao.findByCategoryIds(
+                                List.of(c1.getCategoryId().intValue(), c2.getCategoryId().intValue()), 0, 10,
+                                "name-asc");
+
+                // Assert
+                assertEquals(2, result.size());
+        }
 }

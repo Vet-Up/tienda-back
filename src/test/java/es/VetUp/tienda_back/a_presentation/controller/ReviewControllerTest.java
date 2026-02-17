@@ -112,8 +112,8 @@ class ReviewControllerTest {
             when(reviewService.countReviewsByProductId(10L)).thenReturn(2L);
 
             mockMvc.perform(get("/api/reviews/product/{productId}", 10L)
-                            .param("page", "0")
-                            .param("size", "10"))
+                    .param("page", "0")
+                    .param("size", "10"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.length()").value(2))
                     .andExpect(jsonPath("$.data[0].productId").value(10))
@@ -133,8 +133,8 @@ class ReviewControllerTest {
             when(reviewService.countReviewsByUserId(5L)).thenReturn(1L);
 
             mockMvc.perform(get("/api/reviews/user/{userId}", 5L)
-                            .param("page", "0")
-                            .param("size", "10"))
+                    .param("page", "0")
+                    .param("size", "10"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.length()").value(1))
                     .andExpect(jsonPath("$.data[0].userId").value(5))
@@ -142,6 +142,31 @@ class ReviewControllerTest {
                     .andExpect(jsonPath("$.pageNumber").value(0))
                     .andExpect(jsonPath("$.pageSize").value(10))
                     .andExpect(jsonPath("$.totalElements").value(1));
+        }
+    }
+
+    @Nested
+    class GetReviewByUserAndProductTests {
+        @Test
+        @DisplayName("GET /api/reviews/product/{productId}/user/{userId} - Success")
+        void testGetReviewByUserAndProductSuccess() throws Exception {
+            when(reviewService.getReviewByUserAndProduct(5L, 10L)).thenReturn(Optional.of(reviewDto1));
+
+            mockMvc.perform(get("/api/reviews/product/{productId}/user/{userId}", 10L, 5L))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.reviewId").value(1))
+                    .andExpect(jsonPath("$.userId").value(5))
+                    .andExpect(jsonPath("$.productId").value(10))
+                    .andExpect(jsonPath("$.rating").value(5));
+        }
+
+        @Test
+        @DisplayName("GET /api/reviews/product/{productId}/user/{userId} - Not Found")
+        void testGetReviewByUserAndProductNotFound() throws Exception {
+            when(reviewService.getReviewByUserAndProduct(5L, 10L)).thenReturn(Optional.empty());
+
+            mockMvc.perform(get("/api/reviews/product/{productId}/user/{userId}", 10L, 5L))
+                    .andExpect(status().isNotFound());
         }
     }
 
@@ -171,8 +196,8 @@ class ReviewControllerTest {
                     """;
 
             mockMvc.perform(post("/api/reviews")
-                            .contentType("application/json")
-                            .content(reviewInsertRequestJson))
+                    .contentType("application/json")
+                    .content(reviewInsertRequestJson))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.reviewId").value(3))
                     .andExpect(jsonPath("$.rating").value(5))
@@ -207,8 +232,8 @@ class ReviewControllerTest {
                     """;
 
             mockMvc.perform(put("/api/reviews/{id}", 1L)
-                            .contentType("application/json")
-                            .content(reviewUpdateRequestJson))
+                    .contentType("application/json")
+                    .content(reviewUpdateRequestJson))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.reviewId").value(1))
                     .andExpect(jsonPath("$.rating").value(4))
@@ -229,8 +254,8 @@ class ReviewControllerTest {
                     """;
 
             mockMvc.perform(put("/api/reviews/{id}", 1L)
-                            .contentType("application/json")
-                            .content(reviewUpdateRequestJson))
+                    .contentType("application/json")
+                    .content(reviewUpdateRequestJson))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.error").value("ID in path and request body must match"));
         }
@@ -251,7 +276,8 @@ class ReviewControllerTest {
         @DisplayName("DELETE /api/reviews/{id} - Not Found")
         void testDeleteReviewNotFound() throws Exception {
             // El GlobalExceptionHandler convierte ReviewNotFoundException en 404
-            doThrow(new es.VetUp.tienda_back.b_domain.exception.ReviewNotFoundException("Review not found with id: 999"))
+            doThrow(new es.VetUp.tienda_back.b_domain.exception.ReviewNotFoundException(
+                    "Review not found with id: 999"))
                     .when(reviewService).deleteReview(999L);
 
             mockMvc.perform(delete("/api/reviews/{id}", 999L))
@@ -284,4 +310,3 @@ class ReviewControllerTest {
         }
     }
 }
-

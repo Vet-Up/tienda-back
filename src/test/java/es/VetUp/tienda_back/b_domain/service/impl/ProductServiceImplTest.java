@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -186,11 +187,11 @@ class ProductServiceImplTest {
                         ProductDto result = productServiceImpl.getProductById(productId);
 
                         assertAll("result",
-                                () -> assertNotNull(result),
-                                () -> assertEquals(productId, result.productId()),
-                                () -> assertEquals("Dog Food", result.name()),
-                                () -> assertEquals(0.0, result.averageRating()),
-                                () -> assertEquals(0, result.reviewsCount()));
+                                        () -> assertNotNull(result),
+                                        () -> assertEquals(productId, result.productId()),
+                                        () -> assertEquals("Dog Food", result.name()),
+                                        () -> assertEquals(0.0, result.averageRating()),
+                                        () -> assertEquals(0, result.reviewsCount()));
 
                 }
 
@@ -230,11 +231,11 @@ class ProductServiceImplTest {
                         Optional<ProductDto> result = productServiceImpl.findProductById(productId);
 
                         assertAll("result",
-                                () -> assertTrue(result.isPresent()),
-                                () -> assertEquals(productId, result.get().productId()),
-                                () -> assertEquals("Dog Food", result.get().name()),
-                                () -> assertEquals(0.0, result.get().averageRating()),
-                                () -> assertEquals(0, result.get().reviewsCount()));
+                                        () -> assertTrue(result.isPresent()),
+                                        () -> assertEquals(productId, result.get().productId()),
+                                        () -> assertEquals("Dog Food", result.get().name()),
+                                        () -> assertEquals(0.0, result.get().averageRating()),
+                                        () -> assertEquals(0, result.get().reviewsCount()));
                 }
 
                 @Test
@@ -544,4 +545,104 @@ class ProductServiceImplTest {
 
         }
 
+        @Nested
+        class FindProductsByNameTests {
+                @Test
+                @DisplayName("findProductsByName should return list of products")
+                void testFindProductsByName() {
+                        String name = "Food";
+                        int page = 1;
+                        int size = 10;
+                        String sort = "name_asc";
+
+                        ProductEntity product1 = new ProductEntity(
+                                        1L, "Dog Food", "Description", BigDecimal.TEN, BigDecimal.ZERO, "pic.jpg",
+                                        "Brand", 1L, BigDecimal.TEN, 10);
+
+                        when(productRepository.findProductsByName(name, page, size, sort))
+                                        .thenReturn(List.of(product1));
+
+                        List<ProductDto> result = productServiceImpl.findProductsByName(name, page, size, sort);
+
+                        assertNotNull(result);
+                        assertEquals(1, result.size());
+                        assertEquals("Dog Food", result.get(0).name());
+                }
+        }
+
+        @Nested
+        class FindAllOrderedTests {
+                @Test
+                @DisplayName("findAllOrdered should return page of products")
+                void testFindAllOrdered() {
+                        String order = "price_asc";
+                        int page = 1;
+                        int size = 10;
+
+                        ProductEntity product1 = new ProductEntity(
+                                        1L, "Dog Food", "Description", BigDecimal.TEN, BigDecimal.ZERO, "pic.jpg",
+                                        "Brand", 1L, BigDecimal.TEN, 10);
+
+                        when(productRepository.findAllOrdered(order, page, size)).thenReturn(List.of(product1));
+                        when(productRepository.count()).thenReturn(1L);
+
+                        Page<ProductDto> result = productServiceImpl.findAllOrdered(order, page, size);
+
+                        assertNotNull(result);
+                        assertEquals(1, result.data().size());
+                        assertEquals(1L, result.totalElements());
+                }
+        }
+
+        @Nested
+        class GetProductsByPriceRangeTests {
+                @Test
+                @DisplayName("getProductsByPriceRange should return page of products")
+                void testGetProductsByPriceRange() {
+                        double min = 10.0;
+                        double max = 20.0;
+                        int page = 1;
+                        int size = 10;
+                        String order = "price_asc";
+
+                        ProductEntity product1 = new ProductEntity(
+                                        1L, "Dog Food", "Description", BigDecimal.TEN, BigDecimal.ZERO, "pic.jpg",
+                                        "Brand", 1L, BigDecimal.TEN, 10);
+
+                        Page<ProductEntity> entityPage = new Page<>(List.of(product1), page, size, 1L);
+                        when(productRepository.getProductsByPriceRange(min, max, page, size, order))
+                                        .thenReturn(entityPage);
+
+                        Page<ProductDto> result = productServiceImpl.getProductsByPriceRange(min, max, page, size,
+                                        order);
+
+                        assertNotNull(result);
+                        assertEquals(1, result.data().size());
+                }
+        }
+
+        @Nested
+        class GetProductsByCategoriesTests {
+                @Test
+                @DisplayName("getProductsByCategories should return page of products")
+                void testGetProductsByCategories() {
+                        List<Integer> categoryIds = List.of(1, 2);
+                        int page = 0; // Service check page < 0
+                        int size = 10;
+                        String order = "price_asc";
+
+                        ProductEntity product1 = new ProductEntity(
+                                        1L, "Dog Food", "Description", BigDecimal.TEN, BigDecimal.ZERO, "pic.jpg",
+                                        "Brand", 1L, BigDecimal.TEN, 10);
+
+                        when(productRepository.findByCategoryIds(categoryIds, page, size, order))
+                                        .thenReturn(List.of(product1));
+
+                        Page<ProductDto> result = productServiceImpl.getProductsByCategories(categoryIds, page, size,
+                                        order);
+
+                        assertNotNull(result);
+                        assertEquals(1, result.data().size());
+                }
+        }
 }

@@ -4,6 +4,8 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import es.VetUp.tienda_back.a_presentation.controller.webModel.request.AddProductToCartRequest;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -63,8 +65,7 @@ class CartControllerTest {
                 123456789,
                 "USA",
                 "profile1.jpg",
-                LocalDate.of(1990, 1, 1)
-        );
+                LocalDate.of(1990, 1, 1));
 
         userDto2 = new UserDto(
                 2L,
@@ -77,24 +78,21 @@ class CartControllerTest {
                 987654321,
                 "Canada",
                 "profile2.jpg",
-                LocalDate.of(1995, 5, 15)
-        );
+                LocalDate.of(1995, 5, 15));
 
         cartDto1 = new CartDto(
                 1L,
                 0,
                 BigDecimal.ZERO,
                 userDto1,
-                new ArrayList<>()
-        );
+                new ArrayList<>());
 
         cartDto2 = new CartDto(
                 2L,
                 0,
                 BigDecimal.ZERO,
                 userDto2,
-                new ArrayList<>()
-        );
+                new ArrayList<>());
     }
 
     @Nested
@@ -169,8 +167,8 @@ class CartControllerTest {
             when(cartService.createCart(any(CartDto.class))).thenReturn(cartDto1);
 
             mockMvc.perform(post("/api/carts")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(newCart)))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(newCart)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.id").value(1))
                     .andExpect(jsonPath("$.user.id").value(1));
@@ -186,8 +184,8 @@ class CartControllerTest {
             when(cartService.updateCart(any(CartDto.class))).thenReturn(updatedCart);
 
             mockMvc.perform(put("/api/carts/{id}", 1L)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(updatedCart)))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(updatedCart)))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(1))
                     .andExpect(jsonPath("$.user.id").value(2));
@@ -207,5 +205,28 @@ class CartControllerTest {
             verify(cartService).deleteCart(1L);
         }
     }
-}
 
+    @Nested
+    class AddProductToCartTests {
+        @Test
+        @DisplayName("POST /api/carts/add-product - Success")
+        void testAddProductToCartSuccess() throws Exception {
+            String token = "Bearer test.token.jwt";
+            String jwtToken = "test.token.jwt";
+
+            AddProductToCartRequest request = new AddProductToCartRequest(1L, 2);
+
+            when(jwtService.getUserFromToken(jwtToken)).thenReturn(userDto1);
+            when(cartService.addProductToCart(userDto1.id(), request.productId(), request.quantity()))
+                    .thenReturn(cartDto1);
+
+            mockMvc.perform(post("/api/carts/add-product")
+                    .header("Authorization", token)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id").value(1))
+                    .andExpect(jsonPath("$.user.id").value(1));
+        }
+    }
+}

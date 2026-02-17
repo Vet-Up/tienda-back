@@ -74,8 +74,7 @@ class OrderServiceImplTest {
                 123456789,
                 "USA",
                 "profile1.jpg",
-                LocalDate.of(1990, 1, 1)
-        );
+                LocalDate.of(1990, 1, 1));
     }
 
     private OrderEntity createOrderEntity() {
@@ -88,8 +87,7 @@ class OrderServiceImplTest {
                 LocalDateTime.of(2026, 1, 1, 10, 0),
                 null,
                 "123 Delivery St",
-                null
-        );
+                null);
     }
 
     @Nested
@@ -107,8 +105,7 @@ class OrderServiceImplTest {
                     LocalDateTime.of(2026, 1, 2, 12, 0),
                     null,
                     "456 Delivery Ave",
-                    null
-            );
+                    null);
 
             when(orderRepository.getAllOrders()).thenReturn(List.of(entity1, entity2));
 
@@ -117,8 +114,7 @@ class OrderServiceImplTest {
             assertAll("result",
                     () -> assertEquals(2, result.size()),
                     () -> assertEquals(1L, result.getFirst().id()),
-                    () -> assertEquals(2L, result.get(1).id())
-            );
+                    () -> assertEquals(2L, result.get(1).id()));
         }
 
         @Test
@@ -147,8 +143,7 @@ class OrderServiceImplTest {
             assertAll("result",
                     () -> assertTrue(result.isPresent()),
                     () -> assertEquals(orderId, result.orElseThrow().id()),
-                    () -> assertEquals(2, result.orElseThrow().totalProducts())
-            );
+                    () -> assertEquals(2, result.orElseThrow().totalProducts()));
         }
 
         @Test
@@ -179,8 +174,7 @@ class OrderServiceImplTest {
                     LocalDateTime.of(2026, 1, 2, 12, 0),
                     null,
                     "456 Delivery Ave",
-                    null
-            );
+                    null);
 
             when(orderRepository.getOrdersByUserId(userId)).thenReturn(List.of(entity1, entity2));
 
@@ -189,8 +183,7 @@ class OrderServiceImplTest {
             assertAll("result",
                     () -> assertEquals(2, result.size()),
                     () -> assertEquals(1L, result.getFirst().id()),
-                    () -> assertEquals(2L, result.get(1).id())
-            );
+                    () -> assertEquals(2L, result.get(1).id()));
         }
 
         @Test
@@ -220,8 +213,7 @@ class OrderServiceImplTest {
                     null,
                     null,
                     "123 Delivery St",
-                    null
-            );
+                    null);
 
             when(orderRepository.createOrder(any(OrderEntity.class))).thenReturn(entity);
 
@@ -236,8 +228,7 @@ class OrderServiceImplTest {
         @DisplayName("createOrder should throw exception when cart already exists")
         void testCreateOrderCartAlreadyExists() {
             UserEntity userEntity = createUserEntity();
-            es.VetUp.tienda_back.b_domain.service.dto.UserDto userDto =
-                new es.VetUp.tienda_back.b_domain.service.dto.UserDto(
+            es.VetUp.tienda_back.b_domain.service.dto.UserDto userDto = new es.VetUp.tienda_back.b_domain.service.dto.UserDto(
                     userEntity.id(),
                     userEntity.name(),
                     userEntity.username(),
@@ -248,8 +239,7 @@ class OrderServiceImplTest {
                     userEntity.phone(),
                     userEntity.country(),
                     userEntity.profilePicture(),
-                    userEntity.birthdate()
-                );
+                    userEntity.birthdate());
 
             OrderDto orderDto = new OrderDto(
                     null,
@@ -260,8 +250,7 @@ class OrderServiceImplTest {
                     null,
                     null,
                     null,
-                    null
-            );
+                    null);
 
             when(orderRepository.findCartByUserId(1L)).thenReturn(Optional.of(createOrderEntity()));
 
@@ -284,8 +273,7 @@ class OrderServiceImplTest {
                     LocalDateTime.of(2026, 1, 1, 10, 0),
                     LocalDateTime.now(),
                     "123 Delivery St",
-                    null
-            );
+                    null);
 
             OrderDto orderDto = new OrderDto(
                     1L,
@@ -296,8 +284,7 @@ class OrderServiceImplTest {
                     null,
                     null,
                     "123 Delivery St",
-                    null
-            );
+                    null);
 
             when(orderRepository.getOrderById(1L)).thenReturn(Optional.of(existingEntity));
             when(orderRepository.updateOrder(any(OrderEntity.class))).thenReturn(updatedEntity);
@@ -321,8 +308,7 @@ class OrderServiceImplTest {
                     null,
                     null,
                     "123 Delivery St",
-                    null
-            );
+                    null);
 
             when(orderRepository.getOrderById(999L)).thenReturn(Optional.empty());
 
@@ -363,11 +349,11 @@ class OrderServiceImplTest {
 
             // Crear un CardPaymentRequest válido con todos los campos
             CardPaymentRequest paymentRequest = new CardPaymentRequest(
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12", "123", "John Doe"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment")
-            );
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12",
+                            "123", "John Doe"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment"));
             CardPaymentResponse paymentResponse = new CardPaymentResponse("txn123", "success", "Payment successful");
 
             UserEntity userEntity = createUserEntity();
@@ -376,8 +362,7 @@ class OrderServiceImplTest {
                     2,
                     new BigDecimal("179.98"),
                     userEntity,
-                    null
-            );
+                    null);
 
             ProductEntity product = new ProductEntity(
                     10L,
@@ -389,8 +374,7 @@ class OrderServiceImplTest {
                     "Brand1",
                     1L,
                     new BigDecimal("89.99"),
-                    10
-            );
+                    10);
 
             CartItemEntity cartItem = new CartItemEntity(1L, 2, 1L, product);
             OrderEntity createdOrder = createOrderEntity();
@@ -421,11 +405,11 @@ class OrderServiceImplTest {
         void testCheckoutNullAddress() {
             Long userId = 1L;
             CardPaymentRequest paymentRequest = new CardPaymentRequest(
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12", "123", "John Doe"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment")
-            );
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12",
+                            "123", "John Doe"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment"));
 
             assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, null, paymentRequest));
         }
@@ -435,11 +419,11 @@ class OrderServiceImplTest {
         void testCheckoutBlankAddress() {
             Long userId = 1L;
             CardPaymentRequest paymentRequest = new CardPaymentRequest(
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12", "123", "John Doe"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment")
-            );
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12",
+                            "123", "John Doe"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment"));
 
             assertThrows(BusinessException.class, () -> orderServiceImpl.checkout(userId, "   ", paymentRequest));
         }
@@ -459,11 +443,11 @@ class OrderServiceImplTest {
             Long userId = 1L;
             String address = "123 Delivery St";
             CardPaymentRequest paymentRequest = new CardPaymentRequest(
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12", "123", "John Doe"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment")
-            );
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12",
+                            "123", "John Doe"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment"));
             CardPaymentResponse paymentResponse = new CardPaymentResponse("txn123", "failed", "Insufficient funds");
 
             when(paymentGateway.payment(any(CardPaymentRequest.class))).thenReturn(paymentResponse);
@@ -479,11 +463,11 @@ class OrderServiceImplTest {
             Long userId = 999L;
             String address = "123 Delivery St";
             CardPaymentRequest paymentRequest = new CardPaymentRequest(
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12", "123", "John Doe"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment")
-            );
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12",
+                            "123", "John Doe"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment"));
             CardPaymentResponse paymentResponse = new CardPaymentResponse("txn123", "success", "Payment successful");
 
             when(paymentGateway.payment(any(CardPaymentRequest.class))).thenReturn(paymentResponse);
@@ -501,11 +485,11 @@ class OrderServiceImplTest {
             Long userId = 1L;
             String address = "123 Delivery St";
             CardPaymentRequest paymentRequest = new CardPaymentRequest(
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12", "123", "John Doe"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment")
-            );
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12",
+                            "123", "John Doe"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment"));
             CardPaymentResponse paymentResponse = new CardPaymentResponse("txn123", "success", "Payment successful");
             UserEntity userEntity = createUserEntity();
 
@@ -526,11 +510,11 @@ class OrderServiceImplTest {
             Long userId = 1L;
             String address = "123 Delivery St";
             CardPaymentRequest paymentRequest = new CardPaymentRequest(
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12", "123", "John Doe"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
-                new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment")
-            );
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization("user", "token"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Origin("4111111111111111", "2027-12",
+                            "123", "John Doe"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination("ES1234567890"),
+                    new es.VetUp.tienda_back.infrastructure.model.smallModels.Pay(179.98, "Test payment"));
             CardPaymentResponse paymentResponse = new CardPaymentResponse("txn123", "success", "Payment successful");
             UserEntity userEntity = createUserEntity();
             CartEntity cartEntity = new CartEntity(
@@ -538,8 +522,7 @@ class OrderServiceImplTest {
                     0,
                     BigDecimal.ZERO,
                     userEntity,
-                    null
-            );
+                    null);
 
             when(paymentGateway.payment(any(CardPaymentRequest.class))).thenReturn(paymentResponse);
             when(userRepository.getClientById(userId)).thenReturn(Optional.of(userEntity));
@@ -554,5 +537,33 @@ class OrderServiceImplTest {
             verify(cartItemRepository).getCartItemsByCartId(1L);
         }
     }
-}
 
+    @Nested
+    class HasUserPurchasedProductTests {
+        @Test
+        @DisplayName("hasUserPurchasedProduct should return true when user has purchased product")
+        void testHasUserPurchasedProductTrue() {
+            Long userId = 1L;
+            Long productId = 10L;
+
+            when(orderRepository.hasUserPurchasedProduct(userId, productId)).thenReturn(true);
+
+            boolean result = orderServiceImpl.hasUserPurchasedProduct(userId, productId);
+
+            assertTrue(result);
+        }
+
+        @Test
+        @DisplayName("hasUserPurchasedProduct should return false when user has not purchased product")
+        void testHasUserPurchasedProductFalse() {
+            Long userId = 1L;
+            Long productId = 10L;
+
+            when(orderRepository.hasUserPurchasedProduct(userId, productId)).thenReturn(false);
+
+            boolean result = orderServiceImpl.hasUserPurchasedProduct(userId, productId);
+
+            assertFalse(result);
+        }
+    }
+}

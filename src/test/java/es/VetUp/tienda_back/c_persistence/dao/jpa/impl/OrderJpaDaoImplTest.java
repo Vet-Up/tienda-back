@@ -15,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import es.VetUp.tienda_back.c_persistence.dao.jpa.OrderJpaDao;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.entity.CategoryJpaEntity;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.entity.OrderItemJpaEntity;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.entity.OrderJpaEntity;
+import es.VetUp.tienda_back.c_persistence.dao.jpa.entity.ProductJpaEntity;
 import es.VetUp.tienda_back.c_persistence.dao.jpa.entity.UserJpaEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -45,8 +48,7 @@ class OrderJpaDaoImplTest {
                 123456789,
                 "USA",
                 "profile.jpg",
-                LocalDate.of(1990, 1, 1)
-        );
+                LocalDate.of(1990, 1, 1));
         entityManager.persist(user);
         entityManager.flush();
 
@@ -83,8 +85,7 @@ class OrderJpaDaoImplTest {
                 123456789,
                 "USA",
                 "profile.jpg",
-                LocalDate.of(1990, 1, 1)
-        );
+                LocalDate.of(1990, 1, 1));
         entityManager.persist(user);
         entityManager.flush();
 
@@ -121,8 +122,7 @@ class OrderJpaDaoImplTest {
                 123456789,
                 "USA",
                 "profile.jpg",
-                LocalDate.of(1990, 1, 1)
-        );
+                LocalDate.of(1990, 1, 1));
         entityManager.persist(user);
         entityManager.flush();
 
@@ -159,8 +159,7 @@ class OrderJpaDaoImplTest {
                 123456789,
                 "USA",
                 "profile.jpg",
-                LocalDate.of(1990, 1, 1)
-        );
+                LocalDate.of(1990, 1, 1));
         entityManager.persist(user);
         entityManager.flush();
 
@@ -196,8 +195,7 @@ class OrderJpaDaoImplTest {
                 123456789,
                 "USA",
                 "profile.jpg",
-                LocalDate.of(1990, 1, 1)
-        );
+                LocalDate.of(1990, 1, 1));
         entityManager.persist(user);
         entityManager.flush();
 
@@ -231,8 +229,7 @@ class OrderJpaDaoImplTest {
                 123456789,
                 "USA",
                 "profile.jpg",
-                LocalDate.of(1990, 1, 1)
-        );
+                LocalDate.of(1990, 1, 1));
         entityManager.persist(user);
         entityManager.flush();
 
@@ -268,8 +265,7 @@ class OrderJpaDaoImplTest {
                 123456789,
                 "USA",
                 "profile.jpg",
-                LocalDate.of(1990, 1, 1)
-        );
+                LocalDate.of(1990, 1, 1));
         entityManager.persist(user);
         entityManager.flush();
 
@@ -291,5 +287,56 @@ class OrderJpaDaoImplTest {
         // Assert
         assertNull(deletedOrder);
     }
-}
 
+    @Test
+    void testHasUserPurchasedProduct() {
+        // Arrange
+        UserJpaEntity user = new UserJpaEntity(
+                null, "Test User", "testuser", "test@em.com", "pass", "addr", UserRole.CUSTOMER, 123, "ES", "pic",
+                LocalDate.now());
+        entityManager.persist(user);
+
+        // Category is required for Product
+        CategoryJpaEntity category = new CategoryJpaEntity(null, "Category Test", "Description");
+        entityManager.persist(category);
+
+        OrderJpaEntity order = new OrderJpaEntity();
+        order.setUser(user);
+        order.setStatus(OrderState.ORDER);
+        order.setTotal_products(1);
+        order.setTotal_price(BigDecimal.TEN);
+        order.setAddress("Addr");
+        order.setCreatedAt(LocalDateTime.now());
+        entityManager.persist(order);
+
+        ProductJpaEntity product = new ProductJpaEntity();
+        product.setName("Prod");
+        product.setProductDescription("Desc");
+        product.setBasePrice(BigDecimal.TEN);
+        product.setPrice(BigDecimal.TEN);
+        product.setStock(10);
+        product.setPictureProduct("img");
+        product.setBrand("Brand");
+        product.setCategory(category);
+
+        entityManager.persist(product);
+
+        OrderItemJpaEntity orderItem = new OrderItemJpaEntity();
+        orderItem.setOrder(order);
+        orderItem.setProduct(product);
+        orderItem.setQuantity(1);
+
+        entityManager.persist(orderItem);
+        entityManager.flush();
+
+        // Act
+        boolean purchased = orderJpaDao.hasUserPurchasedProduct(user.getId(), product.getProductId());
+
+        // Assert
+        assertTrue(purchased);
+
+        // Negative test
+        boolean notPurchased = orderJpaDao.hasUserPurchasedProduct(user.getId(), 999L);
+        assertFalse(notPurchased);
+    }
+}

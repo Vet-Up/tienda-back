@@ -40,7 +40,7 @@ class ProductControllerTest {
 
         @BeforeEach
         void setUp() {
-                productDto1 =  new ProductDto(
+                productDto1 = new ProductDto(
                                 1L,
                                 "Producto 1",
                                 "Descripción producto 1",
@@ -134,6 +134,84 @@ class ProductControllerTest {
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.length()").value(1))
                                 .andExpect(jsonPath("$[0].name").value("Producto 1"));
+        }
+
+        @Test
+        @DisplayName("GET /api/products/ordered - Success")
+        void testGetProductsOrderedSuccess() throws Exception {
+                Page<ProductDto> productPage = new Page<>(
+                                List.of(productDto1, productDto2),
+                                1,
+                                10,
+                                2);
+
+                when(productService.findAllOrdered("priceAsc", 1, 10)).thenReturn(productPage);
+
+                mockMvc.perform(get("/api/products/ordered")
+                                .param("order", "priceAsc")
+                                .param("page", "1")
+                                .param("size", "10"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.data.length()").value(2))
+                                .andExpect(jsonPath("$.data[0].name").value("Producto 1"));
+        }
+
+        @Test
+        @DisplayName("GET /api/products/search - Success")
+        void testSearchProductsByNameSuccess() throws Exception {
+                when(productService.findProductsByName("Producto", 0, 10, null))
+                                .thenReturn(List.of(productDto1, productDto2));
+
+                mockMvc.perform(get("/api/products/search")
+                                .param("name", "Producto")
+                                .param("page", "1")
+                                .param("size", "10"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.length()").value(2))
+                                .andExpect(jsonPath("$[0].name").value("Producto 1"));
+        }
+
+        @Test
+        @DisplayName("GET /api/products/price-range - Success")
+        void testGetProductsByPriceRangeSuccess() throws Exception {
+                Page<ProductDto> productPage = new Page<>(
+                                List.of(productDto1),
+                                0, // Service returns 0-based page index
+                                10,
+                                1);
+
+                when(productService.getProductsByPriceRange(10.0, 20.0, 0, 10, null)).thenReturn(productPage);
+
+                mockMvc.perform(get("/api/products/price-range")
+                                .param("minPrice", "10.0")
+                                .param("maxPrice", "20.0")
+                                .param("page", "1")
+                                .param("size", "10"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.data.length()").value(1))
+                                .andExpect(jsonPath("$.pageNumber").value(1)) // Controller converts to 1-based
+                                .andExpect(jsonPath("$.data[0].name").value("Producto 1"));
+        }
+
+        @Test
+        @DisplayName("GET /api/products/categories - Success")
+        void testGetProductsByCategoriesSuccess() throws Exception {
+                Page<ProductDto> productPage = new Page<>(
+                                List.of(productDto1),
+                                0, // Service returns 0-based page index
+                                10,
+                                1);
+
+                when(productService.getProductsByCategories(List.of(1, 2), 0, 10, null)).thenReturn(productPage);
+
+                mockMvc.perform(get("/api/products/categories")
+                                .param("categoryIds", "1,2")
+                                .param("page", "1")
+                                .param("size", "10"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.data.length()").value(1))
+                                .andExpect(jsonPath("$.pageNumber").value(1)) // Controller converts to 1-based
+                                .andExpect(jsonPath("$.data[0].name").value("Producto 1"));
         }
 
         @Test

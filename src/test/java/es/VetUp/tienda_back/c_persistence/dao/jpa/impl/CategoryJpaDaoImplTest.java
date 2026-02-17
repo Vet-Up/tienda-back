@@ -123,4 +123,53 @@ class CategoryJpaDaoImplTest {
         assertNull(deletedCategory);
     }
 
+    @Test
+    void testFindByNameContainingIgnoreCase() {
+        // Arrange
+        entityManager.createQuery("DELETE FROM ProductJpaEntity").executeUpdate();
+        entityManager.createQuery("DELETE FROM CategoryJpaEntity").executeUpdate();
+        entityManager.flush();
+        entityManager.clear();
+
+        CategoryJpaEntity category1 = new CategoryJpaEntity(null, "Dog Food", "Food for dogs");
+        CategoryJpaEntity category2 = new CategoryJpaEntity(null, "Cat Food", "Food for cats");
+        CategoryJpaEntity category3 = new CategoryJpaEntity(null, "Toys", "Toys for pets");
+
+        entityManager.persist(category1);
+        entityManager.persist(category2);
+        entityManager.persist(category3);
+        entityManager.flush();
+        entityManager.clear();
+
+        // Act
+        List<CategoryJpaEntity> result = categoryJpaDao.findByNameContainingIgnoreCase("Food");
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.stream().anyMatch(c -> "Dog Food".equals(c.getName())));
+        assertTrue(result.stream().anyMatch(c -> "Cat Food".equals(c.getName())));
+    }
+
+    @Test
+    void testFindAllPaginated() {
+        // Arrange
+        entityManager.createQuery("DELETE FROM ProductJpaEntity").executeUpdate();
+        entityManager.createQuery("DELETE FROM CategoryJpaEntity").executeUpdate();
+        entityManager.flush();
+        entityManager.clear();
+
+        for (int i = 0; i < 5; i++) {
+            entityManager.persist(new CategoryJpaEntity(null, "Category " + i, "Desc " + i));
+        }
+        entityManager.flush();
+        entityManager.clear();
+
+        // Act
+        List<CategoryJpaEntity> result = categoryJpaDao.findAll(0, 3);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(3, result.size());
+    }
 }

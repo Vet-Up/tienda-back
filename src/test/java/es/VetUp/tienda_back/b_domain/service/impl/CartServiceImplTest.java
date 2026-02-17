@@ -26,9 +26,12 @@ import es.VetUp.tienda_back.b_domain.repository.CartItemRepository;
 import es.VetUp.tienda_back.b_domain.repository.ProductRepository;
 import es.VetUp.tienda_back.b_domain.repository.UserRepository;
 import es.VetUp.tienda_back.b_domain.repository.entity.CartEntity;
+import es.VetUp.tienda_back.b_domain.repository.entity.CartItemEntity;
+import es.VetUp.tienda_back.b_domain.repository.entity.ProductEntity;
 import es.VetUp.tienda_back.b_domain.repository.entity.UserEntity;
 import es.VetUp.tienda_back.b_domain.service.dto.CartDto;
 import es.VetUp.tienda_back.b_domain.service.dto.UserDto;
+import org.junit.jupiter.api.Nested;
 
 @ExtendWith(MockitoExtension.class)
 class CartServiceImplTest {
@@ -226,5 +229,43 @@ class CartServiceImplTest {
         verify(cartRepository, times(1)).getCartById(999L);
         verify(cartRepository, never()).deleteCart(anyLong());
     }
-}
 
+    @Nested
+    class AddProductToCartTests {
+        @Test
+        @DisplayName("addProductToCart should create new cart if not exists and add item")
+        void testAddProductToCart_NewCart() {
+            Long userId = 1L;
+            Long productId = 10L;
+            int quantity = 2;
+
+            ProductEntity productEntity = new ProductEntity(
+                    productId, "Product 1", "Desc", BigDecimal.TEN, BigDecimal.ZERO, "pic.jpg", "Brand", 1L,
+                    BigDecimal.TEN, 10);
+
+            when(userRepository.getClientById(userId)).thenReturn(Optional.of(userEntity));
+            when(productRepository.findProductById(productId)).thenReturn(Optional.of(productEntity));
+            when(cartRepository.getCartByUserId(userId)).thenReturn(Optional.empty());
+
+            CartEntity createdCart = new CartEntity(1L, 0, BigDecimal.ZERO, userEntity, new ArrayList<>());
+            when(cartRepository.createCart(any(CartEntity.class))).thenReturn(createdCart);
+
+            // First call returns empty, second call returns list with item
+            when(cartItemRepository.getCartItemsByCartId(1L)).thenReturn(new ArrayList<>(),
+                    List.of(new CartItemEntity(1L, quantity, 1L, productEntity)));
+
+            // Mock final update
+            CartEntity finalCart = new CartEntity(1L, quantity, BigDecimal.TEN.multiply(BigDecimal.valueOf(quantity)),
+                    userEntity, List.of(
+                            new CartItemEntity(1L, quantity, 1L, productEntity)));
+
+            when(cartRepository.updateCart(any(CartEntity.class))).thenReturn(finalCart);
+
+            CartDto result = cartService.addProductToCart(userId, productId, quantity);
+
+            assertNotNull(result);
+            verify(cartRepository).createCart(any(CartEntity.class));
+            verify(cartItemRepository).createCartItem(any(CartItemEntity.class));
+        }
+    }
+}
