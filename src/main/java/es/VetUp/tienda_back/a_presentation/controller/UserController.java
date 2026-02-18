@@ -25,6 +25,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @RequireAdmin
     @GetMapping
     public ResponseEntity<Page<UserDetailResponse>> findAllUsers(@RequestParam(required = false, defaultValue = "1") int page,
                                                                  @RequestParam(required = false, defaultValue = "10") int size) {
@@ -43,6 +44,7 @@ public class UserController {
         return new ResponseEntity<>(userResponsePage, HttpStatus.OK);
     }
 
+    @RequireAdmin
     @GetMapping("/search")
     public ResponseEntity<Page<UserDetailResponse>> searchUsersByEmail(
             @RequestParam String email,
@@ -68,7 +70,15 @@ public class UserController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDetailResponse> getUserById(@PathVariable Long id) {
+    public ResponseEntity<UserDetailResponse> getUserById(
+            @PathVariable Long id,
+            @RequestAttribute("userId") Long authenticatedUserId,
+            @RequestAttribute("isAdmin") Boolean isAdmin) {
+
+        if (!isAdmin && !id.equals(authenticatedUserId)) {
+            throw new RuntimeException("Unauthorized: You can only access your own profile");
+        }
+
         UserDto userDto = userService.getUserById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         UserDetailResponse userDetailResponse =
@@ -77,6 +87,7 @@ public class UserController {
     }
 
 
+    @RequireAdmin
     @GetMapping("/by-email")
     public ResponseEntity<UserDetailResponse> getUserByEmail(@RequestParam String email) {
         UserDto userDto = userService.getUserByEmail(email)
@@ -96,12 +107,21 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @RequireAdmin
     @PutMapping("/{id}")
-    public ResponseEntity<UserDetailResponse> updateUser(@PathVariable("id") Long id, @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
+    public ResponseEntity<UserDetailResponse> updateUser(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody UserUpdateRequest userUpdateRequest,
+            @RequestAttribute("userId") Long authenticatedUserId,
+            @RequestAttribute("isAdmin") Boolean isAdmin) {
+
         if (!id.equals(userUpdateRequest.id())) {
             throw new IllegalArgumentException("ID in path and request body must match");
         }
+
+        if (!isAdmin && !id.equals(authenticatedUserId)) {
+            throw new RuntimeException("Unauthorized: You can only update your own profile");
+        }
+
         UserDto userDto = UserPresentationMapper.getInstance().fromUserUpdateRequestToUserDto(userUpdateRequest);
         UserDto updatedUser = userService.updateUser(userDto);
         UserDetailResponse response = UserPresentationMapper.getInstance().fromUserDtoToUserDetailResponse(updatedUser);

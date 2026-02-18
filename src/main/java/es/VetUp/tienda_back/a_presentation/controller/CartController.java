@@ -9,6 +9,7 @@ import es.VetUp.tienda_back.b_domain.service.CartService;
 import es.VetUp.tienda_back.b_domain.service.JwtService;
 import es.VetUp.tienda_back.b_domain.service.dto.CartDto;
 import es.VetUp.tienda_back.b_domain.service.dto.UserDto;
+import es.VetUp.tienda_back.config.annotation.RequireAdmin;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,7 @@ public class CartController {
         this.jwtService = jwtService;
     }
 
+    @RequireAdmin
     @GetMapping
     public ResponseEntity<List<CartDetailResponse>> findAllCarts() {
         List<CartDto> carts = cartService.getAllCarts();
@@ -38,16 +40,33 @@ public class CartController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CartDetailResponse> getCartById(@PathVariable Long id) {
+    public ResponseEntity<CartDetailResponse> getCartById(
+            @PathVariable Long id,
+            @RequestAttribute("userId") Long authenticatedUserId,
+            @RequestAttribute("isAdmin") Boolean isAdmin) {
+
         CartDto cartDto = cartService.getCartById(id)
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
+
+        if (!isAdmin && !cartDto.user().id().equals(authenticatedUserId)) {
+            throw new RuntimeException("Unauthorized: You can only access your own cart");
+        }
+
         CartDetailResponse cartDetailResponse =
                 CartPresentationMapper.getInstance().fromCartDtoToCartDetailResponse(cartDto);
         return new ResponseEntity<>(cartDetailResponse, HttpStatus.OK);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<CartDetailResponse> getCartByUserId(@PathVariable Long userId) {
+    public ResponseEntity<CartDetailResponse> getCartByUserId(
+            @PathVariable Long userId,
+            @RequestAttribute("userId") Long authenticatedUserId,
+            @RequestAttribute("isAdmin") Boolean isAdmin) {
+
+        if (!isAdmin && !userId.equals(authenticatedUserId)) {
+            throw new RuntimeException("Unauthorized: You can only access your own cart");
+        }
+
         CartDto cartDto = cartService.getCartByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("Cart not found for user"));
         CartDetailResponse cartDetailResponse =
@@ -64,10 +83,23 @@ public class CartController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CartDetailResponse> updateCart(@PathVariable Long id, @RequestBody CartUpdateRequest cartUpdateRequest) {
+    public ResponseEntity<CartDetailResponse> updateCart(
+            @PathVariable Long id,
+            @RequestBody CartUpdateRequest cartUpdateRequest,
+            @RequestAttribute("userId") Long authenticatedUserId,
+            @RequestAttribute("isAdmin") Boolean isAdmin) {
+
         if (!id.equals(cartUpdateRequest.id())) {
             throw new RuntimeException("ID mismatch");
         }
+
+        CartDto existingCart = cartService.getCartById(id)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+
+        if (!isAdmin && !existingCart.user().id().equals(authenticatedUserId)) {
+            throw new RuntimeException("Unauthorized: You can only update your own cart");
+        }
+
         CartDto cartDto = CartPresentationMapper.getInstance().fromCartUpdateRequestToCartDto(cartUpdateRequest);
         CartDto updatedCart = cartService.updateCart(cartDto);
         CartDetailResponse response = CartPresentationMapper.getInstance().fromCartDtoToCartDetailResponse(updatedCart);
@@ -75,7 +107,18 @@ public class CartController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCart(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCart(
+            @PathVariable Long id,
+            @RequestAttribute("userId") Long authenticatedUserId,
+            @RequestAttribute("isAdmin") Boolean isAdmin) {
+
+        CartDto existingCart = cartService.getCartById(id)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
+
+        if (!isAdmin && !existingCart.user().id().equals(authenticatedUserId)) {
+            throw new RuntimeException("Unauthorized: You can only delete your own cart");
+        }
+
         cartService.deleteCart(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

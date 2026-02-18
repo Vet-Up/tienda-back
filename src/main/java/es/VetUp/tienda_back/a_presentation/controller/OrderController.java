@@ -32,6 +32,7 @@ public class OrderController {
         this.jwtService = jwtService;
     }
 
+    @RequireAdmin
     @GetMapping
     public ResponseEntity<List<OrderDetailResponse>> findAllOrders() {
         List<OrderDto> orders = orderService.getAllOrders();
@@ -40,16 +41,33 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDetailResponse> getOrderById(@PathVariable Long id) {
+    public ResponseEntity<OrderDetailResponse> getOrderById(
+            @PathVariable Long id,
+            @RequestAttribute("userId") Long authenticatedUserId,
+            @RequestAttribute("isAdmin") Boolean isAdmin) {
+
         OrderDto orderDto = orderService.getOrderById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (!isAdmin && !orderDto.user().id().equals(authenticatedUserId)) {
+            throw new RuntimeException("Unauthorized: You can only access your own orders");
+        }
+
         OrderDetailResponse orderDetailResponse =
                 OrderPresentationMapper.getInstance().fromOrderDtoToOrderDetailResponse(orderDto);
         return new ResponseEntity<>(orderDetailResponse, HttpStatus.OK);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<OrderDetailResponse>> getOrdersByUserId(@PathVariable Long userId) {
+    public ResponseEntity<List<OrderDetailResponse>> getOrdersByUserId(
+            @PathVariable Long userId,
+            @RequestAttribute("userId") Long authenticatedUserId,
+            @RequestAttribute("isAdmin") Boolean isAdmin) {
+
+        if (!isAdmin && !userId.equals(authenticatedUserId)) {
+            throw new RuntimeException("Unauthorized: You can only access your own orders");
+        }
+
         List<OrderDto> orders = orderService.getOrdersByUserId(userId);
         List<OrderDetailResponse> orderResponses = orders.stream()
                 .map(OrderPresentationMapper.getInstance()::fromOrderDtoToOrderDetailResponse)
@@ -60,7 +78,14 @@ public class OrderController {
     @GetMapping("/user/{userId}/product/{productId}/purchased")
     public ResponseEntity<Boolean> hasUserPurchasedProduct(
             @PathVariable Long userId,
-            @PathVariable Long productId) {
+            @PathVariable Long productId,
+            @RequestAttribute("userId") Long authenticatedUserId,
+            @RequestAttribute("isAdmin") Boolean isAdmin) {
+
+        if (!isAdmin && !userId.equals(authenticatedUserId)) {
+            throw new RuntimeException("Unauthorized: You can only check your own purchases");
+        }
+
         boolean hasPurchased = orderService.hasUserPurchasedProduct(userId, productId);
         return new ResponseEntity<>(hasPurchased, HttpStatus.OK);
     }
