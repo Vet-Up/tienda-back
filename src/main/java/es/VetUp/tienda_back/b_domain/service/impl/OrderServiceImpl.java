@@ -118,17 +118,16 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException("Payment information is required for checkout");
         }
 
-        // Forzar los datos de autorización y destino de la tienda (mroberts - propietario)
         CardPaymentRequest securePaymentRequest = new CardPaymentRequest(
             new es.VetUp.tienda_back.infrastructure.model.smallModels.Authorization(
                 "mroberts",
                 "token_mroberts_002"
             ),
-            cardPaymentRequest.origin(), // Mantener los datos de origen (tarjeta del usuario)
+            cardPaymentRequest.origin(),
             new es.VetUp.tienda_back.infrastructure.model.smallModels.Destination(
                 "ES1200492352123456789012"
             ),
-            cardPaymentRequest.payment() // Mantener el monto y concepto
+            cardPaymentRequest.payment()
         );
 
         CardPaymentResponse paymentResponse = paymentGateway.payment(securePaymentRequest);
